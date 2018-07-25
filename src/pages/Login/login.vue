@@ -1,16 +1,16 @@
 <template>
     <div class="login">
         <div class="login_wrap">
-            <h1 class="title">澳门到家</h1>
+            <h1 class="title">澳門到家</h1>
             <div class="row">
                 <span class="iconfont icon-yonghu"></span>
-                <input v-model="userInfo.userName" class="row_input" type="text" placeholder="请输入您的用户名">
+                <input v-model="userInfo.userName" class="row_input" type="text" placeholder="請輸入您的用戶名">
             </div>
             <div class="row">
                 <span class="iconfont icon-mima"></span>
-                <input v-model="userInfo.userPas" class="row_input" type="password" placeholder="请输入您的密码">
+                <input v-model="userInfo.userPas" class="row_input" type="password" placeholder="請輸入您的密碼">
             </div>
-            <div class="row login_btn" @click="login">登录</div>
+            <div class="row login_btn" @click="login">登錄</div>
         </div>
     </div>
 </template>
@@ -27,7 +27,18 @@ export default {
     },
     methods:{
         login(){
+            if(!this.userInfo.userName||!this.userInfo.userPas){
+                this.$message({
+                    message: '請輸入用戶名或密碼',
+                    type: 'warning'
+                    });
+                return;
+            }
+            this.$post('',{
 
+            }).then(res=>{
+                
+            })
         }
     }
 }
@@ -89,6 +100,7 @@ export default {
     font-weight: bold;
     font-size: 16px;
     border-radius: 4px;
+    user-select: none;
 }
 .iconfont{
     font-size: 18px;
