@@ -4,6 +4,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 
+
 Vue.config.productionTip = false
 
 //引入elementui
@@ -11,10 +12,10 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 Vue.use(ElementUI);
 
-// import '@/assets/reset.css'    //重置样式公共文件
+import '@/assets/css/reset.css'    //重置样式公共文件
 
 //引用阿里图标
-// import '@/assets/font/iconfont.css'
+import '@/assets/font/iconfont.css' 
 
 
 
