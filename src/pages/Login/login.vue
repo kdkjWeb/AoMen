@@ -76,6 +76,8 @@ export default {
     box-sizing: border-box;
     position: relative;
     outline: none;
+    border: none;
+    border-radius: 4px;
 }
 .login_btn{
     margin-top: 82px !important;
@@ -84,6 +86,9 @@ export default {
     text-align: center;
     line-height: 50px;
     cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    border-radius: 4px;
 }
 .iconfont{
     font-size: 18px;
@@ -91,6 +96,7 @@ export default {
     top:12px;
     left: 15px;
     z-index: 100;
+    color: #000;
 }
 /*用户登录输入框*/
 
