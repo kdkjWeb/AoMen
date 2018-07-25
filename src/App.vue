@@ -11,5 +11,8 @@ export default {
 </script>
 
 <style>
-
+/*css重置样式公共文件*/
+  @import '/assets/css/reset.css';
+  @import '/assets/css/main.css';
+ /*  @import '/assets/font/iconfont.css' */
 </style>

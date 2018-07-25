@@ -6,6 +6,17 @@ import router from './router'
 
 Vue.config.productionTip = false
 
+//引入elementui
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+Vue.use(ElementUI);
+
+// import '@/assets/reset.css'    //重置样式公共文件
+
+//引用阿里图标
+// import '@/assets/font/iconfont.css'
+
+
 
 //封装axios
 import Server from './server/server.js';
