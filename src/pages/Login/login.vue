@@ -84,6 +84,8 @@ export default {
     width: 400px;
     height: 50px;
     padding-left: 45px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
     box-sizing: border-box;
     position: relative;
     outline: none;
