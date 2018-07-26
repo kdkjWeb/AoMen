@@ -128,6 +128,9 @@ export default {
 .el-menu{
     border: none
 }
+.el-main{
+    background-color:#ccc;
+}
 /* 菜单头部 */
     #homePage .el-header{
         width:100%;
