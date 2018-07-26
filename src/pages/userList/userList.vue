@@ -174,6 +174,9 @@ export default {
         //查看消費詳情
          handleClick(row) {
             console.log(row);
+            this.$router.push({
+                name: 'userListDetails'
+            })
         }
     }
 }

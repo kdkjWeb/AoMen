@@ -21,6 +21,10 @@ export default new Router({
         name:'userList',
         component: resolve => require(['@/pages/userList/userList.vue'],resolve)
       },{
+        path:"/userListDetails",
+        name:'userListDetails',
+        component: resolve => require(['@/pages/userList/userListDetails.vue'],resolve)
+      },{
         path:"/bussinessList",
         name:'bussinessList',
         component: resolve => require(['@/pages/bussinessList/bussinessList.vue'],resolve)
