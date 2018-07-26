@@ -45,6 +45,10 @@ export default new Router({
         name:'reBackOrder',
         component: resolve => require(['@/pages/reBackOrder/reBackOrder.vue'],resolve)
       },{
+        path:"/reBackOrderDetail",
+        name:'reBackOrderDetail',
+        component: resolve => require(['@/pages/reBackOrder/reBackOrderDetail.vue'],resolve)
+      },{
         path:"/userTrade",
         name:'userTrade',
         component: resolve => require(['@/pages/userTrade/userTrade.vue'],resolve)

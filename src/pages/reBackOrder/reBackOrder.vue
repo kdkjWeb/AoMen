@@ -181,7 +181,9 @@ export default {
         },
         //點擊查看
         handleClick(row){
-            console.log(row)
+            this.$router.push({
+                path:"/reBackOrderDetail"
+            })
         }
     }
 }

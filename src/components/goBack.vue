@@ -1,7 +1,7 @@
 <template>
     <div class="searchBar">
         <el-button round @click="goBack"><i class="el-icon-arrow-left"></i>返回</el-button>
-        <div class="search">
+        <div class="search" v-show="isShow">
             <input type="text" v-model="inputText" :placeholder="placeholder">
             <span class="iconfont icon-search-o" @click="search"></span>
         </div>
@@ -14,6 +14,10 @@ export default {
        placeholder:{
            type: String,
            default: '请输入查询内容',
+       },
+       isShow:{
+           type: Boolean,
+           default:true
        }
    },
    data(){
