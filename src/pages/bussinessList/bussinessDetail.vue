@@ -7,6 +7,7 @@
         <!-- 表格 -->
             <el-table
                 :data="tableData"
+                border
                 height="600"
                 style="width: 100%">
                 <el-table-column
