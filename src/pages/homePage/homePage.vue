@@ -129,7 +129,7 @@ export default {
     border: none
 }
 .el-main{
-    background-color:#ccc;
+    background-color: #ddd;
 }
 /* 菜单头部 */
     #homePage .el-header{
