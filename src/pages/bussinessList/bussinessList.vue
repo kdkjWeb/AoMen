@@ -1,53 +1,17 @@
 <template>
     <div id="bussinessList">
-        <div class="header">
-            <p><span>|</span>商家列表</p>
-        </div>
+        <searchBar :title="title" :placeholder="placeholder" @search="search"></searchBar>
         <div>
             <el-table
                 :data="tableData"
                 style="width: 100%"
                 height="600">
                 <el-table-column
-                fixed
-                prop="account"
                 header-align = "center"
-                label="帳號">
-                </el-table-column>
-                <el-table-column
-                prop="accountName"
-                header-align = "center"
-                label="賬號昵稱">
-                </el-table-column>
-                <el-table-column
-                prop="shopName"
-                header-align = "center"
-                label="店鋪名稱">
-                </el-table-column>
-                <el-table-column
-                prop="regiestTime"
-                header-align = "center"
-                label="註冊時間">
-                </el-table-column>
-                <el-table-column
-                prop="becomeTime"
-                header-align = "center"
-                label="成為商家時間">
-                </el-table-column>
-                <el-table-column
-                header-align = "center"
-                prop="number"
-                label="店鋪數量">
-                </el-table-column>
-                <el-table-column
-                header-align = "center"
-                prop="accountBalance"
-                label="賬戶餘額">
-                </el-table-column>
-                <el-table-column
-                header-align = "center"
-                prop="integralBalance"
-                label="積分餘額">
+                v-for="(item,index) in tableList"
+                :key="index"
+                :prop="item.prop"
+                :label="item.label">
                 </el-table-column>
                 <el-table-column
                 header-align = "center"
@@ -57,7 +21,7 @@
                 <template slot-scope="scope">
                     <div v-show = "isShow" class="handle">
                         <el-button round id="refuse">拒絕</el-button>
-                        <el-button round>查看</el-button>
+                        <el-button round @click="look">查看</el-button>
                     </div>
                     <!-- <div v-if="isShow == false" class="handle">
                         <el-button round id="refuse">拒絕</el-button>
@@ -75,7 +39,7 @@
                 </el-table-column>
             </el-table>
             <div class="block">
-                <el-pagination
+                <!-- <el-pagination
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
                 :current-page="currentPage4"
@@ -84,7 +48,7 @@
                 layout="total, sizes, prev, pager, next, jumper"
                 :total="400" 
                 style="margin-top:10px">
-                </el-pagination>
+                </el-pagination> -->
             </div>
         </div>
        
@@ -92,85 +56,86 @@
 </template>
 
 <script>
+import searchBar from "./../../components/searchBar.vue"
 export default {
+
     name:"bussinessList",
+    components:{
+        searchBar
+    },
     data(){
         return{
+            title:"商家列表",
+            placeholder:"請輸入用戶帳號",
             isShow:true,
-            currentPage1: 5,
-            currentPage2: 5,
-            currentPage3: 5,
-            currentPage4: 4,
             tableData: [{
-                account: '2016-05-03',
-                accountName: '王小虎',
-                shopName: '上海',
-                regiestTime: '普陀区',
-                becomeTime: '上海市普陀区金沙江路 1518 弄',
-                number: "200333",
-                accountBalance: "0",
-                integralBalance: "0"
-            }, {
-                account: '2016-05-03',
-                accountName: '王小虎',
-                shopName: '上海',
-                regiestTime: '普陀区',
-                becomeTime: '上海市普陀区金沙江路 1518 弄',
-                number: "200333",
-                accountBalance: "0",
-                integralBalance: "0"
-            }, {
-                account: '2016-05-03',
-                accountName: '王小虎',
-                shopName: '上海',
-                regiestTime: '普陀区',
-                becomeTime: '上海市普陀区金沙江路 1518 弄',
-                number: "200333",
-                accountBalance: "0",
-                integralBalance: "0"
-            }, {
-                account: '2016-05-03',
-                accountName: '王小虎',
-                shopName: '上海',
-                regiestTime: '普陀区',
-                becomeTime: '上海市普陀区金沙江路 1518 弄',
-                number: "200333",
-                accountBalance: "0",
-                integralBalance: "0"
-            }]
+                    account: '2016-05-03',
+                    accountName: '王小虎',
+                    shopName: '上海',
+                    regiestTime: '普陀区',
+                    becomeTime: '上海市普陀区金沙江路 1518 弄',
+                    number: "200333",
+                    accountBalance: "0",
+                    integralBalance: "0"
+                }, {
+                    account: '2016-05-03',
+                    accountName: '王小虎',
+                    shopName: '上海',
+                    regiestTime: '普陀区',
+                    becomeTime: '上海市普陀区金沙江路 1518 弄',
+                    number: "200333",
+                    accountBalance: "0",
+                    integralBalance: "0"
+                }, {
+                    account: '2016-05-03',
+                    accountName: '王小虎',
+                    shopName: '上海',
+                    regiestTime: '普陀区',
+                    becomeTime: '上海市普陀区金沙江路 1518 弄',
+                    number: "200333",
+                    accountBalance: "0",
+                    integralBalance: "0"
+                }, {
+                    account: '2016-05-03',
+                    accountName: '王小虎',
+                    shopName: '上海',
+                    regiestTime: '普陀区',
+                    becomeTime: '上海市普陀区金沙江路 1518 弄',
+                    number: "200333",
+                    accountBalance: "0",
+                    integralBalance: "0"
+            }],
+            tableList:[
+                {prop:"account",label:"帳號",width:''},
+                {prop:"accountName",label:"賬號昵稱",width:''},
+                {prop:"shopName",label:"店鋪名稱",width:''},
+                {prop:"regiestTime",label:"註冊時間",width:''},
+                {prop:"becomeTime",label:"成為商家時間",width:''},
+                {prop:"number",label:"店鋪數量",width:''},
+                {prop:"accountBalance",label:"賬戶餘額",width:''},
+                {prop:"integralBalance",label:"積分餘額",width:''}
+               
+            ]
         }
     },
     mounted() {
       
     },
     methods: {
-        handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
+      
+      search(val){
+          console.log(val)
       },
-      handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
+      look(){
+          this.$router.push({
+              path:"/bussinessDetail"
+          })
       }
     }
 }
 </script>
 
 <style>
-    #bussinessList .header{
-        width:100%;
-        height: 90px;
-        background-color: #fff;
-        margin-bottom: 20px;
-    }
-    #bussinessList .header p{
-        line-height: 90px;
-        font-size: 18px;
-        font-weight: 700;
-    }
-    #bussinessList .header span{
-        font-size: 28px;
-        color: #f99e1b;
-        padding-right: 20px;
-    }
     .el-table .cell{
         display: flex;
         justify-content: space-around;
@@ -180,15 +145,20 @@ export default {
         padding: 10px 15px;
         border-radius: 20px;
     }
-    .block{
+    /* .block{
         float: right;
         height: 50px;
         margin-top: 20px;
     }
-    .el-pagination button, .el-pagination span:not([class*=suffix]){
+    .el-pagination button, .el-pagination span:not([class*=suffix]),.el-pager li,.el-pagination__editor.el-input .el-input__inner{
         height: 40px !important;
+        line-height: 40px;
+        font-size: 16px;
     }
-    
+    .el-pagination .el-select .el-input .el-input__inner{
+        height: 43px !important;
+        font-size: 16px;
+    } */
 </style>
 <style scoped>
 .handle{
