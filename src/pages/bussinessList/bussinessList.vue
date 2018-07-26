@@ -185,10 +185,8 @@ export default {
         height: 50px;
         margin-top: 20px;
     }
-    .el-pagination button, .el-pagination span:not([class*=suffix]),.el-pager li,.el-pagination__editor.el-input .el-input__inner,.el-pagination .el-select .el-input .el-input__inner{
+    .el-pagination button, .el-pagination span:not([class*=suffix]){
         height: 40px !important;
-        line-height: 40px;
-        font-size: 16px
     }
     
 </style>
