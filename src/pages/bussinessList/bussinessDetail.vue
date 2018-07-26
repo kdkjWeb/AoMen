@@ -12,6 +12,13 @@
                 style="width: 100%">
                 <el-table-column
                 header-align = "center"
+                label="店鋪圖片">
+                <template slot-scope="scope">
+                <img style="width:120px; height:80px" :src="scope.row.shopImg" alt="">
+                </template>
+                </el-table-column>
+                <el-table-column
+                header-align = "center"
                 v-for="(item,index) in tableList"
                 :key="index"
                 :prop="item.prop"
@@ -37,28 +44,28 @@ export default {
         return{
             placeholder:"請輸入用戶帳號",
             tableData: [{
-                    shopImg: '2016-05-03',
+                    shopImg: '../../../static/header.jpg',
                     shopName: '上海',
                     shopStyle: '普陀区',
                     creatTime: '上海市普陀区金沙江路 1518 弄',
                     number: "200333",
                     allMoney: "0"
                 }, {
-                    shopImg: '2016-05-03',
+                    shopImg: '../../../static/header.jpg',
                     shopName: '上海',
                     shopStyle: '普陀区',
                     creatTime: '上海市普陀区金沙江路 1518 弄',
                     number: "200333",
                     allMoney: "0"
                 }, {
-                    shopImg: '2016-05-03',
+                    shopImg: '../../../static/header.jpg',
                     shopName: '上海',
                     shopStyle: '普陀区',
                     creatTime: '上海市普陀区金沙江路 1518 弄',
                     number: "200333",
                     allMoney: "0"
                 }, {
-                    shopImg: '2016-05-03',
+                    shopImg: '../../../static/header.jpg',
                     shopName: '上海',
                     shopStyle: '普陀区',
                     creatTime: '上海市普陀区金沙江路 1518 弄',
@@ -66,7 +73,7 @@ export default {
                     allMoney: "0"
             }],
             tableList:[
-                {prop:"shopImg",label:"店鋪圖片",width:''},
+                // {prop:"shopImg",label:"店鋪圖片",width:''},
                 {prop:"shopName",label:"店鋪名稱",width:''},
                 {prop:"shopStyle",label:"店鋪類型",width:''},
                 {prop:"creatTime",label:"創建時間",width:''},

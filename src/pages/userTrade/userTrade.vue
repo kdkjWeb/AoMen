@@ -138,9 +138,12 @@ export default {
     display: flex;
     justify-content: space-around;
 }
-.el-checkbox__input,.el-table-filter__bottom{
+.el-checkbox__input{
     display: none
 }
+/* .el-table-filter__bottom{
+    display: none
+} */
 .el-tag{
     color:unset;
     border:none;

@@ -30,15 +30,13 @@
             :visible.sync="dialogVisible"
             width="600px"
             :before-close="handleClose">
-            <div>
-                
-            </div>
             <el-form ref="form" :model="form" label-width="80px">
+                <h1>拒絕原因</h1>
                 <el-form-item>
-                    <el-input type="textarea" v-model="form.desc" placeholder="請填寫拒絕原因"></el-input>
+                    <el-input type="textarea" v-model="form.desc" placeholder="請填寫拒絕原因" style="width:80%;"></el-input>
                 </el-form-item>
                  <el-form-item>
-                    <el-button type="warning" id="confirm">確定</el-button>
+                    <el-button type="warning" id="confirm" @click="confirm">確定</el-button>
                 </el-form-item>
                 </el-form>
             </el-dialog>
@@ -78,11 +76,20 @@ export default {
             console.log("同意")
         },
         handleClose(){
-            console.log("關閉")
+            this.dialogVisible = false
+        },
+        confirm(){
+            this.dialogVisible = false
         }
     }
 }
 </script>
+
+<style>
+.el-textarea__inner{
+    height: 230px;
+}
+</style>
 
 <style scoped>
 .content{
@@ -130,7 +137,13 @@ export default {
     margin-bottom: 30px;
     margin-right: 50px;
 }
-    /* #confirm{
-        width:550px
-    } */
+#confirm{
+    width:80%;
+}
+h1{
+    text-align:center;
+    font-size:16px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
 </style>

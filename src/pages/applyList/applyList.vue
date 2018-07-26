@@ -55,21 +55,19 @@
 
         <!-- start 彈出拒絕原因框 -->
         <el-dialog
-        title="請輸入拒絕理由"
-        :visible.sync="dialogVisible"
-        top="35vh"
-        width="40%"
-        >
-        <el-form :model="form">
-            <el-form-item>
-            <el-input type="textarea" v-model="form.desc" placeholder="請輸入拒絕理由"></el-input>
-            </el-form-item>
-        </el-form>
-        <span slot="footer" class="dialog-footer">
-            <el-button @click="cancel">取 消</el-button>
-            <el-button type="primary" @click="comfirm">确 定</el-button>
-        </span>
-        </el-dialog>
+            :visible.sync="dialogVisible"
+            width="600px"
+            :before-close="handleClose">
+            <el-form ref="form" :model="form" label-width="80px">
+                <h1>拒絕原因</h1>
+                <el-form-item>
+                    <el-input type="textarea" v-model="form.desc" placeholder="請填寫拒絕原因" style="width:80%;"></el-input>
+                </el-form-item>
+                 <el-form-item>
+                    <el-button type="warning" id="confirm" @click="sure">確定</el-button>
+                </el-form-item>
+                </el-form>
+            </el-dialog>
         <!-- end 彈出拒絕原因框 -->
     </div>
 </template>
@@ -211,6 +209,9 @@ export default {
             type: 'success'
             });
             this.dialogVisible = false;
+        },
+        sure(){
+            this.dialogVisible = false
         }
     }
 }
@@ -222,3 +223,15 @@ export default {
     justify-content: space-around;
 }
 </style>
+<style scoped>
+#confirm{
+    width:80%;
+}
+h1{
+    text-align:center;
+    font-size:16px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+</style>
+
