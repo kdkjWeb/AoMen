@@ -20,9 +20,16 @@
             </el-table-column>
             <el-table-column
             header-align = "center"
-            label="身份證圖片">
+            label="身份證正面">
             <template slot-scope="scope">
-               <img style="width:120px; height:80px" :src="scope.row.idCard" alt="">
+               <img style="width:120px; height:80px" :src="scope.row.idCardA" alt="">
+            </template>
+            </el-table-column>
+            <el-table-column
+            header-align = "center"
+            label="身份證反面">
+            <template slot-scope="scope">
+               <img style="width:120px; height:80px" :src="scope.row.idCardB" alt="">
             </template>
             </el-table-column>
             <el-table-column
@@ -98,56 +105,64 @@ export default {
                 account: '123456',
                 nickName: '王小虎',
                 applicationTime: '2018-11-15',
-                idCard: '../../../static/header.jpg',
+                idCardA: '../../../static/header.jpg',
+                idCardB: '../../../static/header.jpg',
                 businessLicense: '../../../static/header.jpg',
                 status: '通過'
             },{
                 account: '123456',
                 nickName: '王小虎',
                 applicationTime: '2018-11-15',
-                idCard: '../../../static/header.jpg',
+                idCardA: '../../../static/header.jpg',
+                idCardB: '../../../static/header.jpg',
                 businessLicense: '../../../static/header.jpg',
                 status: '通過'
             },{
                 account: '123456',
                 nickName: '王小虎',
                 applicationTime: '2018-11-15',
-                idCard: '../../../static/header.jpg',
+                idCardA: '../../../static/header.jpg',
+                idCardB: '../../../static/header.jpg',
                 businessLicense: '../../../static/header.jpg',
                 status: '通過'
             },{
                 account: '123456',
                 nickName: '王小虎',
                 applicationTime: '2018-11-15',
-                idCard: '../../../static/header.jpg',
+                idCardA: '../../../static/header.jpg',
+                idCardB: '../../../static/header.jpg',
                 businessLicense: '../../../static/header.jpg',
                 status: '通過'
             },{
                 account: '123456',
                 nickName: '王小虎',
                 applicationTime: '2018-11-15',
-                idCard: '../../../static/header.jpg',
+                idCardA: '../../../static/header.jpg',
+                idCardB: '../../../static/header.jpg',
                 businessLicense: '../../../static/header.jpg',
                 status: '通過'
             },{
                 account: '123456',
                 nickName: '王小虎',
                 applicationTime: '2018-11-15',
-                idCard: '../../../static/header.jpg',
+                idCardA: '../../../static/header.jpg',
+                idCardB: '../../../static/header.jpg',
                 businessLicense: '../../../static/header.jpg',
                 status: '通過'
             },{
                 account: '123456',
                 nickName: '王小虎',
                 applicationTime: '2018-11-15',
-                idCard: '../../../static/header.jpg',
+                idCardA: '../../../static/header.jpg',
+                idCardB: '../../../static/header.jpg',
                 businessLicense: '../../../static/header.jpg',
                 status: '通過'
             },{
                 account: '123456',
                 nickName: '王小虎',
                 applicationTime: '2018-11-15',
-                idCard: '../../../static/header.jpg',
+                idCardA: '../../../static/header.jpg',
+                idCardB: '../../../static/header.jpg',
                 businessLicense: '../../../static/header.jpg',
                 status: '通過'
             }]
