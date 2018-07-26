@@ -7,18 +7,18 @@
         <!-- start 表格 -->
         <div class="table">
             <el-table
-            :data="tableData"
-            border
-            style="width: 100%">
-            <el-table-column
-            header-align = "center"
-            v-for="(item,index) in tableList"
-            :key="index"
-            :prop="item.prop"
-            :label="item.label"
-            :width="item.width">
-            </el-table-column>
-        </el-table>
+                :data="tableData"
+                border
+                style="width: 100%">
+                <el-table-column
+                header-align = "center"
+                v-for="(item,index) in tableList"
+                :key="index"
+                :prop="item.prop"
+                :label="item.label"
+                :width="item.width">
+                </el-table-column>
+            </el-table>
         </div>
         <!-- end 表格 -->
     </div>
