@@ -5,7 +5,7 @@
                 <h1>澳門到家</h1>
                 <ul>
                     <li class="admin" style="margin-right:30px">
-                        <img src="../../assets/images/img-0d8a4fa603c582d66f68ed10291f376c.jpg" alt="">
+                        <img src="../../assets/images/header.jpg" alt="">
                         <span>黄大喵</span>
                     </li>
                     <li class="myicon">
