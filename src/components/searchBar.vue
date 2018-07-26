@@ -5,6 +5,18 @@
             <input type="text" v-model="inputText" :placeholder="placeholder">
             <span class="iconfont icon-search-o" @click="search"></span>
         </div>
+        <div class="block" v-show="isShow" >
+            <el-date-picker
+            v-model="date"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            style="border:none;width:300px;margin-top:5px"
+            @blur="blur">
+            </el-date-picker>
+        </div>
+        
     </div>
 </template>
 
@@ -18,16 +30,24 @@ export default {
        placeholder:{
            type: String,
            default: '请输入查询内容',
+       },
+       isShow: {
+           type: Boolean,
+           default: false
        }
    },
    data(){
        return {
-           inputText: ''
+           inputText: '',
+           date:'',
        }
    },
    methods:{
        search(){
            this.$emit('search',this.inputText)
+       },
+       blur(){
+           this.$emit("date",this.date)
        }
    }
 }
@@ -82,4 +102,32 @@ export default {
     line-height: 30px;
     cursor: pointer;
 }
+.block{
+    float: right;
+    width: 310px;
+    height: 50px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-right: 90px;
+    margin-top: 20px;
+    box-sizing: border-box;
+}
+
+
+
+
+
+/* .block{
+    margin-top: 20px;
+}
+ .el-date-editor--daterange.el-input__inner{
+     width:unset
+ }
+ .el-range-editor.el-input__inner{
+     height: 50px;
+ }
+ .el-date-editor .el-range-separator{
+     display: inline-block;
+     line-height: unset !important
+ } */
 </style>
