@@ -2,7 +2,7 @@
     <div class="searchBar">
         <h1>{{title}}</h1>
         <div class="search">
-            <input type="text" :placeholder="placeholder">
+            <input type="text" v-model="inputText" :placeholder="placeholder">
             <span class="iconfont icon-search-o" @click="search"></span>
         </div>
     </div>
@@ -20,9 +20,14 @@ export default {
            default: '请输入查询内容',
        }
    },
+   data(){
+       return {
+           inputText: ''
+       }
+   },
    methods:{
        search(){
-           this.$emit('search')
+           this.$emit('search',this.inputText)
        }
    }
 }

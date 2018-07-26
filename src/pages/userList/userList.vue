@@ -168,8 +168,8 @@ export default {
     },
     methods:{
         //搜索功能
-        search(){
-            console.log(6)
+        search(val){
+            console.log(val)
         },
         //查看消費詳情
          handleClick(row) {
