@@ -60,23 +60,22 @@ export default {
 
 <style scoped>
     .list{
-        display: flex;
-        justify-content: space-between;
         width:100%;
         height: 160px;
         background-color: #fff;
         margin-bottom: 20px;
     }
     .list img{
+        float: left;
         width: 120px;
         height: 120px;
+        margin-right: 30px;
     }
     .list .left{
-        display: flex;
-        justify-content: space-around;
+        float: left;
         width:340px;
         height: 120px;
-        margin: 20px 0;
+        margin: 20px ;
     }
     .list .money{
         display: flex;
@@ -100,8 +99,7 @@ export default {
         font-size: 12px
     }
     .el-button--danger{
-        width:140px;
-        height: 70px;
-        margin: 45px 20px 0 0;
+       float: right;
+       margin: 50px 20px 0 0;
     }
 </style>
