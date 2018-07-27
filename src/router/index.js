@@ -65,6 +65,10 @@ export default new Router({
         name:'creditSite',
         component: resolve => require(['@/pages/creditSite/creditSite.vue'],resolve)
       },{
+        path:"/creditSiteDetails",
+        name:'creditSiteDetails',
+        component: resolve => require(['@/pages/creditSite/creditSiteDetails.vue'],resolve)
+      },{
         path:"/article",
         name:'article',
         component: resolve => require(['@/pages/article/article.vue'],resolve)
