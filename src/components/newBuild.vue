@@ -39,7 +39,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .newBuild{
     width: 100%;
     height: 90px;
