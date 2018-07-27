@@ -7,6 +7,7 @@
                     <li class="admin" style="margin-right:30px">
                         <img src="../../assets/images/header.jpg" alt="">
                         <span>黄大喵</span>
+                        <div></div>
                     </li>
                     <li class="myicon">
                         <i class="el-icon-minus"></i>

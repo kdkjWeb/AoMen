@@ -1,7 +1,7 @@
 <template>
     <div class="newBuild">
         <h1>{{title}}</h1>
-        <div class="btn">
+        <div class="btn" v-show="isShow">
             <el-button type="warning" @click="newBuild" v-if="isAdd" id="new"><i class="el-icon-plus"></i> 新建</el-button>
             <el-button type="warning" @click="save" v-else id="save">保存</el-button>
         </div>
@@ -19,6 +19,10 @@ export default {
         isAdd:{
             type:Boolean,
             default: false
+        },
+        isShow:{
+            type:Boolean,
+            default: true
         }
     },
     data(){
@@ -32,7 +36,7 @@ export default {
        },
        save(){
            console.log("保存")
-        //    this.$emit("date",this.date)
+           this.$emit("keep")
        }
     }
 }

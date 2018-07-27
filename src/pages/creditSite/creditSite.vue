@@ -58,7 +58,6 @@ export default {
         },
         //刪除
         deleted(val){
-            console.log(val)
              this.$confirm('此操作將永久刪除該積分兌換活動, 是否繼續?', '提示', {
                 confirmButtonText: '確定',
                 cancelButtonText: '取消',
