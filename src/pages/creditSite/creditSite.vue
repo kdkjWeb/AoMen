@@ -1,10 +1,12 @@
 <template>
     <div>
-       
+        <!-- start頂部標題新建按鈕 -->
+         <newBuild @newBulid="newBuild" :isAdd="true" :title="title"></newBuild>
+        <!-- end頂部標題新建按鈕 -->
 
        <!-- start积分兑换列表 -->
        <div class="integral">
-           <div class="integral_list" v-for="(item,index) in integralList">
+           <div class="integral_list" v-for="(item,index) in integralList" :key="index">
                <dl>
                    <dt>
                        <img :src="item.imgSrc" alt="">
@@ -23,10 +25,15 @@
 </template>
 
 <script>
+import newBuild from "../../components/newBuild"
 export default {
     name:"creditSite",
+    components:{
+        newBuild
+    },
     data(){
         return{
+            title:"積分兌換設置",
             integralList: [
                 {
                     imgSrc: '../../../static/header.jpg',
@@ -41,6 +48,10 @@ export default {
         }
     },
     methods: {
+        //新建
+        newBuild(){
+            console.log('新建')
+        },
         //查看
         examine(){
 
@@ -75,6 +86,7 @@ export default {
     padding: 20px;
     box-sizing: border-box;
     background-color: #fff;
+    margin-bottom: 20px;
 }
 .integral_list dl{
     float: left;
