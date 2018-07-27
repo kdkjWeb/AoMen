@@ -1,6 +1,6 @@
 <template>
     <div>
-        <newBuild @newBulid="newBuild" :isAdd="true" :title="title"></newBuild>
+        <newBuild @add="add" :isAdd="true" :title="title"></newBuild>
         <div class="list" v-for="(list,index) in lists" :key="index">
             <div class="left">
                 <img :src="list.src" alt="">
@@ -16,6 +16,17 @@
             </div>
             <el-button type="danger" @click="delet">刪除</el-button>
         </div>
+        <el-dialog
+            title="提示"
+            :visible.sync="dialogVisible"
+            width="30%"
+            :before-close="handleClose">
+            <span>这是一段信息</span>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -28,6 +39,7 @@ export default {
     },
     data(){
         return{
+            dialogVisible:false,
             title:"打折券設置",
             lists:[{
                 src:"../../../static/header.jpg",
@@ -47,11 +59,14 @@ export default {
         }
     },
     methods:{
-        newBuild(){
-            console.log("新建")
+        add(){
+            this.dialogVisible = true
         },
         delet(){
             console.log("刪除")
+        },
+        handleClose(){
+            this.dialogVisible = false
         }
     }
 }
@@ -64,18 +79,20 @@ export default {
         height: 160px;
         background-color: #fff;
         margin-bottom: 20px;
+        padding:20px;
+        box-sizing: border-box;
     }
     .list img{
         float: left;
         width: 120px;
         height: 120px;
         margin-right: 30px;
+        border-radius: 6px;
     }
     .list .left{
         float: left;
         width:340px;
         height: 120px;
-        margin: 20px ;
     }
     .list .money{
         display: flex;
@@ -100,6 +117,6 @@ export default {
     }
     .el-button--danger{
        float: right;
-       margin: 50px 20px 0 0;
+       margin-top: 40px ;
     }
 </style>

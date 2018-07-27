@@ -18,7 +18,7 @@ export default {
         },
         isAdd:{
             type:Boolean,
-            default:"true"
+            default: false
         }
     },
     data(){
@@ -28,8 +28,7 @@ export default {
     },
     methods:{
         newBuild(){
-            console.log("新建")
-        //    this.$emit('search',this.inputText)
+           this.$emit('add')
        },
        save(){
            console.log("保存")
