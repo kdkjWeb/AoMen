@@ -15,6 +15,17 @@
                 :label="item.label">
                 </el-table-column>
             </el-table>
+            <div class="block">
+                <el-pagination
+                @current-change="handleCurrentChange"
+                :current-page="currentPage"
+                :page-size="pageSize"
+                layout="total, prev, pager, next, jumper"
+                :total="total" 
+                style="margin-top:10px">
+                </el-pagination>
+            </div>
+
         </div>
     </div>
 </template>
@@ -25,7 +36,7 @@ import searchBar from "./../../components/searchBar.vue"
 export default {
     name:"turnOverOrder",
     components:{
-        searchBar
+        searchBar,
     },
     data(){
         return{
@@ -88,7 +99,10 @@ export default {
                 {prop:"bussinessName",label:"商家昵稱",width:''},
                 {prop:"shopName",label:"店鋪昵稱",width:''},
                 {prop:"orderState",label:"訂單狀態",width:''}
-            ]
+            ],
+            currentPage: 1,
+            pageSize:10,
+            total:null
         }
     },
     methods:{
@@ -97,6 +111,9 @@ export default {
         },
         search(val){
             console.log(val)
+        },
+        handleCurrentChange(val){
+            console.log("分頁")
         }
     }
 }
@@ -108,3 +125,23 @@ export default {
     justify-content: space-around;
 }
 </style>
+<style scoped>
+    .block{
+        width: 100%;
+        height: 50px;
+        background-color: #fff;
+    }
+    .el-pagination{
+        float: right;
+    }
+    .el-pagination button, .el-pagination span:not([class*=suffix]),.el-pager li,.el-pagination__editor.el-input .el-input__inner{
+        height: 40px !important;
+        line-height: 40px;
+        font-size: 16px;
+    }
+    .el-pagination .el-select .el-input .el-input__inner{
+        height: 43px !important;
+        font-size: 16px;
+    }
+</style>
+

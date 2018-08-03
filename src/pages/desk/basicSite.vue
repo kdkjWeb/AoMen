@@ -98,13 +98,13 @@ export default {
     .el-dialog__footer{
         text-align: center
     }
-    .el-upload--picture-card{
+    /* .el-upload--picture-card{
         width:80px !important;
         height: 80px;
     }
     .el-upload--picture-card i{
         margin-top: -40px !important;
-    }
+    } */
 </style>
 
 <style scoped>
@@ -122,8 +122,8 @@ export default {
         border-bottom: 1px solid #eee;
         box-sizing: border-box;
     }
-    .el-tag + .el-tag {
-        margin-left: 10px;
+    .el-tag {
+        margin: 10px;
     }
     .button-new-tag {
         margin-left: 10px;
@@ -150,7 +150,7 @@ export default {
         margin-left: 40px;
     }
      .el-button{
-        width:260px
+        width:200px
     }
     
 </style>

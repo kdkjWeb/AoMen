@@ -28,6 +28,17 @@
                 </template>
                 </el-table-column>
             </el-table>
+            <div class="block">
+                <el-pagination
+                @current-change="handleCurrentChange"
+                :current-page="currentPage"
+                :page-size="pageSize"
+                layout="total, prev, pager, next, jumper"
+                :total="total" 
+                style="margin-top:10px">
+                </el-pagination>
+            </div>
+
         </div>
         <!-- end 表格 -->
     </div>
@@ -35,16 +46,20 @@
 
 <script>
 import searchBar from './../../components/searchBar'
+
 export default {
     name:"reBackOrder",
     components:{
-        searchBar
+        searchBar,
     },
     data(){
         return{
             placeholder: '訂單號/商品名/商家暱稱',
             title: '退款訂單',
             isShow: true,
+            currentPage:1,
+            pageSize:10,
+            total:null,
             tableList:[
                 {prop:'orderNum', label: '訂單號', width: ''},
                 {prop:'productName', label: '商品名稱', width: ''},
@@ -184,6 +199,9 @@ export default {
             this.$router.push({
                 path:"/reBackOrderDetail"
             })
+        },
+        handleCurrentChange(){
+            console.log("分頁")
         }
     }
 }
@@ -195,3 +213,23 @@ export default {
     justify-content: space-around;
 }
 </style>
+<style scoped>
+    .block{
+        width: 100%;
+        height: 50px;
+        background-color: #fff;
+    }
+    .el-pagination{
+        float: right;
+    }
+    .el-pagination button, .el-pagination span:not([class*=suffix]),.el-pager li,.el-pagination__editor.el-input .el-input__inner{
+        height: 40px !important;
+        line-height: 40px;
+        font-size: 16px;
+    }
+    .el-pagination .el-select .el-input .el-input__inner{
+        height: 43px !important;
+        font-size: 16px;
+    }
+</style>
+

@@ -1,7 +1,7 @@
 <template>
     <div>
         <!-- 返回+查詢 -->
-        <goBack  :placeholder="placeholder" @search="search"></goBack>
+        <goBack  :placeholder="placeholder" @search="search" :isShow="true"></goBack>
         <!-- 返回+查詢 -->
         <div class="table">
         <!-- 表格 -->
@@ -14,7 +14,7 @@
                 header-align = "center"
                 label="店鋪圖片">
                 <template slot-scope="scope">
-                <img style="width:120px; height:80px" :src="scope.row.shopImg" alt="">
+                <img style="width:80px; height:80px" :src="scope.row.shopImg" alt="">
                 </template>
                 </el-table-column>
                 <el-table-column
@@ -27,7 +27,16 @@
             </el-table>
         <!-- 表格 -->
         <!-- 分頁 -->
-        <div class="block"></div>
+        <div class="block">
+            <el-pagination
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-size="pageSize"
+            layout="total, prev, pager, next, jumper"
+            :total="total" 
+            style="margin-top:10px">
+            </el-pagination>
+        </div>
         <!-- 分頁 -->
         </div>
     </div>
@@ -73,18 +82,23 @@ export default {
                     allMoney: "0"
             }],
             tableList:[
-                // {prop:"shopImg",label:"店鋪圖片",width:''},
                 {prop:"shopName",label:"店鋪名稱",width:''},
                 {prop:"shopStyle",label:"店鋪類型",width:''},
                 {prop:"creatTime",label:"創建時間",width:''},
                 {prop:"number",label:"成交數量",width:''},
                 {prop:"allMoney",label:"總營業額",width:''}
-            ]
+            ],
+            currentPage: 1,
+            pageSize:10,
+            total:null
         }
     },
     methods:{
         search(val){
             console.log(val)
+        },
+        handleCurrentChange(){
+            
         }
     }
 }
@@ -95,4 +109,23 @@ export default {
     display: flex;
     justify-content: space-around;
 }
+</style>
+<style scoped>
+    .block{
+        width: 100%;
+        height: 50px;
+        background-color: #fff;
+    }
+    .el-pagination{
+        float: right;
+    }
+    .el-pagination button, .el-pagination span:not([class*=suffix]),.el-pager li,.el-pagination__editor.el-input .el-input__inner{
+        height: 40px !important;
+        line-height: 40px;
+        font-size: 16px;
+    }
+    .el-pagination .el-select .el-input .el-input__inner{
+        height: 43px !important;
+        font-size: 16px;
+    }
 </style>

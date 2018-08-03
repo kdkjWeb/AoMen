@@ -33,11 +33,11 @@ export default {
     methods:{
         newBuild(){
            this.$emit('add')
-       },
-       save(){
+        },
+        save(){
            console.log("保存")
            this.$emit("keep")
-       }
+        }
     }
 }
 </script>

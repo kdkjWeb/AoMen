@@ -4,22 +4,38 @@
         <newBuild @add="add" :isAdd="true" :title="title"></newBuild>
         <!-- 新建表頭 -->
         <!-- 列表 -->
-        <div class="list" v-for="(list,index) in lists" :key="index">
-            <div class="left">
-                <img :src="list.src" alt="">
-                <ul>
-                    <li class="money">
-                        <h1>{{list.title}}</h1>
-                        <span>{{list.state}}</span>
-                    </li>
-                    <li>{{list.active}}</li>
-                    <li>剩餘數量：{{list.number}}</li>
-                    <li>{{list.activeTime}}</li>
-                </ul>
+        <div class="content">
+            <div class="list" v-for="(list,index) in lists" :key="index">
+                <div class="left">
+                    <img :src="list.src" alt="">
+                    <ul>
+                        <li class="money">
+                            <h1>{{list.title}}</h1>
+                            <span>{{list.state}}</span>
+                        </li>
+                        <li>{{list.active}}</li>
+                        <li>剩餘數量：{{list.number}}</li>
+                        <li>{{list.activeTime}}</li>
+                    </ul>
+                </div>
+                <el-button type="danger" @click="delet">刪除</el-button>
             </div>
-            <el-button type="danger" @click="delet">刪除</el-button>
+            <!-- 分頁 -->
+            <div class="block">
+                <el-pagination
+                @current-change="handleCurrentChange"
+                :current-page="currentPage"
+                :page-size="pageSize"
+                layout="total, prev, pager, next, jumper"
+                :total="total" 
+                style="margin-top:10px">
+                </el-pagination>
+            </div>
+            <!-- 分頁 -->
         </div>
+      
         <!-- 列表 -->
+        
         <!-- 新建框 -->
         <el-dialog
             :visible.sync="dialogVisible"
@@ -120,7 +136,10 @@ export default {
                 cut:""
             },
             beginDate:'',
-            overDate:''
+            overDate:'',
+            currentPage: 1,
+            pageSize:10,
+            total:null
         }
     },
     methods:{
@@ -181,6 +200,9 @@ export default {
             message: '已取消!'
           });
         })
+        },
+        handleCurrentChange(){
+
         }
     }
 }
@@ -192,14 +214,20 @@ export default {
 </style>
 
 <style scoped>
+.content{
+    width:100%;
+    background-color: #fff;
+
+}
     .list{
         width:100%;
         height: 160px;
-        background-color: #fff;
         margin-bottom: 20px;
         padding:20px;
+        border-bottom:1px dashed #ccc;
         box-sizing: border-box;
     }
+    
     .list img{
         float: left;
         width: 120px;
@@ -259,5 +287,22 @@ export default {
     }
     .voucher .el-form-item{
         width:45%;
+    }
+    .block{
+        width: 100%;
+        height: 50px;
+        background-color: #fff;
+    }
+    .el-pagination{
+        float: right;
+    }
+    .el-pagination button, .el-pagination span:not([class*=suffix]),.el-pager li,.el-pagination__editor.el-input .el-input__inner{
+        height: 40px !important;
+        line-height: 40px;
+        font-size: 16px;
+    }
+    .el-pagination .el-select .el-input .el-input__inner{
+        height: 43px !important;
+        font-size: 16px;
     }
 </style>

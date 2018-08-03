@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import newBuild from "../../components/newBuild"
+import newBuild from "./../../components/newBuild"
 export default {
     components:{
         newBuild

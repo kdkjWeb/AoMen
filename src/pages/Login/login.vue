@@ -8,8 +8,9 @@
             </div>
             <div class="row">
                 <span class="iconfont icon-mima"></span>
-                <input v-model="userInfo.userPas" class="row_input" type="password" placeholder="請輸入您的密碼">
+                <input v-model="userInfo.userPas" class="row_input" type="password" placeholder="請輸入您的密碼" @keyup.enter="login">
             </div>
+            
             <div class="row login_btn" @click="login">登錄</div>
         </div>
     </div>
@@ -23,6 +24,7 @@ export default {
                 userName: '',
                 userPas: '',
             },
+
         }
     },
     methods:{
@@ -31,16 +33,48 @@ export default {
                 this.$message({
                     message: '請輸入用戶名或密碼',
                     type: 'warning'
-                    });
+                });
                 return;
+            }else if((/^([\u4e00-\u9fa5\.]){6,12}$/.test(this.userInfo.userName))){
+                this.$message({
+                    message: '請輸入正確的用戶名或密碼',
+                    type: 'warning'
+                });
+                return;
+            }else if(this.userInfo.userName.length>12 || this.userInfo.userName.length<6 || this.userInfo.userPas.length>12 || this.userInfo.userPas.length<6){
+                this.$message({
+                    message: '用戶名或密碼長度不夠6位或已超過20位，請輸入正確的用戶名或密碼',
+                    type: 'warning'
+                });
+                return;
+            }else{
+                console.log(this.userInfo.userName,this.userInfo.userPas)
+               this.$post('login',{
+                   phone: this.userInfo.userName,
+                   password: this.userInfo.userPas
+               }).then(res=>{
+                   console.log(res)
+                   if(res.code === 0){
+                        let flag = res.data.roleList.includes('super_admin');
+                        console.log(res.data.id)
+                        localStorage.setItem("id",res.data.id)
+                        localStorage.setItem("userName",JSON.stringify(this.userInfo.userName));
+                        localStorage.setItem("userPas",JSON.stringify(this.userInfo.userPas));
+                        this.$router.push({
+                            path:"/homePage",
+                            query:{
+                                PermissionId: flag
+                            }
+                        })
+                   }
+               })
             }
-            this.$post('',{
-
-            }).then(res=>{
-                
-            })
         }
-    }
+    },
+   mounted(){
+        this.userInfo.username = JSON.parse(localStorage.getItem('userName'));
+        this.userInfo.userpas = JSON.parse(localStorage.getItem('userPsd'));
+   }
 }
 </script>
 
@@ -56,10 +90,10 @@ export default {
 /*用户登录输入框*/
 .login_wrap{
     position: absolute;
-    top: 295px;
+    top: 270px;
     right: 7.84%;
     width: 500px;
-    height: 480px;
+    height:480px;
     border:2px solid #fff;
     border-radius: 8px;
     box-sizing: border-box;
@@ -93,7 +127,7 @@ export default {
     border-radius: 4px;
 }
 .login_btn{
-    margin-top: 82px !important;
+    margin-top: 50px !important;
     background-color: #f99e1b;
     color: #fff;
     text-align: center;
@@ -112,6 +146,18 @@ export default {
     z-index: 100;
     color: #000;
 }
+#remember{
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 0;
+    color: white;
+  }
+  #remember .el-checkbox{
+       color: white;
+     }
+  #remember .el-checkbox{
+       line-height:40px;
+     }
 /*用户登录输入框*/
 
 

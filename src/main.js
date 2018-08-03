@@ -23,11 +23,30 @@ import '@/assets/font/iconfont.css'
 import Server from './server/server.js';
 Vue.prototype.$get = Server.get;
 Vue.prototype.$post = Server.post;
+Vue.prototype.$put = Server.put;
+Vue.prototype.$getTimes = Server.getTimes;
+
+
 
 /* eslint-disable no-new */
+router.beforeEach((to,from,next) =>{
+  if(to.path === "/"){
+    next()
+  }else{
+    if(JSON.parse(localStorage.getItem("id"))){
+      next()
+    }
+    else{
+      next({path: "/"})
+    }
+  }
+})
+
+
 new Vue({
   el: '#app',
   router,
   components: { App },
   template: '<App/>'
 })
+

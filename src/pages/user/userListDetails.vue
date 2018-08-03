@@ -19,6 +19,16 @@
                 :width="item.width">
                 </el-table-column>
             </el-table>
+            <div class="block">
+                <el-pagination
+                @current-change="handleCurrentChange"
+                :current-page="currentPage"
+                :page-size="pageSize"
+                layout="total, prev, pager, next, jumper"
+                :total="total" 
+                style="margin-top:10px">
+                </el-pagination>
+            </div>
         </div>
         <!-- end 表格 -->
     </div>
@@ -33,6 +43,9 @@ export default {
     data(){
         return{
             placeholder:"請輸入用戶帳號",
+            currentPage: 1,
+            pageSize:10,
+            total:null,
             tableList:[
                 {prop:'byTime', label: '購買時間', width: ''},
                 {prop:'orderNum', label: '訂單號', width: ''},
@@ -179,9 +192,19 @@ export default {
             ]
         }
     },
+    mounted(){
+
+    },
     methods:{
+        // 獲取用戶詳情列表
+        getUserDatailList(){
+
+        },
         search(val){
             console.log(val)
+        },
+        handleCurrentChange(){
+            
         }
     }
 }
@@ -192,4 +215,23 @@ export default {
     display: flex;
     justify-content: space-around;
 }
+</style>
+<style scoped>
+    .block{
+        width: 100%;
+        height: 50px;
+        background-color: #fff;
+    }
+    .el-pagination{
+        float: right;
+    }
+    .el-pagination button, .el-pagination span:not([class*=suffix]),.el-pager li,.el-pagination__editor.el-input .el-input__inner{
+        height: 40px !important;
+        line-height: 40px;
+        font-size: 16px;
+    }
+    .el-pagination .el-select .el-input .el-input__inner{
+        height: 43px !important;
+        font-size: 16px;
+    }
 </style>

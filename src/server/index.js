@@ -4,8 +4,8 @@ import Axios from 'axios'
 
 
 let axiosConfig = Axios.create({
-    baseURL: 'http://192.168.20.158:8080/',
-    timeout: '50000',
+    baseURL: 'http://192.168.20.50:8081/',
+    timeout: '5000',
     withCredentials: true
 });
 

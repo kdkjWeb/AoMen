@@ -16,6 +16,17 @@
                 :label="item.label">
                 </el-table-column>
             </el-table>
+            <div class="block">
+                <el-pagination
+                @current-change="handleCurrentChange"
+                :current-page="currentPage"
+                :page-size="pageSize"
+                layout="total, prev, pager, next, jumper"
+                :total="total" 
+                style="margin-top:10px">
+                </el-pagination>
+            </div>
+
         </div>
     </div>
 </template>
@@ -26,7 +37,7 @@ import searchBar from "./../../components/searchBar.vue"
 export default {
     name:"turnOverOrder",
     components:{
-        searchBar
+        searchBar,
     },
     data(){
         return{
@@ -69,7 +80,10 @@ export default {
                 {prop:"cashTime",label:"提現時間",width:''},
                 {prop:"AccountBalance",label:"賬戶餘額",width:'',color:"red"},
                 {prop:"cashState",label:"提現狀態",width:'',color:"green"}
-            ]
+            ],
+            currentPage: 1,
+            pageSize:10,
+            total:null
         }
     },
     methods:{
@@ -88,6 +102,9 @@ export default {
         filterHandler(value, row, column) {
             const property = column['property'];
             return row[property] === value;
+        },
+        handleCurrentChange(val){
+            console.log("分頁")
         }
     }
 }
@@ -103,4 +120,23 @@ export default {
     border:none;
     background-color: unset
 }
+</style>
+<style scoped>
+    .block{
+        width: 100%;
+        height: 50px;
+        background-color: #fff;
+    }
+    .el-pagination{
+        float: right;
+    }
+    .el-pagination button, .el-pagination span:not([class*=suffix]),.el-pager li,.el-pagination__editor.el-input .el-input__inner{
+        height: 40px !important;
+        line-height: 40px;
+        font-size: 16px;
+    }
+    .el-pagination .el-select .el-input .el-input__inner{
+        height: 43px !important;
+        font-size: 16px;
+    }
 </style>

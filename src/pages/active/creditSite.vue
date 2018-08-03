@@ -21,8 +21,18 @@
            </div>
        </div>
        <!-- end积分兑换列表 -->
-
-
+       <!-- 分頁 -->
+        <div class="block">
+            <el-pagination
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-size="pageSize"
+            layout="total, prev, pager, next, jumper"
+            :total="total" 
+            style="margin-top:10px">
+            </el-pagination>
+        </div>
+        <!-- 分頁 -->
        <!-- start彈出框 -->
        <el-dialog title="新建積分兌換商品" :visible.sync="dialogFormVisible" width="35%">
         <div class="upload">
@@ -87,7 +97,10 @@ export default {
                     title: '僅需2萬積分兌換蘋果筆記本超級划算',
                     num: '50'
                 }
-            ]
+            ],
+            currentPage: 1,
+            pageSize:10,
+            total:null
         }
     },
     methods: {
@@ -130,7 +143,7 @@ export default {
         comfirm(){
 
         },
-
+        handleCurrentChange(){},
 
 
 
@@ -228,5 +241,22 @@ export default {
     padding: 0 12px 0 0;
     text-align: right;
     box-sizing: border-box;
+}
+.block{
+    width: 100%;
+    height: 50px;
+    background-color: #fff;
+}
+.el-pagination{
+    float: right;
+}
+.el-pagination button, .el-pagination span:not([class*=suffix]),.el-pager li,.el-pagination__editor.el-input .el-input__inner{
+    height: 40px !important;
+    line-height: 40px;
+    font-size: 16px;
+}
+.el-pagination .el-select .el-input .el-input__inner{
+    height: 43px !important;
+    font-size: 16px;
 }
 </style>

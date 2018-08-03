@@ -1,6 +1,7 @@
 <template>
     <div class="searchBar">
         <el-button round @click="goBack"><i class="el-icon-arrow-left"></i>返回</el-button>
+        <el-button type="warning" round @click="newBuild" id="add"  v-if="isAdd"> <i class="el-icon-plus"></i> 新建</el-button>
         <div class="search" v-show="isShow">
             <input type="text" v-model="inputText" :placeholder="placeholder">
             <span class="iconfont icon-search-o" @click="search"></span>
@@ -18,6 +19,10 @@ export default {
        isShow:{
            type: Boolean,
            default:false
+       },
+       isAdd:{
+           type:Boolean,
+           default:false
        }
    },
    data(){
@@ -33,6 +38,9 @@ export default {
     //    查詢
        search(){
            this.$emit('search',this.inputText)
+       },
+       newBuild(){
+           this.$emit('add')
        }
    }
 }
@@ -81,5 +89,9 @@ export default {
     padding-left: 15px;
     line-height: 30px;
     cursor: pointer;
+}
+#add{
+    float: right;
+    margin-right: 30px;
 }
 </style>
