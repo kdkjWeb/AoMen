@@ -24,7 +24,10 @@ import Server from './server/server.js';
 Vue.prototype.$get = Server.get;
 Vue.prototype.$post = Server.post;
 Vue.prototype.$put = Server.put;
+Vue.prototype.$delete = Server.delete;
+
 Vue.prototype.$getTimes = Server.getTimes;
+Vue.prototype.$getTime = Server.getTime;
 
 
 
@@ -33,7 +36,8 @@ router.beforeEach((to,from,next) =>{
   if(to.path === "/"){
     next()
   }else{
-    if(JSON.parse(localStorage.getItem("id"))){
+    
+    if(JSON.parse(sessionStorage.getItem("id"))){
       next()
     }
     else{

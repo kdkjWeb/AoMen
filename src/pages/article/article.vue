@@ -4,82 +4,112 @@
         <newBuild :title="title" :isShow="false"></newBuild>
         <!-- 新建表頭 -->
         <!-- 內容 -->
-        <div class="content" v-for="(list,index) in lists" :key="index">
-            <div class="list">
-                <dl>
-                   <dt>
-                       <img :src="list.src" alt="">
-                   </dt>
-                   <dd>
-                       <h3>{{list.name}}</h3>
-                       <p>{{list.date}}</p>
-                   </dd>
-                   <dd><span>{{list.level}}</span></dd>
-               </dl>
-                <el-button type="danger" @click="delet">刪除</el-button>
-            </div>
-            <div class="cause">
-                <h3>{{list.title}}</h3>
-                <p>
-                    {{list.text}}
-                </p>
-                <div>
-                    <img :src="img.src" alt="" v-for="(img,index) in imgs" :key="index">
+        <div class="content" >
+            <div class="c-list" v-for="(list,index) in lists" :key="index">
+                <div class="list">
+                    <dl>
+                        <dt>
+                            <img :src="list.userMsg.files.origin" alt="">
+                        </dt>
+                        <dd>
+                            <h3>{{list.userMsg.nickname}}</h3>
+                            <p>{{list.createTime}}</p>
+                        </dd>
+                        <dd><span>{{list.userMsg.level}}</span></dd>
+                    </dl>
+                    <el-button type="danger" @click="delet(list)">刪除</el-button>
+                </div>
+                <div class="cause">
+                    <h3>{{list.title}}</h3>
+                    <p>
+                        {{list.content}}
+                    </p>
+                    <img :src="list.files.origin" v-if="list.files">
                 </div>
             </div>
+            <div class="block">
+                <el-pagination
+                @current-change="handleCurrentChange"
+                :current-page="currentPage"
+                :page-size="pageSize"
+                layout="total, prev, pager, next, jumper"
+                :total="total" 
+                style="margin-top:10px">
+                </el-pagination>
+            </div>
         </div>
+        
+        
         <!-- 內容 -->
     </div>
 </template>
 
 <script>
 import newBuild from "./../../components/newBuild"
+import axios from 'axios';
 export default {
     components:{
         newBuild
     },
     data(){
         return{
-            title:"貼文管理",
-            imgs:[
-               { src:"../../../static/header.jpg"},
-               { src:"../../../static/header.jpg"},
-               { src:"../../../static/header.jpg"}
-            ],
-            lists:[{
-                src:"../../../static/header.jpg",
-                name:"黃大喵",
-                date:"2018-07-27",
-                level:"金牌專員",
-                title:"招聘信息",
-                text:"jdhfjdfjfsdjfdjkshfjdshfjkdhfjsdhjfgj"
-            },{
-                src:"../../../static/header.jpg",
-                name:"黃大喵",
-                date:"2018-07-27",
-                level:"金牌專員",
-                title:"招聘信息",
-                text:"jdhfjdfjfsdjfdjkshfjdshfjkdhfjsdhjfgj"
-            }]
+            title: "貼文管理",
+            imgs: [],
+            lists: [],
+            currentPage: 1,
+            pageSize: 10,
+            total: null
         }
     },
+    mounted(){
+        this.getAticle(this.currentPage)
+    },
     methods:{
-        delet(){
+        // 獲取貼文列表
+        getAticle(currentPage){
+            this.$get("article/getArticleList",{
+                pageNum: this.currentPage,
+                pageSize: this.pageSize
+            }).then(res=>{
+                console.log(res)
+                this.total = res.data.total;
+                this.lists = res.data.list;
+                this.imgs = res.data.list
+            })
+        },
+        // 删除贴文
+        delet(val,index){
+            console.log(val)
+            this. id = val.id
+            console.log(this.id)
             this.$confirm('此操作將永久刪除該積分兌換活動, 是否繼續?', '提示', {
                 confirmButtonText: '確定',
                 cancelButtonText: '取消',
                 type: 'warning'
                 }).then(() => {
-                this.$message({
-                    type: 'success',
-                    message: '刪除成功!'
-                });
+                   this.$get("article/delete",{id:val.id}).then(res =>{
+                       console.log(res)
+                       if(res.code === 0){
+                            this.$message({
+                                message:"刪除成功",
+                                type:"success"
+                            });
+                        this.lists.splice(index,1) 
+                        this.getAticle()
+                       }else{
+                           this.$message.error("刪除失敗")
+                       }
+                   })
                 }).catch(() => {
                 this.$message({
                     type: 'info',
                     message: '已取消刪除'
                 });          
             });
+        },
+        handleCurrentChange(val){
+            this.currentPage = val;
+            this.getAticle(this.currentPage)
         }
     }
 }
@@ -89,12 +119,15 @@ export default {
     .content{
         background-color: #fff;
         padding: 20px;
-        margin-bottom: 20px;
         box-sizing: border-box;
+    }
+    .c-list{
+        margin-bottom: 30px;
+        border-bottom: 1px solid #ccc;
     }
     .list dl{
         float: left;
-        width: 200px;
+        width: 400px;
     }
     .list dl img{
         width: 40px;
@@ -104,17 +137,21 @@ export default {
     .list dl h3{
         font-size: 14px;
         font-weight: 700;
-        color: #333333
+        color: #333333;
+    }
+    .list dl p{
+        margin-top: 1px;
     }
     .list dl dt{
         float: left;
         margin-right: 25px;
     }
     .list dl dd{
+        width:200px;
         display: flex;
         justify-content: space-between;
         font-size: 12px;
-        color: #777777
+        color: #777777;
     }
     .el-button--danger{
        float: right;
@@ -130,10 +167,29 @@ export default {
     }
     .cause p{
         margin-bottom: 50px;
+        text-indent: 28px;
     }
     .cause img{
         width: 140px;
         height: 140px;
         margin-right: 10px;
+        margin-bottom: 30px;
     }
-    </style>
+    .block{
+        width: 100%;
+        height: 50px;
+        background-color: #fff;
+    }
+    .el-pagination{
+        float: right;
+    }
+    .el-pagination button, .el-pagination span:not([class*=suffix]),.el-pager li,.el-pagination__editor.el-input .el-input__inner{
+        height: 40px !important;
+        line-height: 40px;
+        font-size: 16px;
+    }
+    .el-pagination .el-select .el-input .el-input__inner{
+        height: 43px !important;
+        font-size: 16px;
+    }
+</style>

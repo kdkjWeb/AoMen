@@ -36,7 +36,7 @@
        <!-- start彈出框 -->
        <el-dialog title="新建積分兌換商品" :visible.sync="dialogFormVisible" width="35%">
         <div class="upload">
-            <span>圖片：</span>
+            <span> <em style="color:red;margin-right:10px">*</em>圖片：</span>
             <el-upload
             class="avatar-uploader"
             action="https://jsonplaceholder.typicode.com/posts/"
@@ -46,24 +46,23 @@
             <img v-if="imageUrl" :src="imageUrl" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
-
         </div>
-        <el-form :model="form" label-position="right" label-width="120px" >
-            <el-form-item label="商品名稱：">
+        <el-form :model="form" label-position="right" label-width="120px" :rules="rules" ref="form">
+            <el-form-item label="商品名稱：" prop="name">
                 <el-input v-model="form.name"></el-input>
             </el-form-item>
-            <el-form-item label="領取上線：">
+            <el-form-item label="領取上線：" prop="limit">
                 <el-input placeholder="请输入内容" v-model="form.limit">
                     <template slot="append">人</template>
                 </el-input>
             </el-form-item>
-            <el-form-item label="需要積分：">
+            <el-form-item label="需要積分：" prop="integral">
                 <el-input v-model="form.integral"></el-input>
             </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button @click="cancel">取 消</el-button>
-            <el-button type="primary" @click="comfirm">确 定</el-button>
+            <el-button type="primary" @click="submitForm(form)">确 定</el-button>
         </div>
         </el-dialog>
        <!-- end彈出框 -->
@@ -98,6 +97,17 @@ export default {
                     num: '50'
                 }
             ],
+            rules:{
+                name:[
+                    { required: true, message: '请输入商品名稱', trigger: 'blur' },
+                ],
+                limit:[
+                    { required: true, message: '请输入最多领取人数', trigger: 'blur' },
+                ],
+                integral:[
+                    { required: true, message: '请输入领取所需分数', trigger: 'blur' },
+                ]
+            },
             currentPage: 1,
             pageSize:10,
             total:null
@@ -107,14 +117,15 @@ export default {
         //新建
         add(){
             this.dialogFormVisible = true;
-            console.log('新建')
+        },
+        submitForm(){
+            console.log("确定")
         },
         //查看
         examine(val){
             console.log(val)
             this.$router.push({
                 name: 'creditSiteDetails',
-             
             })
         },
         //刪除
@@ -124,15 +135,15 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
                 }).then(() => {
-                this.$message({
-                    type: 'success',
-                    message: '刪除成功!'
-                });
+                    this.$message({
+                        type: 'success',
+                        message: '刪除成功!'
+                    });
                 }).catch(() => {
-                this.$message({
-                    type: 'info',
-                    message: '已取消刪除'
-                });          
+                    this.$message({
+                        type: 'info',
+                        message: '已取消刪除'
+                    });          
                 });
         },
         //彈出框的取消按鈕
@@ -140,34 +151,26 @@ export default {
             this.dialogFormVisible = false;
         },
         //彈出框的確認按鈕
-        comfirm(){
-
-        },
         handleCurrentChange(){},
-
-
-
+        // 上传图片
         handleAvatarSuccess(res, file) {
-        this.imageUrl = URL.createObjectURL(file.raw);
-      },
-      beforeAvatarUpload(file) {
-        const isJPG = file.type === 'image/jpeg';
-        const isLt2M = file.size / 1024 / 1024 < 2;
+            this.imageUrl = URL.createObjectURL(file.raw);
+        },
+        beforeAvatarUpload(file) {
+            const isJPG = file.type === 'image/jpeg';
+            const isLt2M = file.size / 1024 / 1024 < 2;
 
-        if (!isJPG) {
-          this.$message.error('上传头像图片只能是 JPG 格式!');
+            if (!isJPG) {
+            this.$message.error('上传头像图片只能是 JPG 格式!');
+            }
+            if (!isLt2M) {
+            this.$message.error('上传头像图片大小不能超过 2MB!');
+            }
+            return isJPG && isLt2M;
         }
-        if (!isLt2M) {
-          this.$message.error('上传头像图片大小不能超过 2MB!');
-        }
-        return isJPG && isLt2M;
-      }
     }
 }
 </script>
-
-
-
 
 <style>
   .avatar-uploader .el-upload {
@@ -196,13 +199,17 @@ export default {
 </style>
 
 <style scoped>
-.integral_list{
-    width: 100%;
-    height: 160px;
-    padding: 20px;
-    box-sizing: border-box;
+.integral{
+    width:100%;
     background-color: #fff;
-    margin-bottom: 20px;
+}
+.integral_list{
+    width: 97%;
+    margin:auto;
+    height: 160px;
+    padding: 20px 0;
+    border-bottom:1px solid #ccc;
+    box-sizing: border-box;
 }
 .integral_list dl{
     float: left;
@@ -249,6 +256,7 @@ export default {
 }
 .el-pagination{
     float: right;
+    margin-right: 20px;
 }
 .el-pagination button, .el-pagination span:not([class*=suffix]),.el-pager li,.el-pagination__editor.el-input .el-input__inner{
     height: 40px !important;

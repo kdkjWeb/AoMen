@@ -126,8 +126,9 @@ export default {
     name:"homePage",
     data(){
         return{
+        
             isShow:false,
-            show: true,
+            show: false,
             dialogFormVisible:false,
             ruleForm: {                                             //修改密碼彈出框
                 oldPass: '',
@@ -151,11 +152,9 @@ export default {
         }
     },
     mounted(){
-        console.log(this.$route.query.PermissionId)
-        if(!this.$route.query.PermissionId){
-            console.log(!this.$route.query.PermissionId)
-            this.show = false;
-        }
+
+         this.show = sessionStorage.getItem('role') == 'true' ? true : false;
+      
     },
     methods:{
         //點擊頭像或名字處顯示
@@ -169,7 +168,6 @@ export default {
         },
         // 修改密碼
         submitPass(){
-            console.log("確認更換密碼")
             if(this.ruleForm.oldPass === this.ruleForm.newPass){
                 this.$message.error("旧密码和新密码必须不一致")
             }else if(this.ruleForm.newPass !== this.ruleForm.confirm){
@@ -211,10 +209,9 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
                 }).then(() => {
-                    localStorage.removeItem('userInfo');
                     this.$get("logout",{}).then(res =>{
-                        console.log(res)
                         if(res.code === 0){
+                            sessionStorage.removeItem('id');
                             this.$router.push({
                                 path:"/"
                             })
@@ -223,12 +220,11 @@ export default {
                 }).catch(() => {
                 this.$message({
                     type: 'info',
-                    message: '已取消註銷'
+                    message: '註銷已取消'
                 });          
             });
             
         }
-        
     }
 }
 </script>

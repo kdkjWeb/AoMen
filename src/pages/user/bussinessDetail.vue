@@ -2,6 +2,11 @@
     <div>
         <!-- 返回+查詢 -->
         <goBack  :placeholder="placeholder" @search="search" :isShow="true"></goBack>
+        <ul>
+            <li>聯係人：<span>12345</span></li>
+            <li>聯係電話：<span>13255555555</span></li>
+            <li>聯係地址：<span>四川省成都市天府三街112號</span></li>
+        </ul>
         <!-- 返回+查詢 -->
         <div class="table">
         <!-- 表格 -->
@@ -111,6 +116,18 @@ export default {
 }
 </style>
 <style scoped>
+    ul{
+        width:100%;
+        height:100px;
+        display: flex;
+        justify-content: space-around;
+        background-color: #fff;
+        margin-bottom: 20px;
+    }
+    ul li{
+        font-size:16px;
+       line-height: 100px;
+    }
     .block{
         width: 100%;
         height: 50px;

@@ -129,7 +129,6 @@ export default {
         // 回顯數據
         getPlatMsg(){
             this.$get("admin/getSettings",{}).then(res =>{
-                console.log(res)
                 if(res.code === 0){
                     this.form = res.data;
                     this.form.ironRate = res.data.ironRate*100;

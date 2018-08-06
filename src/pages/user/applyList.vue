@@ -23,15 +23,15 @@
             label="身份證图片"
             width="280px">
             <template slot-scope="scope">
-               <img style="width:80px; height:80px" :src="scope.row.idCardFile1.origin" alt="">
-               <img style="width:80px; height:80px" :src="scope.row.idCardFile2.origin" alt="">
+               <img style="width:120px; height:80px" :src="scope.row.idCardFile1.origin" alt="">
+               <img style="width:120px; height:80px" :src="scope.row.idCardFile2.origin" alt="">
             </template>
             </el-table-column>
             <el-table-column
             header-align = "center"
             label="營業執照圖片">
             <template slot-scope="scope">
-                <img style="width:80px; height:80px"  :src="scope.row.licenseFile.origin" alt="">
+                <img style="width:120px; height:80px"  :src="scope.row.licenseFile.origin" alt="">
             </template>
             </el-table-column>
             <el-table-column

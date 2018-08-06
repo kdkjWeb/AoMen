@@ -56,15 +56,13 @@ export default {
                    console.log(res)
                    if(res.code === 0){
                         let flag = res.data.roleList.includes('super_admin');
-                        console.log(res.data.id)
-                        localStorage.setItem("id",res.data.id)
+                        
+                        sessionStorage.setItem('role',flag)
+                        sessionStorage.setItem("id",res.data.id)
                         localStorage.setItem("userName",JSON.stringify(this.userInfo.userName));
-                        localStorage.setItem("userPas",JSON.stringify(this.userInfo.userPas));
                         this.$router.push({
                             path:"/homePage",
-                            query:{
-                                PermissionId: flag
-                            }
+                            
                         })
                    }
                })
@@ -73,7 +71,6 @@ export default {
     },
    mounted(){
         this.userInfo.username = JSON.parse(localStorage.getItem('userName'));
-        this.userInfo.userpas = JSON.parse(localStorage.getItem('userPsd'));
    }
 }
 </script>

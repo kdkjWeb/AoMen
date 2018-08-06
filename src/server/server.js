@@ -163,6 +163,58 @@ import { Message, Loading } from 'element-ui';
                 })
           })
     },
+    //delete請求
+    delete:(url,data,load)=>{
+        let loading;
+        if(load || load == undefined) {
+            loading = Loading.service({
+                lock: true,
+                text: 'Loading',
+                spinner: 'el-icon-loading',
+                background: 'rgba(0, 0, 0, 0.5)'
+            });
+        }
+        return new Promise((resolve,reject) => {
+            Axios.delete(url,data,{
+                headers: {
+                    'Content-Type':'application/x-www-form-urlencoded'
+                }
+            })
+                .then(res => {
+                //如果动画为true，返回之后需要关闭动画
+                if(load || load == undefined) {
+                    loading.close();
+                }
+                if(res.data.code == 0){
+                    resolve(res.data)
+                }else if(res.data.code == 500){
+                    resolve(res.data);
+                }
+                },err => {
+                    //如果动画为true，返回之后需要关闭动画
+                    if(load || load == undefined) {
+                        loading.close();
+                    }
+
+                    if(err.msg){
+                        Message({
+                            message: err.data.msg,
+                            type: 'warning'
+                        });
+                    }else{
+                        Message({
+                            message: '系统异常',
+                            type: 'warning'
+                        });
+                    }
+                }).catch((err)=>{
+                    if(load || load == undefined) {
+                        loading.close();
+                    }
+                    reject(err)
+                })
+          })
+    },
     // 时间戳转换
     getTimes:(times)=>{
         var d = new Date(times);
@@ -187,6 +239,13 @@ import { Message, Loading } from 'element-ui';
               return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
             }
         }
+    },
+    getTime:(times)=>{
+        var str = times;
+        str = str.replace('-','/');
+        var date = new Date(str);
+        var time = date.getTime();
+        return time;
     }
     
  }

@@ -39,34 +39,39 @@
         <!-- 新建框 -->
         <el-dialog
             :visible.sync="dialogVisible"
-            width="40%">
-            <el-form  label-width="100px" :model="formLabelAlign">
-                <div style="border-bottom:1px solid #ccc;margin-bottom:30px">
-                    <el-form-item label="名稱">
-                        <el-input v-model="formLabelAlign.name" placeholder="请输入代金券名稱"></el-input>
-                    </el-form-item>
-                    <el-form-item label="需要積分">
-                        <el-input v-model="formLabelAlign.need" placeholder="请输入需要的積分"></el-input>
-                    </el-form-item>
-                    <el-form-item label="發行數量">
-                        <el-input placeholder="请输入您想要發行的數量" v-model="formLabelAlign.number">
-                            <template slot="append">張</template>
-                        </el-input>
-                    </el-form-item>
-                </div>
-                <el-form-item>
-                    <el-button type="primary" plain @click="direct">直接代金券</el-button>
-                    <el-button type="primary" plain @click="fullCut">滿減代金券</el-button>
+            width="35%">
+            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+                <el-form-item label="名稱：" prop="name">
+                    <el-input v-model="ruleForm.name" placeholder="请输入代金券名稱"></el-input>
+                </el-form-item>
+                <el-form-item label="需要積分：" prop="need">
+                    <el-input v-model="ruleForm.need" placeholder="请输入需要的積分"></el-input>
+                </el-form-item>
+                <el-form-item label="發行數量：" prop="number" style="border-bottom:1px solid #ccc;margin-bottom:30px">
+                    <el-input placeholder="请输入您想要發行的數量" v-model="ruleForm.number" style="margin-bottom:30px">
+                        <template slot="append">張</template>
+                    </el-input>
+                </el-form-item >
+                <el-form-item  id="preferential">
+                    <el-radio-group v-model="ruleForm.contentType" @change="handleChange">
+                        <el-radio-button :label="5">直接代金券</el-radio-button>
+                    </el-radio-group>
+                    <el-radio-group v-model="ruleForm.contentType" @change="handleCut">
+                        <el-radio-button :label="4">满减代金券</el-radio-button>
+                    </el-radio-group>
                 </el-form-item>
                 <div class="voucher">
                     <div class="price">
-                        <el-form-item label="滿：">
-                            <el-input placeholder="例：10" v-model="formLabelAlign.full">
+                        <el-form-item prop="full"  v-show="isShow" style="position:relative" >
+                            <div id="full">
+                                <label> <em>*</em>满：</label>
+                            </div>
+                            <el-input placeholder="例：10" v-model="ruleForm.full">
                                 <template slot="append">圓</template>
                             </el-input>
                         </el-form-item>
-                        <el-form-item label="減：" v-show="isShow">
-                            <el-input placeholder="例：5" v-model="formLabelAlign.cut">
+                        <el-form-item label="減：" prop="cut">
+                            <el-input placeholder="例：5" v-model="ruleForm.cut">
                                 <template slot="append">圓</template>
                             </el-input>
                         </el-form-item>
@@ -74,15 +79,17 @@
                     <div class="date">
                         <el-form-item label="開始時間：">
                             <el-date-picker
-                            v-model="beginDate"
+                            :picker-options="pickerOptions1"
+                            v-model="ruleForm.beginDate"
                             type="date"
                             placeholder="选择日期">
                             <i class=""></i>
                             </el-date-picker>
                         </el-form-item>
-                        <el-form-item label="結束時間：">
+                        <el-form-item label="結束時間：" >
                             <el-date-picker
-                            v-model="overDate"
+                            :picker-options="pickerOptions2"
+                            v-model="ruleForm.overDate"
                             type="date"
                             placeholder="选择日期">
                             </el-date-picker>
@@ -90,9 +97,9 @@
                     </div>
                 </div>
                 <el-form-item id="lastBtn">
-                        <el-button @click="cancle">取消</el-button>
-                        <el-button type="warning" @click="Determine">確定</el-button>
-                    </el-form-item>
+                    <el-button>取消</el-button>
+                    <el-button type="warning" @click="submitForm('ruleForm')">確定</el-button>
+                </el-form-item>
             </el-form>
         </el-dialog>
         <!-- 新建框 -->
@@ -108,7 +115,24 @@ export default {
     },
     data(){
         return{
+            pickerOptions1: {
+                disabledDate: (time) => {
+                    if (this.ruleForm.overDate != "") {
+                        return time.getTime() < Date.now() - 8.64e7 || time.getTime() < this.ruleForm.overDate;
+                    } else {
+                        return time.getTime() < Date.now() - 8.64e7;
+                    }
+
+                }
+            },
+            pickerOptions2: {
+                disabledDate: (time) => {
+                    return time.getTime() < this.ruleForm.beginDate || time.getTime() < Date.now() - 8.64e7;
+                }
+            },
+            label:5,
             isShow:false,
+            show:true,
             dialogVisible:false,                //彈出框
             title:"打折券設置",                   //表頭文字
             lists:[                                             //列表內容
@@ -118,22 +142,42 @@ export default {
                     state:"進行中",
                     active:"滿50送5圓代金券",
                     number:"77",
-                    activeTime:"2018-02-25至2018-03-25"
+                    activeTime:"2018-02-25 —— 2018-03-25"
                 },{
                     src:"../../../static/header.jpg",
                     title:"代金券",
                     state:"進行中",
                     active:"滿50送5圓代金券",
-                    number:"77",
-                    activeTime:"2018-02-25至2018-03-25"
+                    number:"77", 
+                    activeTime:"2018-02-25 —— 2018-03-25"
                 }
             ],
-            formLabelAlign:{
+            ruleForm:{
                 name:'',
                 need:"",
                 number:'',
                 full:"",
-                cut:""
+                cut:"",
+                contentType:"",
+                beginDate:"",
+                overDate:""
+            },
+            rules:{
+                name:[
+                    { required: true, message: '请输入代金券名稱', trigger: 'blur' },
+                ],
+                need:[
+                    {required:true,message:"請輸入所需積分",trigger:"blur"},
+                ],
+                number:[
+                    {required:true,message:"請輸入您想要發行的數量",trigger:"blur"},
+                ],
+                // full:[
+                //     {required:true,message:"請輸入需達到滿減的金額",trigger:"blur"},
+                // ],
+                cut:[
+                    {required:true,message:"請輸入需達到滿減的金額",trigger:"blur"},
+                ]
             },
             beginDate:'',
             overDate:'',
@@ -147,87 +191,110 @@ export default {
         add(){
             this.dialogVisible = true
         },
+        //確定新建
+        submitForm(formName){
+            this.$refs[formName].validate((valid) => {
+                if (valid) {
+                    if(this.ruleForm.beginDate>this.ruleForm.overDate){
+                        this.$message.error("開始時間不能大於結束時間")
+                    }else{
+                        this.$post("coupon/add",[{
+                            amount: this.ruleForm.number,
+                            beginTime:this.$getTimes(this.ruleForm.beginDate),
+                            stopTime: this.$getTimes(this.ruleForm.overDate),
+                            conditionAmount: this.ruleForm.full,
+                            discount:this.ruleForm.cut,
+                            couponType: this.ruleForm.contentType,
+                            couponName:this.ruleForm.name,
+                            needIntegral:this.ruleForm.need
+                        }]).then(res =>{
+                            console.log(res)
+                            if(res.code === 0){
+                                this.$message({
+                                    message:"添加成功",
+                                    type:"success"
+                                })
+                                this.ruleForm.name = "";
+                                this.ruleForm.number = "";
+                                this.ruleForm.need = "";
+                                this.ruleForm.beginDate = "";
+                                this.ruleForm.overDate = "";
+                                this.ruleForm.full = "";
+                                this.ruleForm.cut = "";
+                                this.dialogFormNewVisible = false
+                            }
+                        })
+                    }
+                } else {
+                    alert(valid)
+                    this.$message.error("請確認所填寫的數據")
+                    return false;
+                }
+            });
+        },
+        handleChange(){
+            this.isShow = false;
+        },
+        handleCut(){
+            this.isShow = true;
+        },
         // 刪除
         delet(){
-              this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
-        });
-        },
-        direct(){
-            this.isShow = false  
-        },
-        fullCut(){
-            this.isShow = true
-        },
-        Determine(){
-              this.$confirm('是否保存?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '保存成功!'
-          });
-        this.dialogVisible = false
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消'
-          });          
-        });
-        },
-        cancle(){
-            this.$confirm('是否取消?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '已取消!'
-          });
-        })
+            this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+            }).then(() => {
+            this.$message({
+                type: 'success',
+                message: '删除成功!'
+            });
+            }).catch(() => {
+            this.$message({
+                type: 'info',
+                message: '已取消删除'
+            });          
+            });
         },
         handleCurrentChange(){
 
         }
-    }
+    },
+ 
 }
 </script>
 <style>
     .voucher .el-date-editor.el-input{
         width:unset;
     }
+    #preferential .el-form-item__content{
+        margin-left: unset !important;
+    }
+    .el-radio-button:first-child .el-radio-button__inner{
+        border-radius: 4px;
+    }
+    .el-radio-button:last-child .el-radio-button__inner{
+        border-left: 1px solid #dcdfe6;
+        border-radius: 4px;
+    }
+    .el-radio-button__inner{
+        width: 100%;
+    }
 </style>
-
 <style scoped>
-.content{
-    width:100%;
-    background-color: #fff;
-
-}
-    .list{
+    /* 主体内容 */
+    .content{
         width:100%;
+        background-color: #fff;
+    }
+    .list{
+        width:97%;
         height: 160px;
-        margin-bottom: 20px;
-        padding:20px;
-        border-bottom:1px dashed #ccc;
+        margin: auto;
+        padding:20px 0;
+        border-bottom:1px solid #ccc;
         box-sizing: border-box;
     }
-    
     .list img{
         float: left;
         width: 120px;
@@ -261,6 +328,30 @@ export default {
     .list li:nth-child(2),.list li:nth-child(3){
         font-size: 12px
     }
+    .el-radio-group{
+        margin-bottom: 30px;
+    }
+    #preferential{
+        width:80%;
+        margin:auto;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+    }
+     /* 满减---满 */
+    #full{
+        position: absolute;
+        top:5px;
+        left:-50px;
+        z-index: 100;
+    }
+    em{
+        color:red;
+        margin-right: 3px;
+    }
+    .el-radio-button{
+        width:180px ;
+    }
     .el-button--danger{
        float: right;
        margin-top: 40px ;
@@ -274,12 +365,7 @@ export default {
         margin-left: -50px;
     }
     #lastBtn .el-button{
-        width:260px;
-    
-    }
-    .el-button--primary.is-plain{
-        width:180px;
-        margin-left:70px;
+        width:250px;
     }
     .voucher .price,.voucher .date{
         display: flex;
@@ -295,6 +381,7 @@ export default {
     }
     .el-pagination{
         float: right;
+        margin-right: 20px;
     }
     .el-pagination button, .el-pagination span:not([class*=suffix]),.el-pager li,.el-pagination__editor.el-input .el-input__inner{
         height: 40px !important;
@@ -305,4 +392,5 @@ export default {
         height: 43px !important;
         font-size: 16px;
     }
+   
 </style>
