@@ -33,15 +33,17 @@ Vue.prototype.$getTime = Server.getTime;
 
 /* eslint-disable no-new */
 router.beforeEach((to,from,next) =>{
+
   if(to.path === "/"){
     next()
   }else{
-    
     if(JSON.parse(sessionStorage.getItem("id"))){
       next()
     }
     else{
-      next({path: "/"})
+      next({
+        path: "/"
+      })
     }
   }
 })

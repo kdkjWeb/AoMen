@@ -8,24 +8,77 @@
                 height="600"
                 style="width: 100%">
                 <el-table-column
+                prop="orderNumber"
                 header-align = "center"
-                v-for="(item,index) in tableList"
-                :key="index"
-                :prop="item.prop"
-                :label="item.label">
+                label="訂單號">
+                </el-table-column>
+                <el-table-column
+                prop="PurchaseUser"
+                header-align = "center"
+                label="購買用戶"
+                :formatter="formatter">
+                </el-table-column>
+                <el-table-column
+                prop="commodityName"
+                header-align = "center"
+                label="商品名稱">
+                </el-table-column>
+                <el-table-column
+                prop="bussinessAcount"
+                header-align = "center"
+                label="商品賬號"
+                :formatter="formatter">
+                </el-table-column>
+                <el-table-column
+                prop="allMoney"
+                header-align = "center"
+                label="總金額">
+                <template slot-scope="scope">
+                    <p style="color:red">{{scope.row.allMoney}}</p>
+                </template>
+                </el-table-column>
+                <el-table-column
+                prop="PreferentialType"
+                header-align = "center"
+                label="優惠類型"
+                :formatter="formatter">
+                <template slot-scope="scope">
+                    <p>無</p>
+                    <p>積分減免</p>
+                    <p>打折券</p>
+                </template>
+                </el-table-column>
+                <el-table-column
+                prop="DiscountedAmount"
+                header-align = "center"
+                label="打折金額">
+                </el-table-column>
+                <el-table-column
+                prop="factPay"
+                header-align = "center"
+                label="實付款金額"
+                :formatter="formatter">
+                </el-table-column>
+                <el-table-column
+                prop="becomeTime"
+                header-align = "center"
+                label="成交時間"
+                :formatter="formatter">
                 </el-table-column>
                 <el-table-column
                 header-align = "center"
                 prop="tag"
                 label="訂單狀態"
                 width="200"
-                :filters="[{ text: '家', value: '家' }, { text: '公司', value: '公司' }]"
+                :filters="[{ text: '保護期', value: '保護期' }, { text: '退款中', value: '退款中' }, { text: '已退款', value: '已退款' },{ text: '已完結', value: '已完結' }]"
                 :filter-method="filterTag"
-                filter-placement="bottom-end">
+                filter-placement="bottom-end"
+                @filter-change="handleFilterChange">
                     <template slot-scope="scope">
-                        <el-tag
-                        :type="scope.row.tag === '家' ? 'primary' : 'success'"
-                        disable-transitions>{{scope.row.tag}}</el-tag>
+                        <el-tag disable-transitions style="color:green">{{scope.row.tag}}</el-tag>
+                        <!-- <el-tag disable-transitions>退款中</el-tag>
+                        <el-tag disable-transitions style="color:red">已退款</el-tag>
+                        <el-tag disable-transitions style="color:#f99e1b">已完結</el-tag> -->
                     </template>
                 </el-table-column>
             </el-table>
@@ -45,7 +98,6 @@
 
 <script>
 import searchBar from "./../../components/searchBar.vue"
-
 export default {
     name:"userTrede",
     components:{
@@ -60,69 +112,46 @@ export default {
             pageSize:10,
             total:null,
             tableData: [{
-                   orderNumber: '1234',
-                    bussinessAcount: '789',
-                    commodityName: '美式咖啡',
-                    commodityPrice: '12',
-                    PurchaseUser: "黃大喵",
-                    PreferentialType: "滿減",
-                    PurchaseTime: "2018-07-26",
-                    DiscountedAmount: "2",
-                    factPay: "10",
-                    becomeTime: "2018-07-26",
-                    allMoney: "60",
-                     tag: '家'
-                }, {
-                   orderNumber: '1234',
-                    bussinessAcount: '789',
-                    commodityName: '美式咖啡',
-                    commodityPrice: '12',
-                    PurchaseUser: "黃大喵",
-                    PreferentialType: "滿減",
-                    PurchaseTime: "2018-07-26",
-                    DiscountedAmount: "2",
-                    factPay: "10",
-                    becomeTime: "2018-07-26",
-                    allMoney: "60",
-                     tag: '家'
-                }, {
-                    orderNumber: '1234',
-                    bussinessAcount: '789',
-                    commodityName: '美式咖啡',
-                    commodityPrice: '12',
-                    PurchaseUser: "黃大喵",
-                    PreferentialType: "滿減",
-                    PurchaseTime: "2018-07-26",
-                    DiscountedAmount: "2",
-                    factPay: "10",
-                    becomeTime: "2018-07-26",
-                    allMoney: "60",
-                     tag: '家'
-                }, {
-                    orderNumber: '1234',
-                    bussinessAcount: '789',
-                    commodityName: '美式咖啡',
-                    commodityPrice: '12',
-                    PurchaseUser: "黃大喵",
-                    PreferentialType: "滿減",
-                    PurchaseTime: "2018-07-26",
-                    DiscountedAmount: "2",
-                    factPay: "10",
-                    becomeTime: "2018-07-26",
-                    allMoney: "60",
-                     tag: '家'
-            }],
-            tableList:[
-                {prop:"orderNumber",label:"訂單號",width:''},
-                {prop:"PurchaseUser",label:"購買用戶",width:''},
-                {prop:"commodityName",label:"商品名稱",width:''},
-                {prop:"bussinessAcount",label:"商家帳號",width:''},
-                {prop:"allMoney",label:"總金額",width:''},
-                {prop:"PreferentialType",label:"優惠類型",width:''},
-                {prop:"DiscountedAmount",label:"打折金額",width:''},
-                {prop:"factPay",label:"實付款金額",width:''},
-                {prop:"becomeTime",label:"成交時間",width:''},
-            ]
+                orderNumber:"8291",
+                PurchaseUser:"黃大喵",
+                commodityName:"美式咖啡",
+                bussinessAcount:"2801",
+                allMoney:"183",
+                DiscountedAmount:"23",
+                factPay:"160",
+                becomeTime:"2018-08-10",
+                tag:'保護期'
+                },{
+                    orderNumber:"8291",
+                    PurchaseUser:"黃大喵",
+                    commodityName:"美式咖啡",
+                    bussinessAcount:"2801",
+                    allMoney:"183",
+                    DiscountedAmount:"23",
+                    factPay:"160",
+                    becomeTime:"2018-08-10",
+                    tag:"退款中"
+                },{
+                    orderNumber:"8291",
+                    PurchaseUser:"黃大喵",
+                    commodityName:"美式咖啡",
+                    bussinessAcount:"2801",
+                    allMoney:"183",
+                    DiscountedAmount:"23",
+                    factPay:"160",
+                    becomeTime:"2018-08-10",
+                    tag:"已退款"
+                },{
+                orderNumber:"8291",
+                PurchaseUser:"黃大喵",
+                commodityName:"美式咖啡",
+                bussinessAcount:"2801",
+                allMoney:"183",
+                DiscountedAmount:"23",
+                factPay:"160",
+                becomeTime:"2018-08-10",
+                tag:"已完結"
+            }],                 //用戶交易列表信息
         }
     },
     methods:{
@@ -144,7 +173,11 @@ export default {
         },
         handleCurrentChange(val){
             console.log("分頁")
-        }
+        },
+        // 表格篩選
+        // handleFilterChange(filters){
+        //     console.log(filters)
+        // }
     }
 }
 </script>
@@ -154,9 +187,9 @@ export default {
     display: flex;
     justify-content: space-around;
 }
-.el-checkbox__input{
+/* .el-checkbox__input{
     display: none
-}
+} */
 /* .el-table-filter__bottom{
     display: none
 } */
@@ -165,6 +198,9 @@ export default {
     border:none;
     background-color: unset
 }
+/* tbody .el-table_1_column_5{
+    color: red;
+} */
 </style>
 <style scoped>
     .block{

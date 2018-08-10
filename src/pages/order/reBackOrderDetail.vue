@@ -16,28 +16,29 @@
                 </div>
             </div>
             <!-- 用戶退款原因 -->
-            <!-- 商家未處理、拒絕原因、同意-->
+            <!-- 商家未處理、拒絕原因、同意 -->
             <div class="handle">
-                <h3>商家拒絕原因</h3>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae est, ut eligendi aut necessitatibus earum libero at quasi magni sequi eum deserunt doloremque minima iste eos praesentium, placeat soluta impedit!</p>
+                <h3 v-show="isHandle">商家未处理</h3>
+                <div v-show="isRefuse">
+                    <h3>商家拒絕原因</h3>
+                    <p >Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae est, ut eligendi aut necessitatibus earum libero at quasi magni sequi eum deserunt doloremque minima iste eos praesentium, placeat soluta impedit!</p>
+                </div>
+                <h3 v-show="isAgreen">商家已同意退款</h3>
                 <div class="btn">
                      <el-button @click="refuse">拒絕</el-button>
                      <el-button type="warning" @click="agreen">同意</el-button>
                 </div>
             </div>
             <!-- 填寫拒絕原因 -->
-            <el-dialog
-            :visible.sync="dialogVisible"
-            width="600px"
-            :before-close="handleClose">
-            <el-form ref="form" :model="form" label-width="80px">
-                <h1>拒絕原因</h1>
-                <el-form-item>
-                    <el-input type="textarea" v-model="form.desc" placeholder="請填寫拒絕原因" style="width:80%;"></el-input>
-                </el-form-item>
-                 <el-form-item>
-                    <el-button type="warning" id="confirm" @click="confirm">確定</el-button>
-                </el-form-item>
+            <el-dialog :visible.sync="dialogVisible" width="600px">
+                <el-form ref="form" :model="form" label-width="80px">
+                    <h1>拒絕原因</h1>
+                    <el-form-item>
+                        <el-input type="textarea" v-model="form.desc" placeholder="請填寫拒絕原因" style="width:80%;"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="warning" id="confirm" @click="confirm">確定</el-button>
+                    </el-form-item>
                 </el-form>
             </el-dialog>
             <!-- 填寫拒絕原因 -->
@@ -57,6 +58,9 @@ export default {
         return{
             dialogVisible:false,
             isShow:false,
+            isRefuse:true,
+            isHandle:false,
+            isAgreen:false,
             imgs:[{
                 src:"../../../static/header.jpg"
             },{
@@ -67,20 +71,49 @@ export default {
             }
         }
     },
+    mounted(){
+        this.getRefundByUser()
+    },
     methods:{
+        // 獲取用戶退款原因
+        getRefundByUser(){
+            console.log("獲取用戶退款原因")
+        },
+        // 商家拒絕
         refuse(){
-            console.log("拒絕")
-            this.dialogVisible = true
+            this.dialogVisible = true;
         },
-        agreen(){
-            console.log("同意")
-        },
-        handleClose(){
-            this.dialogVisible = false
-        },
+        // 確定拒絕
         confirm(){
-            this.dialogVisible = false
-        }
+            if(this.form.desc == ""){
+                this.$message.error("請填寫拒絕原因")
+            }else{
+                this.dialogVisible = false
+            }
+        },
+        // 商家同意
+        agreen(){
+            console.log("同意");
+            this.$confirm('是否同意此信息?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+               this.$message({
+                   message:"已同意",
+                   type:"success"
+               })
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '已取消删除'
+                });          
+            });
+        },
+        // handleClose(){
+        //     this.dialogVisible = false
+        // },
+        
     }
 }
 </script>
@@ -103,13 +136,21 @@ export default {
     border-bottom: 1px solid #f5f5f5;
     box-sizing: border-box;
 }
+.cause h3,.handle h3{
+    font-size:16px;
+    font-weight:700;
+}
 .cause h3{
     border-left: 5px solid #eee;
     padding-left: 15px;
     margin-bottom: 30px;
 }
 .cause p,.handle p{
-    margin-bottom: 50px;
+    font-size:14px;
+    padding-left:20px;
+    text-indent:28px;
+    margin-bottom: 30px;
+    box-sizing:border-box;
 }
 .cause img{
     width: 200px;
@@ -119,12 +160,14 @@ export default {
 .handle{
     width:98%;
     margin: auto;
-    padding-top: 30px;
+    padding-top: 20px;
     box-sizing: border-box;
 }
 .handle h3{
     color: #f99e1b;
     margin-bottom: 30px;
+    padding-left:20px;
+    box-sizing:border-box;
 }
 .btn{
     width: 650px;

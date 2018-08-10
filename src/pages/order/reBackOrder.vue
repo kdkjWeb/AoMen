@@ -4,7 +4,6 @@
         <searchBar :title="title" :placeholder="placeholder" :isShow="isShow" @date="date" @search="search"></searchBar>
         <!-- end 頂部搜索 -->
 
-
         <!-- start 表格 -->
         <div class="table">
             <el-table
@@ -18,6 +17,15 @@
                 :prop="item.prop"
                 :label="item.label"
                 :width="item.width">
+                </el-table-column>
+                 <el-table-column
+                prop="orderStatus"
+                header-align = "center"
+                label="訂單狀態">
+                <template slot-scope="scope">
+                    <p style="color:red;text-decoration:underline;">未處理</p>
+                    <p>已處理</p>
+                </template>
                 </el-table-column>
                 <el-table-column
                 header-align = "center"
@@ -69,7 +77,6 @@ export default {
                 {prop: 'allMoney', label: '總金額', width: ''},
                 {prop: 'byTime', label: '購買時間', width: ''},
                 {prop: 'busNickname', label: '商家暱稱', width: ''},
-                {prop: 'orderStatus', label: '訂單狀態', width: ''}  
             ],
             tableData: [
                 {

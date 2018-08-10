@@ -1,7 +1,7 @@
 <template>
     <div class="userDetails">
         <!-- 返回+查詢 -->
-        <goBack  :placeholder="placeholder" @search="search"></goBack>
+        <goBack  :placeholder="placeholder" @search="search" :isShow="true"></goBack>
         <!-- 返回+查詢 -->
 
         <!-- start 表格 -->

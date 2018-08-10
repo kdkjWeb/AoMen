@@ -247,5 +247,4 @@ import { Message, Loading } from 'element-ui';
         var time = date.getTime();
         return time;
     }
-    
  }

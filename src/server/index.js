@@ -8,7 +8,6 @@ let axiosConfig = Axios.create({
     timeout: '5000',
     withCredentials: true,
 });
-// Axios.defaults.headers.delete['Content-Type'] = 'application/x-www-form-urlencoded';
 
 
 export default axiosConfig;

@@ -54,7 +54,6 @@ export default {
     data(){
         return{
             title: "貼文管理",
-            imgs: [],
             lists: [],
             currentPage: 1,
             pageSize: 10,
@@ -71,7 +70,7 @@ export default {
                 pageNum: this.currentPage,
                 pageSize: this.pageSize
             }).then(res=>{
-                console.log(res)
+                this.lists = [];
                 this.total = res.data.total;
                 this.lists = res.data.list;
                 this.imgs = res.data.list

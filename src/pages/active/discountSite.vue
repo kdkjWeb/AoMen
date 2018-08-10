@@ -6,19 +6,19 @@
         <!-- 列表 -->
         <div class="content">
             <div class="list" v-for="(list,index) in lists" :key="index">
-                <div class="left">
-                    <img :src="list.src" alt="">
-                    <ul>
-                        <li class="money">
-                            <h1>{{list.title}}</h1>
-                            <span>{{list.state}}</span>
-                        </li>
-                        <li>{{list.active}}</li>
-                        <li>剩餘數量：{{list.number}}</li>
-                        <li>{{list.activeTime}}</li>
-                    </ul>
-                </div>
-                <el-button type="danger" @click="delet">刪除</el-button>
+                <ul class="left">
+                    <li class="money">
+                        <h1>{{list.couponName}}</h1>
+                        <span v-show="list.isBegin" style="color:green">未開始···</span>
+                        <span v-show="list.isBegining">進行中···</span>
+                        <span v-show="list.isOver" style="color:red">已結束···</span>
+                    </li>
+                    <li v-if="list.couponType == 4">滿{{list.conditionAmount}}圓減{{list.discount}}圓優惠券</li>
+                    <li v-if="list.couponType == 5">直減{{list.discount}}圓優惠券</li>
+                    <li>剩餘數量：{{list.amount}}</li>
+                    <li>{{list.beginTime}} 至 {{list.stopTime}}</li>
+                </ul>
+                <el-button type="danger" @click="delet(list,index)">刪除</el-button>
             </div>
             <!-- 分頁 -->
             <div class="block">
@@ -33,7 +33,6 @@
             </div>
             <!-- 分頁 -->
         </div>
-      
         <!-- 列表 -->
         
         <!-- 新建框 -->
@@ -97,7 +96,7 @@
                     </div>
                 </div>
                 <el-form-item id="lastBtn">
-                    <el-button>取消</el-button>
+                    <el-button @click="dialogVisible = false">取消</el-button>
                     <el-button type="warning" @click="submitForm('ruleForm')">確定</el-button>
                 </el-form-item>
             </el-form>
@@ -107,7 +106,7 @@
 </template>
 
 <script>
-import newBuild from "../../components/newBuild"
+import newBuild from "../../components/newBuild" 
 export default {
     name:'discountSite',
     components:{
@@ -115,6 +114,9 @@ export default {
     },
     data(){
         return{
+            isBegin:false,  //活動未開始
+            isBegining:false,    //活動進行中...
+            isOver:false,     //活動已結束
             pickerOptions1: {
                 disabledDate: (time) => {
                     if (this.ruleForm.overDate != "") {
@@ -130,28 +132,11 @@ export default {
                     return time.getTime() < this.ruleForm.beginDate || time.getTime() < Date.now() - 8.64e7;
                 }
             },
-            label:5,
             isShow:false,
             show:true,
             dialogVisible:false,                //彈出框
             title:"打折券設置",                   //表頭文字
-            lists:[                                             //列表內容
-                {                                
-                    src:"../../../static/header.jpg",
-                    title:"代金券",
-                    state:"進行中",
-                    active:"滿50送5圓代金券",
-                    number:"77",
-                    activeTime:"2018-02-25 —— 2018-03-25"
-                },{
-                    src:"../../../static/header.jpg",
-                    title:"代金券",
-                    state:"進行中",
-                    active:"滿50送5圓代金券",
-                    number:"77", 
-                    activeTime:"2018-02-25 —— 2018-03-25"
-                }
-            ],
+            lists:[],
             ruleForm:{
                 name:'',
                 need:"",
@@ -172,9 +157,6 @@ export default {
                 number:[
                     {required:true,message:"請輸入您想要發行的數量",trigger:"blur"},
                 ],
-                // full:[
-                //     {required:true,message:"請輸入需達到滿減的金額",trigger:"blur"},
-                // ],
                 cut:[
                     {required:true,message:"請輸入需達到滿減的金額",trigger:"blur"},
                 ]
@@ -186,7 +168,35 @@ export default {
             total:null
         }
     },
+    mounted(){
+        this.getLists(this.currentPage)
+    },
     methods:{
+        // 獲取所有優惠列表
+        getLists(currentPage){
+            var myDate = new Date()
+            this.$get("coupon/getAvailableSysCoupons",{
+                pageNum: this.currentPage,
+                pageSize: this.pageSize,
+                adminFlag:1
+            }).then(res =>{
+                if(res.code === 0){
+                    this.lists = [];
+                    this.total = res.data.total;
+                    this.lists = res.data.list;
+                    // 把今天的時間分別與活動開始時間、結束時間做比較，從而判斷該活動的進行狀態
+                    for(let i = 0;i<res.data.list.length;i++){
+                        if(this.$getTimes(myDate)< this.$getTimes(this.lists[i].beginTime)){
+                            this.$set(res.data.list[i],'isBegin',true)
+                        }else if(this.$getTimes(myDate)>this.$getTimes(this.lists[i].stopTime)) {
+                            this.$set(res.data.list[i],'isOver',true)
+                        }else{
+                             this.$set(res.data.list[i],'isBegining',true)
+                        }
+                    }
+                }
+            })
+        },
         // 新建
         add(){
             this.dialogVisible = true
@@ -195,36 +205,32 @@ export default {
         submitForm(formName){
             this.$refs[formName].validate((valid) => {
                 if (valid) {
-                    if(this.ruleForm.beginDate>this.ruleForm.overDate){
-                        this.$message.error("開始時間不能大於結束時間")
-                    }else{
-                        this.$post("coupon/add",[{
-                            amount: this.ruleForm.number,
-                            beginTime:this.$getTimes(this.ruleForm.beginDate),
-                            stopTime: this.$getTimes(this.ruleForm.overDate),
-                            conditionAmount: this.ruleForm.full,
-                            discount:this.ruleForm.cut,
-                            couponType: this.ruleForm.contentType,
-                            couponName:this.ruleForm.name,
-                            needIntegral:this.ruleForm.need
-                        }]).then(res =>{
-                            console.log(res)
-                            if(res.code === 0){
-                                this.$message({
-                                    message:"添加成功",
-                                    type:"success"
-                                })
-                                this.ruleForm.name = "";
-                                this.ruleForm.number = "";
-                                this.ruleForm.need = "";
-                                this.ruleForm.beginDate = "";
-                                this.ruleForm.overDate = "";
-                                this.ruleForm.full = "";
-                                this.ruleForm.cut = "";
-                                this.dialogFormNewVisible = false
-                            }
-                        })
-                    }
+                    this.$post("coupon/add",[{
+                        amount: this.ruleForm.number,
+                        beginTime:this.$getTimes(this.ruleForm.beginDate),
+                        stopTime: this.$getTimes(this.ruleForm.overDate),
+                        conditionAmount: this.ruleForm.full,
+                        discount:this.ruleForm.cut,
+                        couponType: this.ruleForm.contentType,
+                        couponName:this.ruleForm.name,
+                        needIntegral:this.ruleForm.need
+                    }]).then(res =>{
+                        if(res.code === 0){
+                            this.$message({
+                                message:"添加成功",
+                                type:"success"
+                            })
+                            this.ruleForm.name = "";
+                            this.ruleForm.number = "";
+                            this.ruleForm.need = "";
+                            this.ruleForm.beginDate = "";
+                            this.ruleForm.overDate = "";
+                            this.ruleForm.full = "";
+                            this.ruleForm.cut = "";
+                            this.getLists();
+                            this.dialogVisible = false
+                        }
+                    })
                 } else {
                     alert(valid)
                     this.$message.error("請確認所填寫的數據")
@@ -239,25 +245,36 @@ export default {
             this.isShow = true;
         },
         // 刪除
-        delet(){
+        delet(val,index){
+            console.log(val,val.id)
             this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
             }).then(() => {
-            this.$message({
-                type: 'success',
-                message: '删除成功!'
-            });
+                this.$get("coupon/deleteOneSysCoupon",{
+                    couponId:val.id
+                }).then(res=>{
+                    if(res.code === 0){
+                        this.lists.splice(index,1)
+                         this.$message({
+                            type: 'success',
+                            message: '删除成功!'
+                        });
+                        this.getLists()
+                    }
+                })
+           
             }).catch(() => {
-            this.$message({
-                type: 'info',
-                message: '已取消删除'
-            });          
+                this.$message({
+                    type: 'info',
+                    message: '已取消删除'
+                });          
             });
         },
-        handleCurrentChange(){
-
+        handleCurrentChange(val){
+            this.currentPage = val;
+            this.getLists(this.currentPage)
         }
     },
  
@@ -295,13 +312,6 @@ export default {
         border-bottom:1px solid #ccc;
         box-sizing: border-box;
     }
-    .list img{
-        float: left;
-        width: 120px;
-        height: 120px;
-        margin-right: 30px;
-        border-radius: 6px;
-    }
     .list .left{
         float: left;
         width:340px;
@@ -317,9 +327,13 @@ export default {
         margin-top: 30px;
     }
     .list li:first-child h1{
+        width:230px;
         font-size: 16px;
         color: #333;
         font-weight: 700;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
     }
     .list li:first-child span{
         font-size: 12px;

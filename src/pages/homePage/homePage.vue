@@ -1,13 +1,16 @@
 <template>
     <div id="homePage">
         <el-container>
-            <el-header>
-                <h1>澳門到家</h1>
-                <ul>
+            <el-header style="border-bottom:1px solid #ccc">
+                <div class="logo">
+                    <img src="../../../static/logo.png" alt="">
+                    <h1>澳門到家</h1>
+                </div>
+                <ul style="width:300px">
                     <li class="admin" style="margin-right:30px">
                         <div class="headerName" @click="handleClick">
                             <img src="../../assets/images/header.jpg" alt="">
-                            <span>{{user.name}}</span>
+                            <span>{{userName}}</span>
                         </div>
                         <ul class="adminSpecial" v-show="isShow">
                             <li @click="update" >修改密碼</li>
@@ -45,6 +48,7 @@
                             <el-menu
                             :router="true"
                             unique-opened
+                            @select="handleSelect"
                             default-active="2"
                             class="el-menu-vertical-demo"
                             background-color="#2b3245"
@@ -126,7 +130,7 @@ export default {
     name:"homePage",
     data(){
         return{
-        
+            userName:"",
             isShow:false,
             show: false,
             dialogFormVisible:false,
@@ -134,9 +138,6 @@ export default {
                 oldPass: '',
                 newPass: '',
                 confirm: '',
-            },
-            user:{                                              //首頁展示的登錄用戶名
-                name:'黃大喵',
             },
             rules:{
                 oldPass:[
@@ -152,11 +153,12 @@ export default {
         }
     },
     mounted(){
-
-         this.show = sessionStorage.getItem('role') == 'true' ? true : false;
-      
+        this.show = sessionStorage.getItem('role') == 'true' ? true : false;
+        this.userName = JSON.parse(localStorage.getItem("userName"))
     },
     methods:{
+        handleSelect(index) {},
+
         //點擊頭像或名字處顯示
         handleClick(){
             this.isShow = true;
@@ -250,6 +252,14 @@ export default {
         background-color: #ddd;
     }
     /* 菜单头部 */
+    #homePage .logo{
+        width:150px;
+        display: flex;
+        justify-content: space-between;
+    }
+    #homePage .logo img{
+        margin-top: 25px;
+    }
     #homePage .el-header{
         width:100%;
         height: 90px !important;
@@ -265,6 +275,7 @@ export default {
     #homePage .el-header ul{
         height: 40px;
         display: flex;
+        justify-content: space-between;
         margin-top: 25px;
     }
     #homePage .el-header li{
@@ -291,6 +302,7 @@ export default {
         margin-right: 10px;
     }
     #homePage .headerName{
+        width:180px;
         position: relative;
     }
     #homePage .adminSpecial{

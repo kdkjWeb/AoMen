@@ -56,22 +56,25 @@ export default {
                    console.log(res)
                    if(res.code === 0){
                         let flag = res.data.roleList.includes('super_admin');
-                        
                         sessionStorage.setItem('role',flag)
                         sessionStorage.setItem("id",res.data.id)
                         localStorage.setItem("userName",JSON.stringify(this.userInfo.userName));
                         this.$router.push({
                             path:"/homePage",
-                            
                         })
+
+                        
                    }
+
                })
             }
-        }
+        },
+        
     },
    mounted(){
         this.userInfo.username = JSON.parse(localStorage.getItem('userName'));
-   }
+   },
+  
 }
 </script>
 

@@ -9,14 +9,14 @@
            <div class="integral_list" v-for="(item,index) in integralList" :key="index">
                <dl>
                    <dt>
-                       <img :src="item.imgSrc" alt="">
+                       <img :src="item.origin" alt="">
                    </dt>
-                   <dd class="title">{{item.title}}</dd>
-                   <dd>剩餘數量：<span>{{item.num}}</span></dd>
+                   <dd class="title">{{item.goodsName}}</dd>
+                   <dd>剩餘數量：<span>{{item.storeCount}}</span></dd>
                </dl>
                <div class="btn">
                     <el-button type="primary" @click="examine(item)">查看</el-button>
-                    <el-button type="danger" @click="deleted">刪除</el-button>
+                    <el-button type="danger" @click="deleted(item)">刪除</el-button>
                </div>
            </div>
        </div>
@@ -38,13 +38,19 @@
         <div class="upload">
             <span> <em style="color:red;margin-right:10px">*</em>圖片：</span>
             <el-upload
-            class="avatar-uploader"
-            action="https://jsonplaceholder.typicode.com/posts/"
-            :show-file-list="false"
-            :on-success="handleAvatarSuccess"
-            :before-upload="beforeAvatarUpload">
-            <img v-if="imageUrl" :src="imageUrl" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                ref="upLoad"
+                class="avatar-uploader"
+                action="http://192.168.20.50:8081/IntegralGoodsController/addIntegralGoods"
+                :show-file-list="true"
+                accept="image/jpeg,image/png,image/jpg"
+                name="file"
+                :data="data"
+                :auto-upload="false"
+                :with-credentials="true"
+                :on-success="handleAvatarSuccess"
+                :before-upload="beforeAvatarUpload">
+                <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
         </div>
         <el-form :model="form" label-position="right" label-width="120px" :rules="rules" ref="form">
@@ -59,11 +65,12 @@
             <el-form-item label="需要積分：" prop="integral">
                 <el-input v-model="form.integral"></el-input>
             </el-form-item>
+            <el-form-item>
+                <el-button @click="cancel">取 消</el-button>
+                    <el-button type="primary" @click="submitForm('form')">確 認</el-button>
+            </el-form-item>
         </el-form>
-        <div slot="footer" class="dialog-footer">
-            <el-button @click="cancel">取 消</el-button>
-            <el-button type="primary" @click="submitForm(form)">确 定</el-button>
-        </div>
+       
         </el-dialog>
        <!-- end彈出框 -->
     </div>
@@ -86,17 +93,7 @@ export default {
                 integral: ''
                 },
             title:"積分兌換設置",
-            integralList: [
-                {
-                    imgSrc: '../../../static/header.jpg',
-                    title: '僅需2萬積分兌換蘋果筆記本超級划算僅需2萬積分兌換蘋果筆記本超級划算',
-                    num: '100'
-                },{
-                    imgSrc: '../../../static/header.jpg',
-                    title: '僅需2萬積分兌換蘋果筆記本超級划算',
-                    num: '50'
-                }
-            ],
+            integralList: [],
             rules:{
                 name:[
                     { required: true, message: '请输入商品名稱', trigger: 'blur' },
@@ -110,35 +107,87 @@ export default {
             },
             currentPage: 1,
             pageSize:10,
-            total:null
+            total:null,
+            data:{
+                goodsName: "",
+                needIntegral: "",
+                storeCount: ""
+            }
         }
     },
+    mounted(){
+        this.getIntegral(this.currentPage)
+    },
     methods: {
+        // 獲取所有積分兌換列表
+        getIntegral(currentPage){
+            this.$get("IntegralGoodsController/getIntegralGoodsList",{
+                pageNum: this.currentPage,
+                pageSize: this.pageSize
+            }).then(res=>{
+                console.log(res)
+                if(res.code == 0){
+                    this.integralList = [];
+                    this.total = res.data.total;
+                    this.integralList = res.data.list;
+                }
+            })
+        },
         //新建
         add(){
             this.dialogFormVisible = true;
         },
-        submitForm(){
-            console.log("确定")
+        // 確認新建
+        submitForm(formName) {
+            this.$refs[formName].validate((valid) => {
+            if (valid) {
+                this.$refs.upLoad.submit();
+                setTimeout(()=>{
+                    this.dialogFormVisible = false;
+                    this.getIntegral()
+                },3000);
+            } else {
+                console.log('error submit!!');
+                return false;
+            }
+            });
         },
         //查看
         examine(val){
-            console.log(val)
+            console.log(val.id,val.origin)
             this.$router.push({
                 name: 'creditSiteDetails',
+                query:{
+                    id: val.id,
+                    img: val.origin
+                }
             })
         },
         //刪除
-        deleted(val){
+        deleted(val,index){
              this.$confirm('此操作將永久刪除該積分兌換活動, 是否繼續?', '提示', {
                 confirmButtonText: '確定',
                 cancelButtonText: '取消',
                 type: 'warning'
                 }).then(() => {
-                    this.$message({
-                        type: 'success',
-                        message: '刪除成功!'
-                    });
+                    console.log(val.id)
+                    this.$get("IntegralGoodsController/deleteOne",{
+                        goodsId:val.id
+                    }).then(res=>{
+                        console.log(res);
+                        if(res.code == 0){
+                            this.$message({
+                                type: 'success',
+                                message: '刪除成功!'
+                            })
+                            this.integralList.splice(index,1);
+                            this.getIntegral()
+                        }else{
+                            this.$message.error("刪除失敗")
+                        }
+                       
+                    })
+                   
                 }).catch(() => {
                     this.$message({
                         type: 'info',
@@ -151,29 +200,34 @@ export default {
             this.dialogFormVisible = false;
         },
         //彈出框的確認按鈕
-        handleCurrentChange(){},
-        // 上传图片
+        handleCurrentChange(val){
+            this.currentPage = val;
+            this.getIntegral(this.currentPage)
+        },
         handleAvatarSuccess(res, file) {
             this.imageUrl = URL.createObjectURL(file.raw);
         },
         beforeAvatarUpload(file) {
-            const isJPG = file.type === 'image/jpeg';
+            this.data.goodsName  = this.form.name;
+            this.data.needIntegral   = this.form.integral;
+            this.data.storeCount   = this.form.limit;
+            const isJPG = file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png';
             const isLt2M = file.size / 1024 / 1024 < 2;
-
             if (!isJPG) {
-            this.$message.error('上传头像图片只能是 JPG 格式!');
+            this.$message.error('上传头像图片只能是 JPG/PNG 格式!');
             }
             if (!isLt2M) {
             this.$message.error('上传头像图片大小不能超过 2MB!');
             }
             return isJPG && isLt2M;
-        }
+        },
+        
     }
 }
 </script>
 
 <style>
-  .avatar-uploader .el-upload {
+ .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
     border-radius: 6px;
     cursor: pointer;
@@ -186,14 +240,14 @@ export default {
   .avatar-uploader-icon {
     font-size: 28px;
     color: #8c939d;
-    width: 150px;
-    height: 150px;
-    line-height: 150px;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
     text-align: center;
   }
   .avatar {
-    width: 150px;
-    height: 150px;
+    width: 178px;
+    height: 178px;
     display: block;
   }
 </style>
@@ -248,6 +302,13 @@ export default {
     padding: 0 12px 0 0;
     text-align: right;
     box-sizing: border-box;
+    position: relative;
+}
+em{
+    position: absolute;
+    top:0;
+    left:55px;
+    z-index: 100;
 }
 .block{
     width: 100%;

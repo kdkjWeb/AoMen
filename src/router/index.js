@@ -15,6 +15,7 @@ export default new Router({
     },{
       path:"/homePage",
       name:'homePage',
+      redirect:"/userList",
       component: resolve => require(['@/pages/homePage/homePage.vue'],resolve),
       children:[{
         path:"/userList",

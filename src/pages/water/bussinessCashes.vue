@@ -15,6 +15,23 @@
                 :color="item.color"
                 :label="item.label">
                 </el-table-column>
+                <el-table-column
+                header-align = "center"
+                prop="AccountBalance"
+                label="賬戶餘額">
+                <template slot-scope="scope">
+                    <p style="color:red" v-show="isSuccess">{{scope.row.AccountBalance}}</p>
+                </template>
+                </el-table-column>
+                <el-table-column
+                header-align = "center"
+                prop="cashState"
+                label="提現狀態">
+                <template slot-scope="scope">
+                    <p style="color:green" v-show="isSuccess">提現成功</p>
+                    <p style="color:red" v-show="isFailed">提現失敗</p>
+                </template>
+                </el-table-column>
             </el-table>
             <div class="block">
                 <el-pagination
@@ -42,34 +59,32 @@ export default {
     data(){
         return{
             isShow:true,
+            isSuccess:true,
+            isFailed:false,
             title:"商家提現",
             placeholder:"訂單號/商品名/商家昵稱",
             tableData: [{
                    shopNumber: '1234',
                     bussinessAcount: '789',
                     AccountBalance: "2",
-                    cashState: "提現成功",
                     cashTime: "2018-07-26",
                     cashAmount: "60",
                 }, {
                    shopNumber: '1234',
                     bussinessAcount: '789',
                     AccountBalance: "2",
-                    cashState: "提現成功",
                     cashTime: "2018-07-26",
                     cashAmount: "60",
                 }, {
                    shopNumber: '1234',
                     bussinessAcount: '789',
                     AccountBalance: "2",
-                    cashState: "提現成功",
                     cashTime: "2018-07-26",
                     cashAmount: "60",
                 }, {
                     shopNumber: '1234',
                     bussinessAcount: '789',
                     AccountBalance: "2",
-                    cashState: "提現成功",
                     cashTime: "2018-07-26",
                     cashAmount: "60",
             }],
@@ -78,8 +93,6 @@ export default {
                 {prop:"shopNumber",label:"店鋪名稱",width:''},
                 {prop:"cashAmount",label:"提現金額",width:''},
                 {prop:"cashTime",label:"提現時間",width:''},
-                {prop:"AccountBalance",label:"賬戶餘額",width:'',color:"red"},
-                {prop:"cashState",label:"提現狀態",width:'',color:"green"}
             ],
             currentPage: 1,
             pageSize:10,
@@ -88,7 +101,8 @@ export default {
     },
     methods:{
         date(val){
-            console.log(val)
+            console.log(this.$getTimes(val) +" 23:59:59",)
+            console.log("按時間搜索")
         },
         search(val){
             console.log(val)

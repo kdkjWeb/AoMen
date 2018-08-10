@@ -8,6 +8,7 @@
         <div class="block" v-show="isShow" >
             <el-date-picker
             v-model="date"
+            editable
             type="daterange"
             range-separator="至"
             start-placeholder="开始日期"

@@ -49,8 +49,13 @@
             label="操作"
             width="200">
             <template slot-scope="scope">
-                <el-button @click="through(scope.row)" type="primary" round>通過</el-button>
-                <el-button @click="refuse(scope.row)" type="danger" round>拒絕</el-button>
+                <div v-show="normal">
+                    <el-button @click="through(scope.row)" type="success" round plain>通過</el-button>
+                    <el-button @click="refuse(scope.row)" type="danger" round plain>拒絕</el-button>
+                </div>
+                <el-button type="success" round v-show="pass" id="pass" v-if="scope.row.status == 1">已通過</el-button>
+                <el-button type="danger" round v-show="nopass" id="no" v-if="scope.row.status == 2">已拒絕</el-button>
+                
             </template>
             </el-table-column>
         </el-table>
@@ -111,7 +116,10 @@ export default {
             total:null,
             rules:{
                 desc:{required: true, message: '請輸入拒絕原因', trigger: 'blur'}
-            }
+            },
+            normal:true,
+            pass:false,
+            nopass:false
         }
     },
     mounted(){
@@ -165,7 +173,9 @@ export default {
                                 type: 'success',
                                 message: '申請成功!'
                             });
-                            this.getApplyList()
+                            this.getApplyList();
+                            this.normal = false;
+                            this.pass = true;
                         }
                     })
                 }).catch(() => {
@@ -195,6 +205,8 @@ export default {
                     this.form.desc = "";
                     this.dialogVisible = false;
                     this.getApplyList()
+                    this.normal = false;
+                    this.nopass = true;
                 }else{
                     this.$message.error("請填寫拒絕原因")
                 }
@@ -245,6 +257,9 @@ export default {
     .el-pagination .el-select .el-input .el-input__inner{
         height: 43px !important;
         font-size: 16px;
+    }
+    #pass,#no{
+        width:115px
     }
 </style>
 
