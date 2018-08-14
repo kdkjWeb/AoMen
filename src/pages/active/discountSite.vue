@@ -184,14 +184,18 @@ export default {
                     this.lists = [];
                     this.total = res.data.total;
                     this.lists = res.data.list;
+                    for(let i = 0;i<this.lists.length;i++){
+                        this.lists[i].beginTime = this.$getTimes(this.lists[i].beginTime);
+                        this.lists[i].stopTime = this.$getTimes(this.lists[i].stopTime);
+
                     // 把今天的時間分別與活動開始時間、結束時間做比較，從而判斷該活動的進行狀態
-                    for(let i = 0;i<res.data.list.length;i++){
+
                         if(this.$getTimes(myDate)< this.$getTimes(this.lists[i].beginTime)){
-                            this.$set(res.data.list[i],'isBegin',true)
+                            this.$set(this.lists[i],'isBegin',true)
                         }else if(this.$getTimes(myDate)>this.$getTimes(this.lists[i].stopTime)) {
-                            this.$set(res.data.list[i],'isOver',true)
+                            this.$set(this.lists[i],'isOver',true)
                         }else{
-                             this.$set(res.data.list[i],'isBegining',true)
+                             this.$set(this.lists[i],'isBegining',true)
                         }
                     }
                 }

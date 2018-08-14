@@ -35,7 +35,6 @@ export default {
            this.$emit('add')
         },
         save(){
-           console.log("保存")
            this.$emit("keep")
         }
     }

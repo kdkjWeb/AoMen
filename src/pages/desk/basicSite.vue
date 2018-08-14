@@ -102,6 +102,9 @@ export default {
                 pageSize:0
             }).then(res =>{
                 if(res.code == 0){
+                    this.lists[1].dynamicTags = []
+                    this.lists[0].dynamicTags = []
+                    
                     for(let i = 0;i < res.data.list.length; i++){
                         if(res.data.list[i].kind == "0"){
                             this.lists[1].dynamicTags.push(res.data.list[i])
@@ -143,6 +146,7 @@ export default {
                             type: 'success',
                             message: '删除成功!'
                         });
+                        this.getTypes()
                     }else{
                         this.$message.error("该数据已有用户在使用，不支持删除!")
                     }
@@ -168,12 +172,13 @@ export default {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
                     this.$refs.upLoad.submit();
-                    // this.$message({
-                    //     message:"新建成功",
-                    //     type:"success"
-                    // })
                     setTimeout(()=>{
-                         this.dialogFormVisible = false
+                        // this.$message({
+                        //     message:"新建成功",
+                        //     type:"success"
+                        // })
+                         this.dialogFormVisible = false;
+                         this.getTypes()
                     },3000)
                    
                 } else {

@@ -122,9 +122,8 @@ export default {
             })
         },
         //查看消費詳情
-         handleClick(row) {
+        handleClick(row) {
              this.id = row.id
-            console.log(row.id);
             this.$router.push({
                 name: 'userListDetails',
                 query:{
@@ -132,6 +131,7 @@ export default {
                 }
             })
         },
+        // 分頁
         handleCurrentChange(val){
             this.currentPage = val
             this.getUserList(this.currentPage)

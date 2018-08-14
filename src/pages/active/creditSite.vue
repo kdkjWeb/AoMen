@@ -41,7 +41,7 @@
                 ref="upLoad"
                 class="avatar-uploader"
                 action="http://192.168.20.50:8081/IntegralGoodsController/addIntegralGoods"
-                :show-file-list="true"
+                :show-file-list="false"
                 accept="image/jpeg,image/png,image/jpg"
                 name="file"
                 :data="data"
@@ -51,6 +51,7 @@
                 :before-upload="beforeAvatarUpload">
                 <img v-if="imageUrl" :src="imageUrl" class="avatar">
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                <div v-show="isComfirm"><p style="color:red">點擊確認按鈕后方可顯示</p></div>
             </el-upload>
         </div>
         <el-form :model="form" label-position="right" label-width="120px" :rules="rules" ref="form">
@@ -85,6 +86,7 @@ export default {
     },
     data(){
         return{
+            isComfirm:true,
             imageUrl: '',
             dialogFormVisible: false,
             form: {
@@ -146,6 +148,7 @@ export default {
                     this.dialogFormVisible = false;
                     this.getIntegral()
                 },3000);
+                this.isComfirm = false;
             } else {
                 console.log('error submit!!');
                 return false;

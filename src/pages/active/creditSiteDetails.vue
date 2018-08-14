@@ -12,14 +12,17 @@
                 <dd><span>{{item.needIntegral}}</span></dd>
             </dl>
         </div>
-        <div class="userList" v-for="(user,index) in users" :key="index">
-            <ul >
+        <div class="userList" v-for="(user,index) in users" :key="index" v-if="Object.keys(user).length > 0">
+            <ul>
                 <li>用戶賬號：<span>{{user.userId?user.userId:"暫無數據"}}</span></li>
                 <li>昵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;稱：<span>{{user.nickname?user.nickname:"暫無數據"}}</span></li>
                 <li>聯繫人：<span>{{user.receiveName?user.receiveName:"暫無數據"}}</span></li>
                 <li>聯繫方式：<span>{{user.receivePhone?user.receivePhone:"暫無數據"}}</span></li>
                 <li>聯繫地址：<span>{{user.receiveAddress?user.receiveAddress:"暫無數據"}}</span></li>
             </ul>
+        </div>
+        <div style="width:100%;height:100px;background-color:#fff;" v-else>
+            <p style="text-align:center;line-height:100px">此商品暫無用戶兌換</p>
         </div>
         <div class="block">
                 <el-pagination
@@ -114,6 +117,7 @@ export default {
     margin:auto;
     display: flex;
     flex-wrap: wrap;
+     
     padding: 30px;
     box-sizing:border-box;
     border-bottom:1px solid #ccc;

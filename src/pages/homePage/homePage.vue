@@ -180,7 +180,6 @@ export default {
                     newPassword: this.ruleForm.newPass,
                     rePassword: this.ruleForm.confirm
                 }).then(res =>{
-                    console.log(res)
                     if(res.code === 0){
                         setTimeout(()=>{
                             this.$message({
@@ -313,10 +312,9 @@ export default {
         flex-direction: column;
     }
     #homePage .adminSpecial{
-        width:100px;
+        width:200px;
     }
     #homePage .adminSpecial li{
-        
         width: 100%;
         height: 100%;
         font-size: 14px;

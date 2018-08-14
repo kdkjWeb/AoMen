@@ -19,12 +19,12 @@
                 :width="item.width">
                 </el-table-column>
                  <el-table-column
-                prop="orderStatus"
+                prop="status"
                 header-align = "center"
                 label="訂單狀態">
                 <template slot-scope="scope">
-                    <p style="color:red;text-decoration:underline;">未處理</p>
-                    <p>已處理</p>
+                    <p style="color:red;text-decoration:underline;" v-if="scope.row.status == 4">未處理</p>
+                    <p v-if="scope.row.status == 5">已處理</p>
                 </template>
                 </el-table-column>
                 <el-table-column
@@ -70,136 +70,70 @@ export default {
             total:null,
             tableList:[
                 {prop:'orderNum', label: '訂單號', width: ''},
-                {prop:'productName', label: '商品名稱', width: ''},
-                {prop:'univalent', label: '商品單價', width: ''},
-                {prop: 'byUser', label: '購買用戶', width: ''},
-                {prop: 'byNum', label: '購買數量', width: ''},
-                {prop: 'allMoney', label: '總金額', width: ''},
-                {prop: 'byTime', label: '購買時間', width: ''},
-                {prop: 'busNickname', label: '商家暱稱', width: ''},
+                {prop:'goodsName', label: '商品名稱', width: ''},
+                {prop:'unitPrice', label: '商品單價', width: ''},
+                {prop: 'buyer', label: '購買用戶', width: ''},
+                {prop: 'amount', label: '購買數量', width: ''},
+                {prop: 'realPrice', label: '總金額', width: ''},
+                {prop: 'paidTime', label: '購買時間', width: ''},
+                {prop: 'sellers', label: '商家暱稱', width: ''},
             ],
-            tableData: [
-                {
-                    orderNum: '123456',
-                    productName: '王者榮耀',
-                    univalent: '23',
-                    byUser: '隔壁老王',
-                    byNum: '5',
-                    allMoney: '115',
-                    byTime: '2018-11-12',
-                    busNickname: '猜猜我是誰',
-                    orderStatus: '已處理'
-                },{
-                    orderNum: '123456',
-                    productName: '王者榮耀',
-                    univalent: '23',
-                    byUser: '隔壁老王',
-                    byNum: '5',
-                    allMoney: '115',
-                    byTime: '2018-11-12',
-                    busNickname: '猜猜我是誰',
-                    orderStatus: '已處理'
-                },{
-                    orderNum: '123456',
-                    productName: '王者榮耀',
-                    univalent: '23',
-                    byUser: '隔壁老王',
-                    byNum: '5',
-                    allMoney: '115',
-                    byTime: '2018-11-12',
-                    busNickname: '猜猜我是誰',
-                    orderStatus: '已處理'
-                },{
-                    orderNum: '123456',
-                    productName: '王者榮耀',
-                    univalent: '23',
-                    byUser: '隔壁老王',
-                    byNum: '5',
-                    allMoney: '115',
-                    byTime: '2018-11-12',
-                    busNickname: '猜猜我是誰',
-                    orderStatus: '已處理'
-                },{
-                    orderNum: '123456',
-                    productName: '王者榮耀',
-                    univalent: '23',
-                    byUser: '隔壁老王',
-                    byNum: '5',
-                    allMoney: '115',
-                    byTime: '2018-11-12',
-                    busNickname: '猜猜我是誰',
-                    orderStatus: '已處理'
-                },{
-                    orderNum: '123456',
-                    productName: '王者榮耀',
-                    univalent: '23',
-                    byUser: '隔壁老王',
-                    byNum: '5',
-                    allMoney: '115',
-                    byTime: '2018-11-12',
-                    busNickname: '猜猜我是誰',
-                    orderStatus: '已處理'
-                },{
-                    orderNum: '123456',
-                    productName: '王者榮耀',
-                    univalent: '23',
-                    byUser: '隔壁老王',
-                    byNum: '5',
-                    allMoney: '115',
-                    byTime: '2018-11-12',
-                    busNickname: '猜猜我是誰',
-                    orderStatus: '已處理'
-                },{
-                    orderNum: '123456',
-                    productName: '王者榮耀',
-                    univalent: '23',
-                    byUser: '隔壁老王',
-                    byNum: '5',
-                    allMoney: '115',
-                    byTime: '2018-11-12',
-                    busNickname: '猜猜我是誰',
-                    orderStatus: '已處理'
-                },{
-                    orderNum: '123456',
-                    productName: '王者榮耀',
-                    univalent: '23',
-                    byUser: '隔壁老王',
-                    byNum: '5',
-                    allMoney: '115',
-                    byTime: '2018-11-12',
-                    busNickname: '猜猜我是誰',
-                    orderStatus: '已處理'
-                },{
-                    orderNum: '123456',
-                    productName: '王者榮耀',
-                    univalent: '23',
-                    byUser: '隔壁老王',
-                    byNum: '5',
-                    allMoney: '115',
-                    byTime: '2018-11-12',
-                    busNickname: '猜猜我是誰',
-                    orderStatus: '已處理'
-                },{
-                    orderNum: '123456',
-                    productName: '王者榮耀',
-                    univalent: '23',
-                    byUser: '隔壁老王',
-                    byNum: '5',
-                    allMoney: '115',
-                    byTime: '2018-11-12',
-                    busNickname: '猜猜我是誰',
-                    orderStatus: '已處理'
-                }]
+            tableData: []
         }
     },
+    mounted(){
+        this.getRefund(this.currentPage)
+    },
     methods:{
+        // 獲取所有退款訂單
+        getRefund(currentPage){
+            this.$get("orderForm/queryRefundTrade",{
+                // val: this.val,
+                pageNum: this.currentPage,
+                pageSize: this.pageSize
+            }).then(res => {
+                // console.log(res);
+                if(res.code == 0){
+                    this.tableData = [];
+                    this.total = res.data.total;
+                    this.tableData = res.data.list;
+                }
+            })
+        },
         //選擇時間
         date(val){
-            console.log(val)
+            console.log(this.$getTimes(val[0]),this.$getTimes(val[1]));
+            this.$get("orderForm/queryRefundTrade",{
+                startTime: this.$getTimes(val[0]),
+                endTime: this.$getTimes(val[1]),
+                pageNum: this.currentPage,
+                pageSize: this.pageSize
+            }).then(res => {
+                console.log(res)
+                if(res.code == 0){
+                    this.tableData = [];
+                    this.total = res.data.total;
+                    this.tableData = res.data.list;
+                }
+            })
+           
         },
         //點擊搜索按鈕
         search(val){
-            console.log(val)
+            console.log(val);
+            this.$get("orderForm/queryRefundTrade",{
+                val: val,
+                pageNum: this.currentPage,
+                pageSize: this.pageSize
+            }).then(res=>{
+                console.log(res);
+                if(res.code == 0){
+                    this.tableData = [];
+                    this.total = res.data.total;
+                    this.tableData = res.data.list;
+                }
+            })
+            
         },
         //點擊查看
         handleClick(row){
@@ -207,7 +141,9 @@ export default {
                 path:"/reBackOrderDetail"
             })
         },
-        handleCurrentChange(){
+        handleCurrentChange(val){
+            this.currentPage = val;
+            this.getRefund(this.currentPage)
             console.log("分頁")
         }
     }

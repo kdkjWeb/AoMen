@@ -19,13 +19,12 @@
                 prop="detail"
                 label="店鋪詳情"
                 width="200px">
-                <template slot-scope="scope"  v-show = "isShow"  class="handle">
+                <template slot-scope="scope" class="handle">
                     <div>
-                        <el-button round id="continue" type="success">解封</el-button>
-                        <el-button round type="danger"  v-if="isShow == false">停封</el-button>
+                        <el-button round id="continue" type="success" v-show = "isDeblock" @click="deblock(scope.row)">解封</el-button>
+                        <el-button round type="danger" @click="stop(scope.row)" v-show = "isStop">停封</el-button>
                         <el-button round @click="look(scope.row)">查看</el-button>
                     </div>
-                    
                 </template>
                 </el-table-column>
             </el-table>
@@ -46,18 +45,17 @@
 
 <script>
 import searchBar from "./../../components/searchBar.vue"
-
 export default {
-
     name:"bussinessList",
     components:{
-        searchBar,
+        searchBar
     },
     data(){
         return{
             title:"商家列表",
             placeholder:"請輸入用戶帳號",
-            isShow:true,
+            isDeblock:false,
+            isStop:true,
             currentPage:1,
             pageSize:10,
             total:null,
@@ -84,7 +82,6 @@ export default {
                 pageNum: this.currentPage,
                 pageSize: this.pageSize
             }).then(res=>{
-                console.log(res)
                 if(res.code === 0){
                     this.tableData = [];
                     this.total = res.data.total;
@@ -103,7 +100,6 @@ export default {
                 pageNum: this.currentPage,
                 pageSize: this.pageSize
             }).then(res=>{
-                console.log(res)
                 if(res.code === 0){
                     this.tableData = [];
                     this.total = res.data.total;
@@ -117,15 +113,70 @@ export default {
         },
         // 查看
         look(row){
-            console.log(row)
             this.id = row.id
-            console.log(row.id)
             this.$router.push({
                 path:"/bussinessDetail",
                 query:{
-                    id:this.id
+                    id: this.id,
                 }
             })
+        },
+        // 停封
+        stop(val){
+            this.$confirm('此操作將會使商家處於停封狀態, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.$post("shop/deactivationAndUnsealing?shopId=" + val.id +"&yesOrNo=" + true).then(res=>{
+                    console.log(res);
+                    if(res.code == 0){
+                        this.$message({
+                            type: 'success',
+                            message: '已成功將該商家停封!'
+                        });
+                        this.isDeblock = true;
+                        this.isStop = false;
+                        this.getBussinessList()
+                    }else{
+                        this.$message.error("未能將該商家停封，請注意檢查！")
+                    }
+                })
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '已取消對該商家的停封'
+                });          
+            });
+        },
+        // 解封
+        deblock(val){
+            this.$confirm('此操作將會使商家處於解封狀態, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                console.log(val.id)
+                this.$post("shop/deactivationAndUnsealing?shopId=" + val.id +"&yesOrNo=" + false).then(res=>{
+                    console.log(res);
+                    if(res.code == 0){
+                        this.$message({
+                            type: 'success',
+                            message: '已成功將該商家解封!'
+                        });
+                        this.isDeblock = false;
+                        this.isStop = true;
+                        this.getBussinessList()
+                    }else{
+                        this.$message.error("未能將該商家解封，請注意檢查！")
+                    }
+                })
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '已取消對該商家的解封'
+                });          
+            });
         },
         // 分頁
         handleCurrentChange(val){

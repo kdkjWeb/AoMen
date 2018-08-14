@@ -1,7 +1,7 @@
 <template>
     <div class="userDetails">
         <!-- 返回+查詢 -->
-        <goBack  :placeholder="placeholder" @search="search" :isShow="true"></goBack>
+        <goBack  :placeholder="placeholder"></goBack>
         <!-- 返回+查詢 -->
 
         <!-- start 表格 -->
@@ -17,6 +17,30 @@
                 :prop="item.prop"
                 :label="item.label"
                 :width="item.width">
+                </el-table-column>
+                <el-table-column
+                header-align = "center"
+                prop="couponType "
+                label="優惠類型">
+                    <template slot-scope="scope">
+                        <p v-if="scope.row.couponType == 0">無</p>
+                        <p v-if="scope.row.couponType == 1">直接滿減</p>
+                        <p v-if="scope.row.couponType == 2">直接折扣</p>
+                        <p v-if="scope.row.couponType == 3">滿減領取</p>
+                        <p v-if="scope.row.couponType == 4">滿減優惠券（平台）</p>
+                        <p v-if="scope.row.couponType == 5">直接滿減優惠券（平台）</p>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                header-align = "center"
+                prop="status"
+                label="訂單狀態">
+                    <template slot-scope="scope">
+                        <p v-if="scope.row.status == 6">已完結</p>
+                        <p v-if="scope.row.status == 1 || scope.row.status == 2 || scope.row.status == 3">保護期</p>
+                        <p v-if="scope.row.status == 5">已退款</p>
+                        <p v-if="scope.row.status == 4">申請退款中</p>
+                    </template>
                 </el-table-column>
             </el-table>
             <div class="block">
@@ -47,164 +71,44 @@ export default {
             pageSize:10,
             total:null,
             tableList:[
-                {prop:'byTime', label: '購買時間', width: ''},
+                {prop:'paidTime', label: '購買時間', width: ''},
                 {prop:'orderNum', label: '訂單號', width: ''},
-                {prop:'productName', label: '商品名稱', width: ''},
-                {prop:'univalent', label: '單價', width: ''},
-                {prop:'offerType', label: '優惠類型', width: ''},
-                {prop:'byNum', label: '購買數量', width: ''},
-                {prop:'cope', label: '應付金額', width: ''},
-                {prop:'actuallyPaid', label: '實付金額', width: ''},
-                {prop:'orderStatus', label: '訂單狀態', width: ''}
+                {prop:'goodsName', label: '商品名稱', width: ''},
+                {prop:'unitPrice', label: '單價', width: ''},
+                {prop:'amount', label: '購買數量', width: ''},
+                {prop:'totalPrice', label: '應付金額', width: ''},
+                {prop:'realPrice', label: '實付金額', width: ''},
             ],
-            tableData: [
-                {
-                    byTime: '2018-11-12',
-                    orderNum: '123456',
-                    productName: '王者榮耀',
-                    univalent: '23',
-                    offerType: '無',
-                    byNum: '5',
-                    cope: '115',
-                    actuallyPaid: '115',
-                    orderStatus: '已完結'
-                },{
-                    byTime: '2018-11-12',
-                    orderNum: '123456',
-                    productName: '王者榮耀',
-                    univalent: '23',
-                    offerType: '無',
-                    byNum: '5',
-                    cope: '115',
-                    actuallyPaid: '115',
-                    orderStatus: '已完結'
-                },{
-                    byTime: '2018-11-12',
-                    orderNum: '123456',
-                    productName: '王者榮耀',
-                    univalent: '23',
-                    offerType: '無',
-                    byNum: '5',
-                    cope: '115',
-                    actuallyPaid: '115',
-                    orderStatus: '已完結'
-                },{
-                    byTime: '2018-11-12',
-                    orderNum: '123456',
-                    productName: '王者榮耀',
-                    univalent: '23',
-                    offerType: '無',
-                    byNum: '5',
-                    cope: '115',
-                    actuallyPaid: '115',
-                    orderStatus: '已完結'
-                },{
-                    byTime: '2018-11-12',
-                    orderNum: '123456',
-                    productName: '王者榮耀',
-                    univalent: '23',
-                    offerType: '無',
-                    byNum: '5',
-                    cope: '115',
-                    actuallyPaid: '115',
-                    orderStatus: '已完結'
-                },{
-                    byTime: '2018-11-12',
-                    orderNum: '123456',
-                    productName: '王者榮耀',
-                    univalent: '23',
-                    offerType: '無',
-                    byNum: '5',
-                    cope: '115',
-                    actuallyPaid: '115',
-                    orderStatus: '已完結'
-                },{
-                    byTime: '2018-11-12',
-                    orderNum: '123456',
-                    productName: '王者榮耀',
-                    univalent: '23',
-                    offerType: '無',
-                    byNum: '5',
-                    cope: '115',
-                    actuallyPaid: '115',
-                    orderStatus: '已完結'
-                },{
-                    byTime: '2018-11-12',
-                    orderNum: '123456',
-                    productName: '王者榮耀',
-                    univalent: '23',
-                    offerType: '無',
-                    byNum: '5',
-                    cope: '115',
-                    actuallyPaid: '115',
-                    orderStatus: '已完結'
-                },{
-                    byTime: '2018-11-12',
-                    orderNum: '123456',
-                    productName: '王者榮耀',
-                    univalent: '23',
-                    offerType: '無',
-                    byNum: '5',
-                    cope: '115',
-                    actuallyPaid: '115',
-                    orderStatus: '已完結'
-                },{
-                    byTime: '2018-11-12',
-                    orderNum: '123456',
-                    productName: '王者榮耀',
-                    univalent: '23',
-                    offerType: '無',
-                    byNum: '5',
-                    cope: '115',
-                    actuallyPaid: '115',
-                    orderStatus: '已完結'
-                },{
-                    byTime: '2018-11-12',
-                    orderNum: '123456',
-                    productName: '王者榮耀',
-                    univalent: '23',
-                    offerType: '無',
-                    byNum: '5',
-                    cope: '115',
-                    actuallyPaid: '115',
-                    orderStatus: '已完結'
-                },{
-                    byTime: '2018-11-12',
-                    orderNum: '123456',
-                    productName: '王者榮耀',
-                    univalent: '23',
-                    offerType: '無',
-                    byNum: '5',
-                    cope: '115',
-                    actuallyPaid: '115',
-                    orderStatus: '已完結'
-                },{
-                    byTime: '2018-11-12',
-                    orderNum: '123456',
-                    productName: '王者榮耀',
-                    univalent: '23',
-                    offerType: '無',
-                    byNum: '5',
-                    cope: '115',
-                    actuallyPaid: '115',
-                    orderStatus: '已完結'
-                }
-            ]
+            tableData: []
         }
     },
     mounted(){
-
+        console.log(this.$route.query.id)
+        this.getDetailByUser(this.$route.query.id,this.currentPage)
     },
     methods:{
         // 獲取用戶詳情列表
-        getUserDatailList(){
-
+        getDetailByUser(currentPage,id){
+            this.$get("orderForm/queryUserOrderList",{
+                userId: this.$route.query.id,
+                pageNum: this.currentPage,
+                pageSize: this.pageSize
+            }).then(res=>{
+                console.log(res);
+                if(res.code == 0){
+                    this.tableData = [];
+                    this.total = res.data.total;
+                    this.tableData = res.data.list;
+                    for(var i = 0;i<this.tableData.length;i++) {
+                        this.tableData[i].paidTime = this.$getTimes(this.tableData[i].paidTime);
+                    }
+                }
+            })
         },
-        search(val){
-            console.log(val)
-        },
-        handleCurrentChange(){
-            
+        // 分頁
+        handleCurrentChange(val){
+            this.currentPage = val;
+            this.getDetailByUser(this.currentPage)
         }
     }
 }

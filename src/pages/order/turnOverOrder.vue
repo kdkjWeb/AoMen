@@ -5,7 +5,6 @@
             <el-table
                 :data="tableData"
                 border
-                height="600"
                 style="width: 100%">
                 <el-table-column
                 header-align = "center"
@@ -13,6 +12,17 @@
                 :key="index"
                 :prop="item.prop"
                 :label="item.label">
+                </el-table-column>
+                <el-table-column
+                header-align = "center"
+                prop="status"
+                label="訂單狀態">
+                    <template slot-scope="scope">
+                        <p v-if="scope.row.status == 6">已完結</p>
+                        <p v-if="scope.row.status == 1 || scope.row.status == 2 || scope.row.status == 3">保護期</p>
+                        <p v-if="scope.row.status == 5">已退款</p>
+                        <p v-if="scope.row.status == 4">申請退款中</p>
+                    </template>
                 </el-table-column>
             </el-table>
             <div class="block">
@@ -43,77 +53,73 @@ export default {
             isShow:true,
             title:"已成交訂單",
             placeholder:"訂單號/商品名/商家昵稱",
-            tableData: [{
-                    orderNumber: '1234',
-                    shopName: '星巴克',
-                    commodityName: '美式咖啡',
-                    commodityPrice: '12',
-                    PurchaseUser: "黃大喵",
-                    PurchaseNumber: "5",
-                    PurchaseTime: "2018-07-26",
-                    bussinessName: "星巴克",
-                    orderState: "已完結",
-                    allMoney: "60"
-                }, {
-                    orderNumber: '1234',
-                    shopName: '星巴克',
-                    commodityName: '美式咖啡',
-                    commodityPrice: '12',
-                    PurchaseUser: "黃大喵",
-                    PurchaseNumber: "5",
-                    PurchaseTime: "2018-07-26",
-                    bussinessName: "星巴克",
-                    orderState: "已完結",
-                    allMoney: "60"
-                }, {
-                    orderNumber: '1234',
-                    shopName: '星巴克',
-                    commodityName: '美式咖啡',
-                    commodityPrice: '12',
-                    PurchaseUser: "黃大喵",
-                    PurchaseNumber: "5",
-                    PurchaseTime: "2018-07-26",
-                    bussinessName: "星巴克",
-                    orderState: "已完結",
-                    allMoney: "60"
-                }, {
-                    orderNumber: '1234',
-                    shopName: '星巴克',
-                    commodityName: '美式咖啡',
-                    commodityPrice: '12',
-                    PurchaseUser: "黃大喵",
-                    PurchaseNumber: "5",
-                    PurchaseTime: "2018-07-26",
-                    bussinessName: "星巴克",
-                    orderState: "已完結",
-                    allMoney: "60"
-            }],
+            tableData: [],
             tableList:[
-                {prop:"orderNumber",label:"訂單號",width:''},
-                {prop:"commodityName",label:"商品名稱",width:''},
-                {prop:"commodityPrice",label:"商品單價",width:''},
-                {prop:"PurchaseUser",label:"購買用戶",width:''},
-                {prop:"PurchaseNumber",label:"購買數量",width:''},
-                {prop:"allMoney",label:"總金額",width:''},
-                {prop:"PurchaseTime",label:"購買時間",width:''},
-                {prop:"bussinessName",label:"商家昵稱",width:''},
+                {prop:"orderNum",label:"訂單號",width:''},
+                {prop:"goodsName",label:"商品名稱",width:''},
+                {prop:"unitPrice",label:"商品單價",width:''},
+                {prop:"buyer",label:"購買用戶",width:''},
+                {prop:"amount",label:"購買數量",width:''},
+                {prop:"realPrice",label:"總金額",width:''},
+                {prop:"paidTime",label:"購買時間",width:''},
+                {prop:"sellers",label:"商家昵稱",width:''},
                 {prop:"shopName",label:"店鋪昵稱",width:''},
-                {prop:"orderState",label:"訂單狀態",width:''}
             ],
             currentPage: 1,
             pageSize:10,
             total:null
         }
     },
+    mounted(){
+        this.getOrderBySuccess(this.currentPage)
+    },
     methods:{
+        // 獲取已成交訂單列表
+        getOrderBySuccess(currentPage){
+            this.$get("orderForm/queryExecutedOrder",{
+                pageNum:this.currentPage,
+                pageSize: this.pageSize
+            }).then(res=>{
+                if(res.code == 0){
+                    this.tableData = [];
+                    this.total = res.data.total;
+                    this.tableData = res.data.list;
+                }
+            })
+        },
+        // 按時間查詢
         date(val){
-            console.log(val)
+            this.$get("orderForm/queryExecutedOrder",{
+                startTime: this.$getTimes(val[0]),
+                endTime: this.$getTimes(val[1]),
+                pageNum:this.currentPage,
+                pageSize: this.pageSize
+            }).then(res=>{
+                if(res.code == 0){
+                    this.tableData = [];
+                    this.total = res.data.total;
+                    this.tableData = res.data.list;
+                }
+            })
         },
+        // 查詢
         search(val){
-            console.log(val)
+            this.$get("orderForm/queryExecutedOrder",{
+                val:val,
+                pageNum:this.currentPage,
+                pageSize: this.pageSize
+            }).then(res=>{
+                if(res.code == 0){
+                    this.tableData = [];
+                    this.total = res.data.total;
+                    this.tableData = res.data.list;
+                }
+            })
         },
+        // 分頁
         handleCurrentChange(val){
-            console.log("分頁")
+            this.currentPage = val;
+            this.getOrderBySuccess(this.currentPage);
         }
     }
 }

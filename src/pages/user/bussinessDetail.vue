@@ -1,11 +1,11 @@
 <template>
     <div>
         <!-- 返回+查詢 -->
-        <goBack  :placeholder="placeholder" @search="search" :isShow="true"></goBack>
+        <goBack  :placeholder="placeholder"></goBack>
         <ul>
-            <li>聯係人：<span>12345</span></li>
-            <li>聯係電話：<span>13255555555</span></li>
-            <li>聯係地址：<span>四川省成都市天府三街112號</span></li>
+            <li>聯係人：<span>{{user.linkman?user.linkman:"暫無數據"}}</span></li>
+            <li>聯係電話：<span>{{user.phone?user.phone:"暫無數據"}}</span></li>
+            <li>聯係地址：<span>{{user.shopAddress?user.shopAddress:"暫無數據"}}</span></li>
         </ul>
         <!-- 返回+查詢 -->
         <div class="table">
@@ -13,14 +13,23 @@
             <el-table
                 :data="tableData"
                 border
-                height="600"
                 style="width: 100%">
                 <el-table-column
                 header-align = "center"
-                label="店鋪圖片">
+                label="商品圖片">
                 <template slot-scope="scope">
-                <img style="width:80px; height:80px" :src="scope.row.shopImg" alt="">
+                    <img style="width:120px; height:80px" :src="scope.row.origin" alt="">
                 </template>
+                </el-table-column>
+                <el-table-column
+                prop="goodsName"
+                header-align = "center"
+                label="商品名称">              
+                </el-table-column>
+                <el-table-column
+                prop="shopStyle"
+                header-align = "center"
+                label="商品类型">
                 </el-table-column>
                 <el-table-column
                 header-align = "center"
@@ -29,6 +38,7 @@
                 :prop="item.prop"
                 :label="item.label">
                 </el-table-column>
+                
             </el-table>
         <!-- 表格 -->
         <!-- 分頁 -->
@@ -57,53 +67,47 @@ export default {
     data(){
         return{
             placeholder:"請輸入用戶帳號",
-            tableData: [{
-                    shopImg: '../../../static/header.jpg',
-                    shopName: '上海',
-                    shopStyle: '普陀区',
-                    creatTime: '上海市普陀区金沙江路 1518 弄',
-                    number: "200333",
-                    allMoney: "0"
-                }, {
-                    shopImg: '../../../static/header.jpg',
-                    shopName: '上海',
-                    shopStyle: '普陀区',
-                    creatTime: '上海市普陀区金沙江路 1518 弄',
-                    number: "200333",
-                    allMoney: "0"
-                }, {
-                    shopImg: '../../../static/header.jpg',
-                    shopName: '上海',
-                    shopStyle: '普陀区',
-                    creatTime: '上海市普陀区金沙江路 1518 弄',
-                    number: "200333",
-                    allMoney: "0"
-                }, {
-                    shopImg: '../../../static/header.jpg',
-                    shopName: '上海',
-                    shopStyle: '普陀区',
-                    creatTime: '上海市普陀区金沙江路 1518 弄',
-                    number: "200333",
-                    allMoney: "0"
-            }],
+            tableData: [],
             tableList:[
-                {prop:"shopName",label:"店鋪名稱",width:''},
-                {prop:"shopStyle",label:"店鋪類型",width:''},
-                {prop:"creatTime",label:"創建時間",width:''},
-                {prop:"number",label:"成交數量",width:''},
-                {prop:"allMoney",label:"總營業額",width:''}
+                {prop:"createTime",label:"創建時間",width:''},
+                {prop:"num",label:"成交數量",width:''},
+                {prop:"amount",label:"總營業額",width:''}
             ],
+            user:[],
             currentPage: 1,
             pageSize:10,
             total:null
         }
     },
+    mounted(){
+        console.log(this.$route.query.id)
+        this.getDetailByBussiness(this.$route.query.id,this.currentPage)
+    },
     methods:{
-        search(val){
-            console.log(val)
+        // 獲取商家詳情列表
+        getDetailByBussiness(id){
+           this.$get("shop/s_goods",{
+               shopId: this.$route.query.id,
+               pageNum: this.currentPage,
+               pageSize: this.pageSize
+           }).then(res=>{
+               console.log(res);
+               if(res.code == 0){
+                   this.user = [];
+                   this.tableData = [];
+                   this.user.linkman = res.linkman;
+                   this.user.phone = res.phone;
+                   this.user.shopAddress = res.shopAddress;
+                   this.tableData = res.data.list;
+                   this.total = res.data.total;
+               }
+           })
         },
-        handleCurrentChange(){
-            
+        // 分頁
+        handleCurrentChange(val){
+            console.log("分頁");
+            this.currentPage = val;
+            this.getDetailByBussiness(this.currentPage)
         }
     }
 }

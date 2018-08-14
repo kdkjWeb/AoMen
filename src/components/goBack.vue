@@ -2,10 +2,10 @@
     <div class="searchBar">
         <el-button round @click="goBack"><i class="el-icon-arrow-left"></i>返回</el-button>
         <el-button type="warning" round @click="newBuild" id="add"  v-if="isAdd"> <i class="el-icon-plus"></i> 新建</el-button>
-        <div class="search" v-show="isShow">
+        <!-- <div class="search" v-show="isShow">
             <input type="text" v-model="inputText" :placeholder="placeholder">
             <span class="iconfont icon-search-o" @click="search"></span>
-        </div>
+        </div> -->
     </div>
 </template>
 
