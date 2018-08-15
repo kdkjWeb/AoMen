@@ -26,11 +26,11 @@
                 header-align = "center"
                 label="商品名称">              
                 </el-table-column>
-                <el-table-column
+                <!-- <el-table-column
                 prop="shopStyle"
                 header-align = "center"
                 label="商品类型">
-                </el-table-column>
+                </el-table-column> -->
                 <el-table-column
                 header-align = "center"
                 v-for="(item,index) in tableList"

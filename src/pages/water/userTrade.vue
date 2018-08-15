@@ -8,77 +8,71 @@
                 height="600"
                 style="width: 100%">
                 <el-table-column
-                prop="orderNumber"
+                prop="orderNum"
                 header-align = "center"
                 label="訂單號">
                 </el-table-column>
                 <el-table-column
-                prop="PurchaseUser"
+                prop="buyer"
                 header-align = "center"
-                label="購買用戶"
-                :formatter="formatter">
+                label="購買用戶">
                 </el-table-column>
                 <el-table-column
-                prop="commodityName"
+                prop="goodsName"
                 header-align = "center"
                 label="商品名稱">
                 </el-table-column>
                 <el-table-column
-                prop="bussinessAcount"
+                prop="shopName"
                 header-align = "center"
-                label="商品賬號"
-                :formatter="formatter">
+                label="商家賬號">
                 </el-table-column>
                 <el-table-column
-                prop="allMoney"
                 header-align = "center"
                 label="總金額">
                 <template slot-scope="scope">
-                    <p style="color:red">{{scope.row.allMoney}}</p>
+                    <p style="color:red">{{scope.row.totalPrice}}</p>
                 </template>
                 </el-table-column>
                 <el-table-column
-                prop="PreferentialType"
                 header-align = "center"
-                label="優惠類型"
-                :formatter="formatter">
+                label="優惠類型">
                 <template slot-scope="scope">
-                    <p>無</p>
-                    <p>積分減免</p>
-                    <p>打折券</p>
+                    <p>{{scope.row.coupons}}</p>
+                    <!-- <p>積分減免</p>
+                    <p>打折券</p> -->
                 </template>
                 </el-table-column>
                 <el-table-column
-                prop="DiscountedAmount"
+                prop="discountPrice"
                 header-align = "center"
                 label="打折金額">
                 </el-table-column>
                 <el-table-column
-                prop="factPay"
+                prop="realPrice"
                 header-align = "center"
-                label="實付款金額"
-                :formatter="formatter">
+                label="實付款金額">
                 </el-table-column>
                 <el-table-column
-                prop="becomeTime"
+                prop="paidTime"
                 header-align = "center"
-                label="成交時間"
-                :formatter="formatter">
+                label="成交時間">
                 </el-table-column>
                 <el-table-column
                 header-align = "center"
-                prop="tag"
+                prop="status"
+                column-key="status"
                 label="訂單狀態"
                 width="200"
-                :filters="[{ text: '保護期', value: '保護期' }, { text: '退款中', value: '退款中' }, { text: '已退款', value: '已退款' },{ text: '已完結', value: '已完結' }]"
+                :filters="[{ text: '保護期', value: '1' }, { text: '退款中', value: '4' }, { text: '已退款', value: '5' },{ text: '已完結', value: '6' }]"
                 :filter-method="filterTag"
                 filter-placement="bottom-end"
                 @filter-change="handleFilterChange">
                     <template slot-scope="scope">
-                        <el-tag disable-transitions style="color:green">{{scope.row.tag}}</el-tag>
-                        <!-- <el-tag disable-transitions>退款中</el-tag>
-                        <el-tag disable-transitions style="color:red">已退款</el-tag>
-                        <el-tag disable-transitions style="color:#f99e1b">已完結</el-tag> -->
+                        <el-tag disable-transitions style="color:green" v-if="scope.row.status == 1 || scope.row.status == 2 || scope.row.status == 3">保護期</el-tag>
+                        <el-tag disable-transitions style="color:#3f51b5" v-if="scope.row.status == 4">退款中</el-tag>
+                        <el-tag disable-transitions style="color:red" v-if="scope.row.status == 5">已退款</el-tag>
+                        <el-tag disable-transitions style="color:#f99e1b" v-if="scope.row.status == 6">已完結</el-tag>
                     </template>
                 </el-table-column>
             </el-table>
@@ -101,83 +95,88 @@ import searchBar from "./../../components/searchBar.vue"
 export default {
     name:"userTrede",
     components:{
-        searchBar,
+        searchBar
     },
     data(){
         return{
             isShow:true,
             title:"用戶交易",
-            placeholder:"訂單號/商品名/商家昵稱",
+            placeholder:"訂單號/商品名",
             currentPage: 1,
             pageSize:10,
             total:null,
-            tableData: [{
-                orderNumber:"8291",
-                PurchaseUser:"黃大喵",
-                commodityName:"美式咖啡",
-                bussinessAcount:"2801",
-                allMoney:"183",
-                DiscountedAmount:"23",
-                factPay:"160",
-                becomeTime:"2018-08-10",
-                tag:'保護期'
-                },{
-                    orderNumber:"8291",
-                    PurchaseUser:"黃大喵",
-                    commodityName:"美式咖啡",
-                    bussinessAcount:"2801",
-                    allMoney:"183",
-                    DiscountedAmount:"23",
-                    factPay:"160",
-                    becomeTime:"2018-08-10",
-                    tag:"退款中"
-                },{
-                    orderNumber:"8291",
-                    PurchaseUser:"黃大喵",
-                    commodityName:"美式咖啡",
-                    bussinessAcount:"2801",
-                    allMoney:"183",
-                    DiscountedAmount:"23",
-                    factPay:"160",
-                    becomeTime:"2018-08-10",
-                    tag:"已退款"
-                },{
-                orderNumber:"8291",
-                PurchaseUser:"黃大喵",
-                commodityName:"美式咖啡",
-                bussinessAcount:"2801",
-                allMoney:"183",
-                DiscountedAmount:"23",
-                factPay:"160",
-                becomeTime:"2018-08-10",
-                tag:"已完結"
-            }],                 //用戶交易列表信息
+            tableData: [],                 //用戶交易列表信息
         }
     },
+    mounted(){
+        this.getTradeList(this.currentPage)
+    },
     methods:{
+        // 獲取所有用戶交易列表
+        getTradeList(currentPage){
+            this.$get("orderForm/queryUserTransaction",{
+                pageNum: this.currentPage,
+                pageSize: this.pageSize
+            }).then(res=>{
+                if(res.code == 0){
+                    this.tableData = [];
+                    this.total = res.data.total;
+                    this.tableData = res.data.list;
+                }
+            })
+        },
+        // 按時間查詢
         date(val){
-            console.log(val)
+            this.$get("orderForm/queryUserTransaction",{
+                startTime: this.$getTimes(val[0]),
+                endTime: this.$getTimes(val[1]),
+            }).then(res=>{
+                if(res.code == 0){
+                    this.tableData = [];
+                    this.total = res.data.total;
+                    this.tableData = res.data.list;
+                }
+            })
         },
+        // 查詢
         search(val){
-            console.log(val)
+            console.log(val);
+            this.$get("orderForm/queryUserTransaction",{
+               val: val
+            }).then(res=>{
+                if(res.code == 0){
+                    this.tableData = [];
+                    this.total = res.data.total;
+                    this.tableData = res.data.list;
+                }
+            })
         },
-        formatter(row, column) {
-            return row.address;
-        },
+        // 訂單狀態查詢
         filterTag(value, row) {
+            console.log(value)
             return row.tag === value;
         },
         filterHandler(value, row, column) {
             const property = column['property'];
             return row[property] === value;
         },
-        handleCurrentChange(val){
-            console.log("分頁")
+        handleFilterChange(filters,value){
+            console.log(value);
+            this.$get("orderForm/queryUserTransaction",{
+               status: value
+            }).then(res=>{
+                if(res.code == 0){
+                    this.tableData = [];
+                    this.total = res.data.total;
+                    this.tableData = res.data.list;
+                }
+            })
         },
-        // 表格篩選
-        // handleFilterChange(filters){
-        //     console.log(filters)
-        // }
+        // 分頁
+        handleCurrentChange(val){
+            this.currentPage = val;
+            this.getTradeList(this.currentPage)
+        },
     }
 }
 </script>

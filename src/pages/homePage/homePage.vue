@@ -71,7 +71,7 @@
                                         <span>訂單管理</span>
                                     </template>
                                     <el-menu-item-group>
-                                        <el-menu-item index="turnOverOrder">已成交訂單</el-menu-item>
+                                        <el-menu-item index="turnOverOrder">付款訂單</el-menu-item>
                                         <el-menu-item index="reBackOrder">退款訂單</el-menu-item>
                                     </el-menu-item-group>
                                 </el-submenu>
@@ -157,6 +157,7 @@ export default {
         this.userName = JSON.parse(localStorage.getItem("userName"))
     },
     methods:{
+        // 重定向
         handleSelect(index) {},
 
         //點擊頭像或名字處顯示
@@ -230,7 +231,6 @@ export default {
 }
 </script>
 <style>
-
     #homePage .el-dialog__footer{
         text-align: center;
     }

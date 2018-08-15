@@ -146,7 +146,6 @@ export default {
                             type: 'success',
                             message: '删除成功!'
                         });
-                        this.getTypes()
                     }else{
                         this.$message.error("该数据已有用户在使用，不支持删除!")
                     }
@@ -173,10 +172,6 @@ export default {
                 if (valid) {
                     this.$refs.upLoad.submit();
                     setTimeout(()=>{
-                        // this.$message({
-                        //     message:"新建成功",
-                        //     type:"success"
-                        // })
                          this.dialogFormVisible = false;
                          this.getTypes()
                     },3000)

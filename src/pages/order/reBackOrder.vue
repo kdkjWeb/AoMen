@@ -29,10 +29,9 @@
                 </el-table-column>
                 <el-table-column
                 header-align = "center"
-                label="退款詳情"
-                width="100">
+                label="退款詳情">
                 <template slot-scope="scope">
-                    <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
+                <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
                 </template>
                 </el-table-column>
             </el-table>
@@ -88,11 +87,10 @@ export default {
         // 獲取所有退款訂單
         getRefund(currentPage){
             this.$get("orderForm/queryRefundTrade",{
-                // val: this.val,
                 pageNum: this.currentPage,
                 pageSize: this.pageSize
             }).then(res => {
-                // console.log(res);
+                console.log(res)
                 if(res.code == 0){
                     this.tableData = [];
                     this.total = res.data.total;
@@ -138,7 +136,10 @@ export default {
         //點擊查看
         handleClick(row){
             this.$router.push({
-                path:"/reBackOrderDetail"
+                path:"/reBackOrderDetail",
+                query:{
+                    id:row.id
+                }
             })
         },
         handleCurrentChange(val){

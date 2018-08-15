@@ -5,8 +5,7 @@
             <el-table
                 :data="tableData"
                 border
-                style="width: 100%"
-                height="600">
+                style="width: 100%">
                 <el-table-column
                 header-align = "center"
                 v-for="(item,index) in tableList"
@@ -16,13 +15,12 @@
                 </el-table-column>
                 <el-table-column
                 header-align = "center"
-                prop="detail"
                 label="店鋪詳情"
-                width="200px">
+                width="230px">
                 <template slot-scope="scope" class="handle">
                     <div>
-                        <el-button round id="continue" type="success" v-show = "isDeblock" @click="deblock(scope.row)">解封</el-button>
-                        <el-button round type="danger" @click="stop(scope.row)" v-show = "isStop">停封</el-button>
+                        <el-button round type="success" @click="deblock(scope.row)" :disabled="isBlock" v-show="isShow">解封</el-button>
+                        <el-button round type="danger" @click="stop(scope.row)" :disabled="isStop">停封</el-button>
                         <el-button round @click="look(scope.row)">查看</el-button>
                     </div>
                 </template>
@@ -39,7 +37,6 @@
                 </el-pagination>
             </div>
         </div>
-       
     </div>
 </template>
 
@@ -54,8 +51,10 @@ export default {
         return{
             title:"商家列表",
             placeholder:"請輸入用戶帳號",
-            isDeblock:false,
-            isStop:true,
+            isBlock:false,
+            isStop:false,
+            isShow:false,
+            status:"",
             currentPage:1,
             pageSize:10,
             total:null,
@@ -82,6 +81,7 @@ export default {
                 pageNum: this.currentPage,
                 pageSize: this.pageSize
             }).then(res=>{
+                console.log(res)
                 if(res.code === 0){
                     this.tableData = [];
                     this.total = res.data.total;
@@ -131,13 +131,22 @@ export default {
                 this.$post("shop/deactivationAndUnsealing?shopId=" + val.id +"&yesOrNo=" + true).then(res=>{
                     console.log(res);
                     if(res.code == 0){
-                        this.$message({
-                            type: 'success',
-                            message: '已成功將該商家停封!'
-                        });
-                        this.isDeblock = true;
-                        this.isStop = false;
-                        this.getBussinessList()
+                        this.status = res.data.status;
+                        if(this.status == 1){
+                            this.isBlock = false;
+                            this.isStop = true;
+                            this.$message({
+                                type: 'success',
+                                message: '已成功將該商家停封!'
+                            });
+                            this.isShow = true
+                            this.getBussinessList()
+                        }
+                        console.log(this.status)
+                        
+                        // this.isBlock = false;
+                        // this.isStop = true;
+                        
                     }else{
                         this.$message.error("未能將該商家停封，請注意檢查！")
                     }
@@ -156,17 +165,22 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                console.log(val.id)
                 this.$post("shop/deactivationAndUnsealing?shopId=" + val.id +"&yesOrNo=" + false).then(res=>{
                     console.log(res);
                     if(res.code == 0){
-                        this.$message({
-                            type: 'success',
-                            message: '已成功將該商家解封!'
-                        });
-                        this.isDeblock = false;
-                        this.isStop = true;
-                        this.getBussinessList()
+                        this.status = res.data.status;
+                        if(this.status == 0){
+                            this.isBlock = true;
+                            this.isStop = false;
+                            this.$message({
+                                type: 'success',
+                                message: '已成功將該商家解封!'
+                            });
+                            this.getBussinessList()
+                        }
+                        console.log(this.status)
+                        // this.isBlock = true;
+                        // this.isStop = false;
                     }else{
                         this.$message.error("未能將該商家解封，請注意檢查！")
                     }

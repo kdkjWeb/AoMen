@@ -143,7 +143,7 @@ export default {
                 number:'',
                 full:"",
                 cut:"",
-                contentType:"",
+                contentType:"5",
                 beginDate:"",
                 overDate:""
             },

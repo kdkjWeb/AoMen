@@ -9,7 +9,7 @@
                 <div class="list">
                     <dl>
                         <dt>
-                            <img :src="list.userMsg.files.origin" alt="">
+                            <!-- <img :src="list.userMsg.files.origin" alt=""> -->
                         </dt>
                         <dd>
                             <h3>{{list.userMsg.nickname}}</h3>

@@ -21,7 +21,7 @@
             <el-table-column
             header-align = "center"
             label="身份證图片"
-            width="280px">
+            width="300px">
             <template slot-scope="scope">
                <img style="width:120px; height:80px" :src="scope.row.idCardFile1.origin" alt="">
                <img style="width:120px; height:80px" :src="scope.row.idCardFile2.origin" alt="">
@@ -29,7 +29,8 @@
             </el-table-column>
             <el-table-column
             header-align = "center"
-            label="營業執照圖片">
+            label="營業執照圖片"
+            width="160px">
             <template slot-scope="scope">
                 <img style="width:120px; height:80px"  :src="scope.row.licenseFile.origin" alt="">
             </template>
@@ -53,9 +54,8 @@
                     <el-button @click="through(scope.row)" type="success" round plain>通過</el-button>
                     <el-button @click="refuse(scope.row)" type="danger" round plain>拒絕</el-button>
                 </div>
-                <el-button type="success" round  id="pass" v-if="scope.row.status == 1">已通過</el-button>
-                <el-button type="danger" round  id="no" v-if="scope.row.status == 2">已拒絕</el-button>
-                
+                <p id="pass" v-if="scope.row.status == 1">已通過</p>
+                <p id="no" v-if="scope.row.status == 2">已拒絕</p>
             </template>
             </el-table-column>
         </el-table>
@@ -237,7 +237,20 @@ export default {
         font-weight: 700;
         margin-bottom: 20px;
     }
-    
+    #pass,#no{
+        width:115px;
+        height: 40px;
+        text-align:center;
+        line-height: 40px;
+        color:#fff;
+        border-radius:50px;
+    }
+    #pass{
+        background-color:#56d27f;
+    }
+    #no{
+        background-color:#ef6868;
+    }
     .block{
         width: 100%;
         height: 50px;
@@ -255,8 +268,6 @@ export default {
         height: 43px !important;
         font-size: 16px;
     }
-    #pass,#no{
-        width:115px
-    }
+    
 </style>
 

@@ -21,7 +21,7 @@
                         <p v-if="scope.row.status == 6">已完結</p>
                         <p v-if="scope.row.status == 1 || scope.row.status == 2 || scope.row.status == 3">保護期</p>
                         <p v-if="scope.row.status == 5">已退款</p>
-                        <p v-if="scope.row.status == 4">申請退款中</p>
+                        <p v-if="scope.row.status == 4">退款中</p>
                     </template>
                 </el-table-column>
             </el-table>
@@ -51,7 +51,7 @@ export default {
     data(){
         return{
             isShow:true,
-            title:"已成交訂單",
+            title:"付款訂單",
             placeholder:"訂單號/商品名/商家昵稱",
             tableData: [],
             tableList:[
@@ -80,6 +80,7 @@ export default {
                 pageNum:this.currentPage,
                 pageSize: this.pageSize
             }).then(res=>{
+                console.log(res)
                 if(res.code == 0){
                     this.tableData = [];
                     this.total = res.data.total;

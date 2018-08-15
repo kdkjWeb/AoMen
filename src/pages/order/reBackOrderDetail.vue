@@ -1,32 +1,30 @@
 <template>
     <div>
         <!-- 返回 -->
-        <goBack :isShow="isShow" ></goBack>
+        <goBack></goBack>
         <!-- 返回 -->
         <!-- 內容 -->
         <div class="content">
             <!-- 用戶退款原因 -->
             <div class="cause">
                 <h3>用戶退款原因</h3>
-                <p>
-                    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nihil eligendi dignissimos deleniti non, beatae hic a recusandae accusantium eaque quis at iusto. Ducimus non nihil expedita accusamus perferendis animi nam!
-                </p>
+                <p>{{causeText}}</p>
                 <div>
-                    <img :src="img.src" alt="" v-for="(img,index) in imgs" :key="index">
+                    <img :src="img.origin" alt="" v-for="(img,index) in imgs" :key="index">
                 </div>
             </div>
             <!-- 用戶退款原因 -->
             <!-- 商家未處理、拒絕原因、同意 -->
             <div class="handle">
-                <h3 v-show="isHandle">商家未处理</h3>
-                <div v-show="isRefuse">
+                <h3 v-if="status == 0">商家未处理</h3>
+                <div v-if="status == -1">
                     <h3>商家拒絕原因</h3>
-                    <p >Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae est, ut eligendi aut necessitatibus earum libero at quasi magni sequi eum deserunt doloremque minima iste eos praesentium, placeat soluta impedit!</p>
+                    <p>{{refuseText}}</p>
                 </div>
-                <h3 v-show="isAgreen">商家已同意退款</h3>
+                <h3 v-if="status == 1">商家已同意退款</h3>
                 <div class="btn">
-                     <el-button @click="refuse">拒絕</el-button>
-                     <el-button type="warning" @click="agreen">同意</el-button>
+                     <el-button @click="refuse" :disabled="isClick">拒絕</el-button>
+                     <el-button type="warning" @click="agreen" :disabled="isClick">同意</el-button>
                 </div>
             </div>
             <!-- 填寫拒絕原因 -->
@@ -57,27 +55,37 @@ export default {
     data(){
         return{
             dialogVisible:false,
-            isShow:false,
-            isRefuse:true,
-            isHandle:false,
-            isAgreen:false,
-            imgs:[{
-                src:"../../../static/header.jpg"
-            },{
-                src:"../../../static/header.jpg"
-            }],
+            isClick:false,
+            imgs:[],
             form: {
                 desc: ''
-            }
+            },
+            causeText:"一閃一閃亮晶晶",
+            refuseText:"滿天都是小星星",
+            status:""
         }
     },
     mounted(){
-        this.getRefundByUser()
+        console.log(this.$route.query.id)
+        this.getRefundByUser(this.$route.query.id)
     },
     methods:{
         // 獲取用戶退款原因
-        getRefundByUser(){
-            console.log("獲取用戶退款原因")
+        getRefundByUser(id){
+            this.$get("refund/s_id/" + this.$route.query.id).then(res=>{
+                console.log(res)
+                if(res.code == 0){
+                    this.imgs = [];
+                    this.imgs = res.data.refundImgVos;
+                    this.causeText = res.data.comment;
+                    this.refuseText = res.data.reason;
+                    this.id = res.data.id;
+                    this.status = res.data.status;
+                    if(this.status !=0){
+                        this.isClick = true
+                    }
+                }
+            })
         },
         // 商家拒絕
         refuse(){
@@ -88,21 +96,42 @@ export default {
             if(this.form.desc == ""){
                 this.$message.error("請填寫拒絕原因")
             }else{
-                this.dialogVisible = false
+                this.$post("refund/agreeOrRefuse",{
+                    id: this.id,
+                    reason: this.form.desc,
+                    status: false
+                }).then(res=>{
+                    console.log(res);
+                    if(res.code == 0) {
+                        this.$message({
+                            message:"已拒絕",
+                            type:"success"
+                        });
+                        this.dialogVisible = false;
+                        this.getRefundByUser()
+                    }                   
+                })
             }
         },
         // 商家同意
         agreen(){
-            console.log("同意");
             this.$confirm('是否同意此信息?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-               this.$message({
-                   message:"已同意",
-                   type:"success"
-               })
+                this.$post("refund/agreeOrRefuse",{
+                    id: this.id,
+                    status: true
+                }).then(res=>{
+                    if(res.code == 0){
+                        this.$message({
+                            message:"已同意",
+                            type:"success"
+                        });
+                        this.getRefundByUser()
+                    }
+                })
             }).catch(() => {
                 this.$message({
                     type: 'info',
@@ -110,10 +139,6 @@ export default {
                 });          
             });
         },
-        // handleClose(){
-        //     this.dialogVisible = false
-        // },
-        
     }
 }
 </script>

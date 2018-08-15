@@ -53,10 +53,10 @@ export default {
         }
     },
     mounted(){
-      this.getIntegralMsg(this.$route.query.id)
+      this.getIntegralMsg(this.$route.query.id,this.currentPage)
     },
     methods:{
-       getIntegralMsg(id){
+       getIntegralMsg(id,currentPage){
            this.$get("IntegralGoodsController/selectPaymentDetails",{
                 integralGoodsId: id,
                 pageNum: this.currentPage,
@@ -71,7 +71,10 @@ export default {
            })
        },
         // 分頁
-        handleCurrentChange(){}
+        handleCurrentChange(val){
+            this.currentPage = val;
+            this.getIntegralMsg(this.currentPage)
+        }
     },
    
 }

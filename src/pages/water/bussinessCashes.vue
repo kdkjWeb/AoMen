@@ -5,7 +5,6 @@
             <el-table
                 :data="tableData"
                 border
-                height="600"
                 style="width: 100%">
                 <el-table-column
                 header-align = "center"
@@ -17,19 +16,17 @@
                 </el-table-column>
                 <el-table-column
                 header-align = "center"
-                prop="AccountBalance"
                 label="賬戶餘額">
                 <template slot-scope="scope">
-                    <p style="color:red" v-show="isSuccess">{{scope.row.AccountBalance}}</p>
+                    <p style="color:red" v-show="isSuccess">{{scope.row.balance}}</p>
                 </template>
                 </el-table-column>
                 <el-table-column
                 header-align = "center"
-                prop="cashState"
                 label="提現狀態">
                 <template slot-scope="scope">
-                    <p style="color:green" v-show="isSuccess">提現成功</p>
-                    <p style="color:red" v-show="isFailed">提現失敗</p>
+                    <p style="color:green" v-if="scope.row.status == 1">提現成功</p>
+                    <p style="color:red" v-if="scope.row.status == -1">提現失敗</p>
                 </template>
                 </el-table-column>
             </el-table>
@@ -62,63 +59,65 @@ export default {
             isSuccess:true,
             isFailed:false,
             title:"商家提現",
-            placeholder:"訂單號/商品名/商家昵稱",
-            tableData: [{
-                   shopNumber: '1234',
-                    bussinessAcount: '789',
-                    AccountBalance: "2",
-                    cashTime: "2018-07-26",
-                    cashAmount: "60",
-                }, {
-                   shopNumber: '1234',
-                    bussinessAcount: '789',
-                    AccountBalance: "2",
-                    cashTime: "2018-07-26",
-                    cashAmount: "60",
-                }, {
-                   shopNumber: '1234',
-                    bussinessAcount: '789',
-                    AccountBalance: "2",
-                    cashTime: "2018-07-26",
-                    cashAmount: "60",
-                }, {
-                    shopNumber: '1234',
-                    bussinessAcount: '789',
-                    AccountBalance: "2",
-                    cashTime: "2018-07-26",
-                    cashAmount: "60",
-            }],
+            placeholder:"商家帳號/店鋪名稱",
+            tableData: [],
             tableList:[
-                {prop:"bussinessAcount",label:"商家帳號",width:''},
-                {prop:"shopNumber",label:"店鋪名稱",width:''},
-                {prop:"cashAmount",label:"提現金額",width:''},
-                {prop:"cashTime",label:"提現時間",width:''},
+                {prop:"phone",label:"商家帳號",width:''},
+                {prop:"shopName",label:"店鋪名稱",width:''},
+                {prop:"withdraw",label:"提現金額",width:''},
+                {prop:"createTime",label:"提現時間",width:''},
             ],
             currentPage: 1,
             pageSize:10,
             total:null
         }
     },
+    mounted(){
+        this.getCashesList(this.currentPage)
+    },
     methods:{
+        getCashesList(){
+            this.$get("withdrawalRecord/s_all",{
+                pageNum: this.currentPage,
+                pageSize: this.pageSize
+            }).then(res=>{
+                if(res.code == 0){
+                    this.tableData = [];
+                    this.total = res.data.total;
+                    this.tableData = res.data.list;
+                }
+            })
+        },
+        // 按時間查詢
         date(val){
-            console.log(this.$getTimes(val) +" 23:59:59",)
-            console.log("按時間搜索")
+            this.$get("withdrawalRecord/s_all",{
+                startTime: this.$getTimes(val[0]),
+                endTime: this.$getTimes(val[1]),
+            }).then(res=>{
+                if(res.code == 0){
+                    this.tableData = [];
+                    this.total = res.data.total;
+                    this.tableData = res.data.list;
+                }
+            })
+            
         },
+        // 查詢
         search(val){
-            console.log(val)
+            this.$get("withdrawalRecord/s_all",{
+              val: val
+            }).then(res=>{
+                if(res.code == 0){
+                    this.tableData = [];
+                    this.total = res.data.total;
+                    this.tableData = res.data.list;
+                }
+            })
         },
-        formatter(row, column) {
-            return row.address;
-        },
-        filterTag(value, row) {
-            return row.tag === value;
-        },
-        filterHandler(value, row, column) {
-            const property = column['property'];
-            return row[property] === value;
-        },
+        // 分頁
         handleCurrentChange(val){
-            console.log("分頁")
+            this.currentPage = val;
+            this.getCashesList(this.currentPage)
         }
     }
 }
