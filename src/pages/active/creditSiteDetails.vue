@@ -12,16 +12,16 @@
                 <dd><span>{{item.needIntegral}}</span></dd>
             </dl>
         </div>
-        <div class="userList" v-for="(user,index) in users" :key="index" v-if="Object.keys(user).length > 0">
+        <div class="userList" v-for="(user,index) in users" :key="index"  >
             <ul>
-                <li>用戶賬號：<span>{{user.userId?user.userId:"暫無數據"}}</span></li>
-                <li>昵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;稱：<span>{{user.nickname?user.nickname:"暫無數據"}}</span></li>
-                <li>聯繫人：<span>{{user.receiveName?user.receiveName:"暫無數據"}}</span></li>
-                <li>聯繫方式：<span>{{user.receivePhone?user.receivePhone:"暫無數據"}}</span></li>
-                <li>聯繫地址：<span>{{user.receiveAddress?user.receiveAddress:"暫無數據"}}</span></li>
+                <li>用戶賬號：<span>{{user.username}}</span></li>
+                <li>昵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;稱：<span>{{user.nickname}}</span></li>
+                <li>聯繫人：<span>{{user.receiveName}}</span></li>
+                <li>聯繫方式：<span>{{user.receivePhone}}</span></li>
+                <li>聯繫地址：<span>{{user.receiveAddress}}</span></li>
             </ul>
         </div>
-        <div style="width:100%;height:100px;background-color:#fff;" v-else>
+        <div style="width:100%;height:100px;background-color:#fff;" v-if="users == undefined">
             <p style="text-align:center;line-height:100px">此商品暫無用戶兌換</p>
         </div>
         <div class="block">
@@ -62,6 +62,7 @@ export default {
                 pageNum: this.currentPage,
                 pageSize: this.pageSize
             }).then(res=>{
+                console.log(res)
                if(res.code == 0){
                    this.users = [];
                    this.total = res.data.paymentsList.total;
@@ -116,12 +117,11 @@ export default {
     background-color: #fff;
 }
 .userList ul{
-    width:97%;
+    width:95%;
     margin:auto;
     display: flex;
     flex-wrap: wrap;
-     
-    padding: 30px;
+    padding:10px 30px;
     box-sizing:border-box;
     border-bottom:1px solid #ccc;
 }
@@ -130,6 +130,8 @@ export default {
     line-height: 40px;
     font-size: 14px;
     color: #333;
+    padding:0 30px;
+    box-sizing:border-box;
 }
 .block{
     width: 100%;

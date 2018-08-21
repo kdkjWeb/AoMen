@@ -6,6 +6,22 @@
                 :data="tableData"
                 border
                 style="width: 100%">
+                <!-- <el-table-column
+                prop="phone"
+                header-align = "center"
+                label="帳號">              
+                </el-table-column>
+                <el-table-column
+                prop="nickname"
+                header-align = "center"
+                label="賬號暱稱">              
+                </el-table-column>
+                <el-table-column
+                prop="shopName"
+                header-align = "center"
+                label="店鋪名稱"
+                :show-overflow-tooltip="true">              
+                </el-table-column> -->
                 <el-table-column
                 header-align = "center"
                 v-for="(item,index) in tableList"
@@ -15,12 +31,21 @@
                 </el-table-column>
                 <el-table-column
                 header-align = "center"
+                prop="status"
+                label="当前店铺状态">
+                <template slot-scope="scope">
+                    <p  v-if="scope.row.status == 1" style="color:red">停封</p>
+                    <p v-if="scope.row.status == 0" style="color:green">正常</p>
+                </template>
+                </el-table-column>
+                <el-table-column
+                header-align = "center"
                 label="店鋪詳情"
-                width="230px">
+                width="280px">
                 <template slot-scope="scope" class="handle">
                     <div>
-                        <el-button round type="success" @click="deblock(scope.row)" :disabled="isBlock" v-show="isShow">解封</el-button>
-                        <el-button round type="danger" @click="stop(scope.row)" :disabled="isStop">停封</el-button>
+                        <el-button round type="danger" @click="stop(scope.row)">停封</el-button>
+                        <el-button round type="success" @click="deblock(scope.row)">解封</el-button>
                         <el-button round @click="look(scope.row)">查看</el-button>
                     </div>
                 </template>
@@ -54,7 +79,6 @@ export default {
             isBlock:false,
             isStop:false,
             isShow:false,
-            status:"",
             currentPage:1,
             pageSize:10,
             total:null,
@@ -76,12 +100,12 @@ export default {
     },
     methods: {
         // 獲取所有商家列表
-        getBussinessList(currentPage){
+        getBussinessList(currentPage,val){
             this.$get("admin/getShopList",{
+                keyWord:val,
                 pageNum: this.currentPage,
                 pageSize: this.pageSize
             }).then(res=>{
-                console.log(res)
                 if(res.code === 0){
                     this.tableData = [];
                     this.total = res.data.total;
@@ -95,25 +119,13 @@ export default {
         },
         // 搜索
         search(val){
-            this.$get("admin/getShopList",{
-                keyWord:val,
-                pageNum: this.currentPage,
-                pageSize: this.pageSize
-            }).then(res=>{
-                if(res.code === 0){
-                    this.tableData = [];
-                    this.total = res.data.total;
-                    this.tableData = res.data.list
-                   for(var i = 0;i<this.tableData.length;i++) {
-                        this.tableData[i].registerTime = this.$getTimes(this.tableData[i].registerTime);
-                        this.tableData[i].registerShopTime = this.$getTimes(this.tableData[i].registerShopTime);
-                    }
-                }
-            })
+            this.currentPage = 1;
+            this.getBussinessList(this.currentPage,val)
         },
         // 查看
         look(row){
             this.id = row.id
+            console.log(this.id)
             this.$router.push({
                 path:"/bussinessDetail",
                 query:{
@@ -130,23 +142,12 @@ export default {
             }).then(() => {
                 this.$post("shop/deactivationAndUnsealing?shopId=" + val.id +"&yesOrNo=" + true).then(res=>{
                     console.log(res);
-                    if(res.code == 0){
-                        this.status = res.data.status;
-                        if(this.status == 1){
-                            this.isBlock = false;
-                            this.isStop = true;
-                            this.$message({
-                                type: 'success',
-                                message: '已成功將該商家停封!'
-                            });
-                            this.isShow = true
-                            this.getBussinessList()
-                        }
-                        console.log(this.status)
-                        
-                        // this.isBlock = false;
-                        // this.isStop = true;
-                        
+                    if(res.code == 0){  
+                        this.$message({
+                            type: 'success',
+                            message: '已成功將該商家停封!'
+                        });
+                        this.getBussinessList()
                     }else{
                         this.$message.error("未能將該商家停封，請注意檢查！")
                     }
@@ -166,21 +167,12 @@ export default {
                 type: 'warning'
             }).then(() => {
                 this.$post("shop/deactivationAndUnsealing?shopId=" + val.id +"&yesOrNo=" + false).then(res=>{
-                    console.log(res);
                     if(res.code == 0){
-                        this.status = res.data.status;
-                        if(this.status == 0){
-                            this.isBlock = true;
-                            this.isStop = false;
-                            this.$message({
-                                type: 'success',
-                                message: '已成功將該商家解封!'
-                            });
-                            this.getBussinessList()
-                        }
-                        console.log(this.status)
-                        // this.isBlock = true;
-                        // this.isStop = false;
+                        this.$message({
+                            type: 'success',
+                            message: '已成功將該商家解封!'
+                        });
+                        this.getBussinessList()
                     }else{
                         this.$message.error("未能將該商家解封，請注意檢查！")
                     }
@@ -195,23 +187,21 @@ export default {
         // 分頁
         handleCurrentChange(val){
             this.currentPage = val;
-            this.getBussinessList(this.currentPage)
+            this.getBussinessList(val)
         }
     }
 }
 </script>
 
 <style>
-    .el-table .cell{
+    #bussinessList .el-table .cell{
         display: flex;
         justify-content: space-around;
     }
-    .el-button.is-round{
-        width:60px;
-        padding: 10px 15px;
+    #bussinessList .el-button.is-round{
+        width:75px;
         border-radius: 20px;
     }
-    
 </style>
 <style scoped>
     .handle{

@@ -61,7 +61,7 @@
 <script>
 import goBack from "./../../components/goBack"
 export default {
-     components:{
+    components:{
         goBack
     },
     data(){
@@ -83,7 +83,6 @@ export default {
         }
     },
     mounted(){
-        console.log(this.$route.query.id)
         this.getDetailByUser(this.$route.query.id,this.currentPage)
     },
     methods:{
@@ -94,7 +93,6 @@ export default {
                 pageNum: this.currentPage,
                 pageSize: this.pageSize
             }).then(res=>{
-                console.log(res);
                 if(res.code == 0){
                     this.tableData = [];
                     this.total = res.data.total;

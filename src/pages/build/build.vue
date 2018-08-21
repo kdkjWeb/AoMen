@@ -47,7 +47,8 @@
             <el-table-column
             header-align = "center"
             prop="detail"
-            label="操作">
+            label="操作"
+            width="200px">
             <template slot-scope="scope">
                 <el-button round @click="update(scope.row)" type="warning" plain style="border-color:#f99e1b;">修改</el-button>
                 <el-button round @click="delet(scope.row)">刪除</el-button>
@@ -90,44 +91,43 @@ export default {
                 {prop:"phone",label:"賬號",width:''},
             ],
             ruleForm:{
-                name:"",
-                tel:"",
-                account:"",
-                pass:"",
-                oldPass:"",
-                newPass:"",
-                confirm:""
+                name: "",
+                tel: "",
+                account: "",
+                pass: "",
+                oldPass: "",
+                newPass: "",
+                confirm: ""
             },
             rules:{
                 name:[
                     { required: true, message: '请输入姓名', trigger: 'blur' },
-                    { pattern:/^[\u0391-\uFFE5A-Za-z]+$/ , message: '無效的姓名', trigger: 'blur' },
+                    { pattern:/^[\u0391-\uFFE5A-Za-z]+$/, message: '無效的姓名', trigger: 'blur' },
                 ],
                 tel:[
                     {required: true, message: '请输入電話', trigger: 'blur' },
-                    { pattern:/^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/ , message: '無效的電話', trigger: 'blur' },
+                    { type: 'number', message: '電話號碼應為數值', trigger: ['blur'] }
+                    // { pattern:/^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/ , message: '無效的電話', trigger: 'blur' },
                 ],
                 account:[
                     {required: true, message: '请输入賬號', trigger: 'blur' },
-                ],
-                // password:[
-                //     {required: true, message: '请输入賬號', trigger: 'blur' },
-                // ],
+                    { pattern: /^[^\u4e00-\u9fa5]+$/, message: '無效的帐號', trigger: 'blur' },
+                    { min: 8, max: 20, message: '请确保帐號长度在8-20位之间', trigger: 'blur' }
+                ]
             },
             currentPage: 1,
             pageSize:10,
             total:null,
-            value:1
         }
     },
     mounted(){
-        this.getUserlistByAdmin(this.currentPage)
+        this.getUserlistByAdmin()
     },
     methods:{
         // 獲取所有列表信息
         getUserlistByAdmin(currentPage){
             this.$get("admin/getUsersAdminList",{
-                pageNum: this.currentPage,
+                pageNum: currentPage ? currentPage : 1,
                 pageSize: this.pageSize
             }).then(res=>{
                 if(res.code == 0){
@@ -140,30 +140,36 @@ export default {
         // 點擊新建按鈕出現彈框
         add(){
             this.dialogFormNewVisible = true;
+            this.isUpdate = false;
+            this.isNew = true
         },
         // 確認新建人員
         submitForm(formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
-                    this.$post("admin/addOneAdmin",{
-                        realName: this.ruleForm.name,
-                        phone: this.ruleForm.account,
-                        phoneExt: this.ruleForm.tel,
-                        password: this.ruleForm.password
-                    }).then(res =>{
-                        if(res.code === 0){
-                            this.$message({
-                                message:"添加成功",
-                                type:"success"
-                            })
-                            this.ruleForm.name = "";
-                            this.ruleForm.account = "";
-                            this.ruleForm.tel = "";
-                            this.ruleForm.password = "";
-                            this.dialogFormNewVisible = false;
-                            this.getUserlistByAdmin()
-                        }
-                    })
+                    if(!(/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z_]{8,20}$/.test(this.ruleForm.password))){
+                        this.$message.error("密碼必須由数字、字母或下劃線（_）組合而成，且長度在8-20位之間")
+                    }else{
+                        this.$post("admin/addOneAdmin",{
+                            realName: this.ruleForm.name,
+                            phone: this.ruleForm.account,
+                            phoneExt: this.ruleForm.tel,
+                            password: this.ruleForm.password
+                        }).then(res =>{
+                            if(res.code === 0){
+                                this.$message({
+                                    message:"添加成功",
+                                    type:"success"
+                                })
+                                this.ruleForm.name = "";
+                                this.ruleForm.account = "";
+                                this.ruleForm.tel = "";
+                                this.ruleForm.password = "";
+                                this.dialogFormNewVisible = false;
+                                this.getUserlistByAdmin()
+                            }
+                        })
+                    }
                 } else {
                     this.$message.error("請確認所填寫的數據")
                     return false;

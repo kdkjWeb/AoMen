@@ -37,16 +37,6 @@
             </el-table-column>
             <el-table-column
             header-align = "center"
-            prop="status"
-            label="申請結果">
-            <template slot-scope="scope">
-                <p v-if="scope.row.status == 0">正在審核</p>
-                <p v-if="scope.row.status == 1">通過</p>
-                <p v-if="scope.row.status == 2">拒絕</p>
-            </template>
-            </el-table-column>
-            <el-table-column
-            header-align = "center"
             label="操作"
             width="200">
             <template slot-scope="scope">
@@ -106,7 +96,7 @@ export default {
                 desc: '',
             },
             tableList: [
-                {prop: 'userMsgVo.id', label: '申請帳號', width: ''},
+                {prop: 'userMsgVo.phone', label: '申請帳號', width: ''},
                 {prop: 'userMsgVo.nickname', label: '暱稱', width: ''},
                 {prop: 'createTime', label: '申請時間', width: ''},
             ],
@@ -120,16 +110,16 @@ export default {
         }
     },
     mounted(){
-        this.getApplyList(this.currentPage)
+        this.getApplyList()
     },
     methods:{
         //  獲取所有申請列表
-        getApplyList(currentPage){
+        getApplyList(currentPage , val){
             this.$get("admin/getAuditApplyList",{
-                pageNum: this.currentPage,
+                keyWord: val,
+                pageNum: currentPage ? currentPage : 1,
                 pageSize: this.pageSize
             }).then(res =>{
-                console.log(res)
                 if(res.code === 0){
                     this.tableData = [];
                     this.total = res.data.total;
@@ -142,18 +132,8 @@ export default {
         },
         //搜索功能
         search(val){
-           this.$get("admin/getAuditApplyList",{
-                keyWord:val,
-                pageNum: this.currentPage,
-                pageSize: this.pageSize
-           }).then(res =>{
-               console.log(res)
-               if(res.code === 0){
-                    this.tableData = [];
-                    this.total = res.data.total;
-                    this.tableData = res.data.list;
-                 }
-           })
+            this.currentPage = 1;
+            this.getApplyList(this.currentPage,val)
         },
         //通過
         through(val) {
@@ -163,7 +143,6 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
                 }).then(() => {
-                    console.log(this.id)
                     this.$post("admin/auditApply",{
                         id:this.id,
                         status:1
@@ -190,28 +169,31 @@ export default {
             this.id = val.id;
         },
         sure(val){
-            this.$post("admin/auditApply",{
-                id: this.id,
-                reason: this.form.desc,
-                status:2
-            }).then(res =>{
-                console.log(res);
-                if(res.code === 0){
-                    this.$message({
-                        type: 'success',
-                        message: '已拒绝!'
-                    });
-                    this.form.desc = "";
-                    this.dialogVisible = false;
-                    this.getApplyList()
-                }else{
-                    this.$message.error("請填寫拒絕原因")
-                }
-            })
+            if(this.form.desc == ""){
+                ths.$message.error("拒絕原因不能為空")
+            }else{
+                this.$post("admin/auditApply",{
+                    id: this.id,
+                    reason: this.form.desc,
+                    status:2
+                }).then(res =>{
+                    if(res.code === 0){
+                        this.$message({
+                            type: 'success',
+                            message: '已拒绝!'
+                        });
+                        this.form.desc = "";
+                        this.dialogVisible = false;
+                        this.getApplyList()
+                    }else{
+                        this.$message.error("請填寫拒絕原因")
+                    }
+                })
+            }
         },
         handleCurrentChange(val){
             this.currentPage = val;
-            this.getApplyList(this.currentPage)
+            this.getApplyList(val)
         },
        
     }

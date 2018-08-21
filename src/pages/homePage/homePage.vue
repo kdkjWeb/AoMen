@@ -1,18 +1,18 @@
 <template>
     <div id="homePage">
         <el-container>
-            <el-header style="border-bottom:1px solid #ccc">
+            <el-header>
                 <div class="logo">
                     <img src="../../../static/logo.png" alt="">
                     <h1>澳門到家</h1>
                 </div>
                 <ul style="width:300px">
                     <li class="admin" style="margin-right:30px">
-                        <div class="headerName" @click="handleClick">
+                        <div class="headerName" @click="handleClick" @mouseleave="leave">
                             <img src="../../assets/images/header.jpg" alt="">
                             <span>{{userName}}</span>
                         </div>
-                        <ul class="adminSpecial" v-show="isShow">
+                        <ul class="adminSpecial" v-show="isShow" >
                             <li @click="update" >修改密碼</li>
                             <li @click="newPerson" v-show="show" >新建人員</li>
                         </ul>
@@ -23,7 +23,7 @@
                     </li>
                 </ul>
                 <!-- 修改密碼彈出框 -->
-                <el-dialog :visible.sync="dialogFormVisible" width="25%">
+                <el-dialog :visible.sync="dialogFormVisible" width="30%">
                     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
                         <el-form-item label="原密碼：" prop="oldPass">
                             <el-input v-model="ruleForm.oldPass"></el-input>
@@ -142,12 +142,17 @@ export default {
             rules:{
                 oldPass:[
                     {required: true, message: '请输入原密碼', trigger: 'blur' },
+                    // { pattern: /^[^\u4e00-\u9fa5]+$/, message: '無效的帐號', trigger: 'blur' },
                 ],
                 newPass:[
                     {required: true, message: '请输入新密碼', trigger: 'blur' },
+                    { pattern:/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z_]{8,20}$/, message: '密碼应包含数字、字母或下劃線，且長度在8-20位之間', trigger: 'blur' },
+
                 ],
                 confirm:[
                     {required: true, message: '请確認新密碼', trigger: 'blur' },
+                    { pattern: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z_]{8,20}$/, message: '密碼应包含数字、字母或下劃線，且長度在8-20位之間', trigger: 'blur' },
+
                 ]
             },
         }
@@ -164,37 +169,48 @@ export default {
         handleClick(){
             this.isShow = true;
         },
+        leave(){
+            setTimeout(()=>{
+                this.isShow = false 
+            },4000)
+        },
         // 修改密碼
         update(){
             this.dialogFormVisible  = true;
             this.isShow = false;
         },
         // 修改密碼
-        submitPass(){
+        submitPass(formName){
             if(this.ruleForm.oldPass === this.ruleForm.newPass){
                 this.$message.error("旧密码和新密码必须不一致")
             }else if(this.ruleForm.newPass !== this.ruleForm.confirm){
                 this.$message.error("確認密码與新密碼不一致")
             }else{
-                this.$put("admin/modifyPassword",{
-                    oldPassword: this.ruleForm.oldPass,
-                    newPassword: this.ruleForm.newPass,
-                    rePassword: this.ruleForm.confirm
-                }).then(res =>{
-                    if(res.code === 0){
-                        setTimeout(()=>{
-                            this.$message({
-                                message:"修改成功，請重新登錄",
-                                type:"success"
-                            })
-                            this.dialogFormVisible = false;
-                            this.$router.push({
-                                path:'/'
-                            })
-                        },1000)
-                       
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        this.$put("admin/modifyPassword",{
+                            oldPassword: this.ruleForm.oldPass,
+                            newPassword: this.ruleForm.newPass,
+                            rePassword: this.ruleForm.confirm
+                        }).then(res =>{
+                            if(res.code === 0){
+                                setTimeout(()=>{
+                                    this.$message({
+                                        message:"修改成功，請重新登錄",
+                                        type:"success"
+                                    })
+                                    this.dialogFormVisible = false;
+                                    this.$router.push({
+                                        path:'/'
+                                    })
+                                },1000)
+                            }
+                        })
+                    } else {
+                        this.$message.error("請確認所填寫的數據")
+                        return false;
                     }
-                })
+                });
             }
         },
         // 新建人員
@@ -265,6 +281,7 @@ export default {
         display: flex;
         justify-content: space-between;
         background-color: #2b3245;
+        /* position: relative; */
     }
     #homePage .el-header h1{
         line-height: 90px;
@@ -294,6 +311,9 @@ export default {
         margin-top: 10px;
         color: #fff;
     }
+    #homePage .el-icon-close:hover{
+        cursor:pointer;
+    }
     #homePage img{
         width:40px;
         height: 40px;
@@ -304,29 +324,31 @@ export default {
         width:180px;
         position: relative;
     }
-    #homePage .adminSpecial{
-        position: absolute;
-        top: 50px;
-        z-index: 100;
-        display:flex;
-        flex-direction: column;
+    #homePage .headerName:hover{
+        cursor:pointer;
     }
     #homePage .adminSpecial{
-        width:200px;
+        width:160px;
+        position: absolute;
+        top: 65px;
+        left:84%;
+        z-index: 3;           
+        display:flex;
+        flex-direction: column;
     }
     #homePage .adminSpecial li{
         width: 100%;
         height: 100%;
         font-size: 14px;
-        line-height: 50px;
-        color: #666;
+        line-height: 40px;
+        color: #000;
         text-align: center;
-        background-color:#fff;
-
+        background-color:rgba(256,256,256,.8);
     }
     #homePage .adminSpecial li:hover{
         background-color: #f99e1b;
-        color: #fff
+        color: #fff;
+        cursor:pointer;
     }
     #homePage .el-button--primary{
        width:90%;

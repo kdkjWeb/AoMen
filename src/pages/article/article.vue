@@ -9,7 +9,7 @@
                 <div class="list">
                     <dl>
                         <dt>
-                            <!-- <img :src="list.userMsg.files.origin" alt=""> -->
+                            <img :src="list.userMsg.files.compress" alt="" v-if="list.userMsg.files">
                         </dt>
                         <dd>
                             <h3>{{list.userMsg.nickname}}</h3>
@@ -70,6 +70,7 @@ export default {
                 pageNum: this.currentPage,
                 pageSize: this.pageSize
             }).then(res=>{
+                console.log(res)
                 this.lists = [];
                 this.total = res.data.total;
                 this.lists = res.data.list;

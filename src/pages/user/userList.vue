@@ -94,9 +94,10 @@ export default {
     },
     methods:{
         // 獲取所有列表
-        getUserList(currentPage){
+        getUserList(currentPage,val){
             this.$get("admin/getUsersList",{
-                pageNum:this.currentPage,
+                keyWord: val,
+                pageNum: currentPage ? currentPage : 1,
                 pageSize: this.pageSize,
             }).then(res =>{
                 if(res.code === 0){
@@ -108,18 +109,9 @@ export default {
         },
         //搜索功能
         search(val){
-             this.$get("admin/getUsersList",{
-                pageNum:this.currentPage,
-                pageSize: this.pageSize,
-                keyWord:val
-            }).then(res =>{
-                console.log(res)
-                if(res.code === 0){
-                    this.tableData = [];
-                    this.total = res.data.total;
-                    this.tableData = res.data.list
-                }
-            })
+            this.currentPage = 1
+            this.getUserList(this.currentPage,val)
+            
         },
         //查看消費詳情
         handleClick(row) {

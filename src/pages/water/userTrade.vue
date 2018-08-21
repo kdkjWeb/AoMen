@@ -1,11 +1,10 @@
 <template>
     <div>
-        <searchBar :title="title" :placeholder="placeholder" @search="search" @date="date" :isShow="isShow"></searchBar>
+        <searchBar :title="title" :placeholder="placeholder" @search="search" @date="date" @orderStatus="orderStatus" :isShow="isShow" :isSearch="true" style="position:relative"></searchBar>
         <div class="table">
             <el-table
                 :data="tableData"
                 border
-                height="600"
                 style="width: 100%">
                 <el-table-column
                 prop="orderNum"
@@ -61,16 +60,12 @@
                 <el-table-column
                 header-align = "center"
                 prop="status"
-                column-key="status"
                 label="訂單狀態"
                 width="200"
-                :filters="[{ text: '保護期', value: '1' }, { text: '退款中', value: '4' }, { text: '已退款', value: '5' },{ text: '已完結', value: '6' }]"
-                :filter-method="filterTag"
-                filter-placement="bottom-end"
-                @filter-change="handleFilterChange">
+                filter-placement="bottom-end">
                     <template slot-scope="scope">
                         <el-tag disable-transitions style="color:green" v-if="scope.row.status == 1 || scope.row.status == 2 || scope.row.status == 3">保護期</el-tag>
-                        <el-tag disable-transitions style="color:#3f51b5" v-if="scope.row.status == 4">退款中</el-tag>
+                        <el-tag disable-transitions style="color:#3f51b5" v-if="scope.row.status == 4">申請退款中</el-tag>
                         <el-tag disable-transitions style="color:red" v-if="scope.row.status == 5">已退款</el-tag>
                         <el-tag disable-transitions style="color:#f99e1b" v-if="scope.row.status == 6">已完結</el-tag>
                     </template>
@@ -106,6 +101,8 @@ export default {
             pageSize:10,
             total:null,
             tableData: [],                 //用戶交易列表信息
+            dateTime:[],
+            state:''
         }
     },
     mounted(){
@@ -113,9 +110,13 @@ export default {
     },
     methods:{
         // 獲取所有用戶交易列表
-        getTradeList(currentPage){
+        getTradeList(currentPage , val , date = [] , status){
             this.$get("orderForm/queryUserTransaction",{
-                pageNum: this.currentPage,
+                val: val,
+                status: status,
+                startTime: date.length > 0 ? this.$getTimes(date[0]) : null,
+                endTime:  date.length > 0 ? this.$getTimes(date[1]) : null,
+                pageNum: currentPage ? currentPage : 1,
                 pageSize: this.pageSize
             }).then(res=>{
                 if(res.code == 0){
@@ -127,55 +128,27 @@ export default {
         },
         // 按時間查詢
         date(val){
-            this.$get("orderForm/queryUserTransaction",{
-                startTime: this.$getTimes(val[0]),
-                endTime: this.$getTimes(val[1]),
-            }).then(res=>{
-                if(res.code == 0){
-                    this.tableData = [];
-                    this.total = res.data.total;
-                    this.tableData = res.data.list;
-                }
-            })
+            this.dateTime = val;
+            this.currentPage = 1;
+            this.getTradeList("","",val,"")
         },
         // 查詢
         search(val){
-            console.log(val);
-            this.$get("orderForm/queryUserTransaction",{
-               val: val
-            }).then(res=>{
-                if(res.code == 0){
-                    this.tableData = [];
-                    this.total = res.data.total;
-                    this.tableData = res.data.list;
-                }
-            })
+            this.dateTime = []
+            this.state = []
+            this.currentPage = 1;
+            this.getTradeList(this.currentPage,val)
         },
         // 訂單狀態查詢
-        filterTag(value, row) {
-            console.log(value)
-            return row.tag === value;
-        },
-        filterHandler(value, row, column) {
-            const property = column['property'];
-            return row[property] === value;
-        },
-        handleFilterChange(filters,value){
-            console.log(value);
-            this.$get("orderForm/queryUserTransaction",{
-               status: value
-            }).then(res=>{
-                if(res.code == 0){
-                    this.tableData = [];
-                    this.total = res.data.total;
-                    this.tableData = res.data.list;
-                }
-            })
+        orderStatus(val){
+            this.state = val
+            this.currentPage = 1;
+            this.getTradeList(this.currentPage,"",this.dateTime,val)
         },
         // 分頁
         handleCurrentChange(val){
             this.currentPage = val;
-            this.getTradeList(this.currentPage)
+            this.getTradeList(this.currentPage,"",this.dateTime,this.state);
         },
     }
 }
@@ -197,11 +170,9 @@ export default {
     border:none;
     background-color: unset
 }
-/* tbody .el-table_1_column_5{
-    color: red;
-} */
 </style>
 <style scoped>
+
     .block{
         width: 100%;
         height: 50px;

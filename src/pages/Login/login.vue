@@ -10,7 +10,6 @@
                 <span class="iconfont icon-mima"></span>
                 <input v-model="userInfo.userPas" class="row_input" type="password" placeholder="請輸入您的密碼" @keyup.enter="login">
             </div>
-            
             <div class="row login_btn" @click="login">登錄</div>
         </div>
     </div>
@@ -29,26 +28,32 @@ export default {
     },
     methods:{
         login(){
-            if(!this.userInfo.userName||!this.userInfo.userPas){
+            if(this.userInfo.userName == "" || this.userInfo.userPas == "" || !this.userInfo.userName || !this.userInfo.userPas){
                 this.$message({
                     message: '請輸入用戶名或密碼',
                     type: 'warning'
                 });
                 return;
-            }else if((/^([\u4e00-\u9fa5\.]){6,12}$/.test(this.userInfo.userName))){
+            }else if((/^[\u0391-\uFFE5A-Za-z]+$/.test(this.userInfo.userName))){
                 this.$message({
-                    message: '請輸入正確的用戶名或密碼',
+                    message: '請輸入正確的用戶名',
                     type: 'warning'
                 });
                 return;
-            }else if(this.userInfo.userName.length>12 || this.userInfo.userName.length<6 || this.userInfo.userPas.length>12 || this.userInfo.userPas.length<6){
+            }
+            else if(!(/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z_]{8,20}$/.test(this.userInfo.userPas))){
                 this.$message({
-                    message: '用戶名或密碼長度不夠6位或已超過20位，請輸入正確的用戶名或密碼',
+                    message: '請輸入正確的密碼',
+                    type: 'warning'
+                });
+            }
+            else if(this.userInfo.userName.length > 12 || this.userInfo.userName.length < 6 || this.userInfo.userPas.length > 12 || this.userInfo.userPas.length < 6){
+                this.$message({
+                    message: '用戶名或密碼長度不夠8位或已超過20位，請輸入正確的用戶名或密碼',
                     type: 'warning'
                 });
                 return;
             }else{
-                console.log(this.userInfo.userName,this.userInfo.userPas)
                this.$post('login',{
                    phone: this.userInfo.userName,
                    password: this.userInfo.userPas
@@ -59,13 +64,11 @@ export default {
                         sessionStorage.setItem('role',flag)
                         sessionStorage.setItem("id",res.data.id)
                         localStorage.setItem("userName",JSON.stringify(this.userInfo.userName));
+                        // localStorage.setItem("userPas",JSON.stringify(this.userInfo.userPas));
                         this.$router.push({
                             path:"/homePage",
                         })
-
-                        
                    }
-
                })
             }
         },
@@ -90,19 +93,20 @@ export default {
 /*用户登录输入框*/
 .login_wrap{
     position: absolute;
-    top: 270px;
-    right: 7.84%;
+    top:25%;
+    /* left: 35%; */
+    right: 15%;
     width: 500px;
-    height:480px;
+    height:360px;
     border:2px solid #fff;
     border-radius: 8px;
     box-sizing: border-box;
     background:rgba(124, 134, 146, .5)
 }
 .login_wrap .title{
-    padding: 46px 0;
+    padding: 25px 0;
     text-align: center;
-    font-size: 18px;
+    font-size: 24px;
     font-weight: bold;
     color: #fff;
     letter-spacing: 3px;
@@ -127,7 +131,7 @@ export default {
     border-radius: 4px;
 }
 .login_btn{
-    margin-top: 50px !important;
+    margin-top: 30px !important;
     background-color: #f99e1b;
     color: #fff;
     text-align: center;

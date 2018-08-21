@@ -1,6 +1,7 @@
 <template>
     <div>
         <searchBar :title="title" :placeholder="placeholder" @search="search" @date="date" :isShow="isShow"></searchBar>
+
         <div class="table">
             <el-table
                 :data="tableData"
@@ -18,17 +19,17 @@
                 prop="status"
                 label="訂單狀態">
                     <template slot-scope="scope">
-                        <p v-if="scope.row.status == 6">已完結</p>
-                        <p v-if="scope.row.status == 1 || scope.row.status == 2 || scope.row.status == 3">保護期</p>
-                        <p v-if="scope.row.status == 5">已退款</p>
-                        <p v-if="scope.row.status == 4">退款中</p>
+                        <p v-if="scope.row.status == 6" style="color:#f99e1b">已完結</p>
+                        <p v-if="scope.row.status == 1 || scope.row.status == 2 || scope.row.status == 3" style="color:green">保護期</p>
+                        <p v-if="scope.row.status == 5" style="color:red">已退款</p>
+                        <p v-if="scope.row.status == 4" style="color:#3f51b5">申請退款中</p>
                     </template>
                 </el-table-column>
             </el-table>
             <div class="block">
                 <el-pagination
                 @current-change="handleCurrentChange"
-                :current-page="currentPage"
+                :current-page.sync="currentPage"
                 :page-size="pageSize"
                 layout="total, prev, pager, next, jumper"
                 :total="total" 
@@ -50,6 +51,7 @@ export default {
     },
     data(){
         return{
+            dateTime: [],
             isShow:true,
             title:"付款訂單",
             placeholder:"訂單號/商品名/商家昵稱",
@@ -63,7 +65,7 @@ export default {
                 {prop:"realPrice",label:"總金額",width:''},
                 {prop:"paidTime",label:"購買時間",width:''},
                 {prop:"sellers",label:"商家昵稱",width:''},
-                {prop:"shopName",label:"店鋪昵稱",width:''},
+                {prop:"shopName",label:"店鋪昵稱",width:''}
             ],
             currentPage: 1,
             pageSize:10,
@@ -71,16 +73,18 @@ export default {
         }
     },
     mounted(){
-        this.getOrderBySuccess(this.currentPage)
+        this.getOrderBySuccess()
     },
     methods:{
         // 獲取已成交訂單列表
-        getOrderBySuccess(currentPage){
+        getOrderBySuccess(currentPage,val = '', date = []){
             this.$get("orderForm/queryExecutedOrder",{
-                pageNum:this.currentPage,
+                val: val,
+                startTime: date.length >0 ? this.$getTimes(date[0]) : null,
+                endTime:  date.length >0 ? this.$getTimes(date[1]) : null,
+                pageNum: currentPage ? currentPage : 1,
                 pageSize: this.pageSize
             }).then(res=>{
-                console.log(res)
                 if(res.code == 0){
                     this.tableData = [];
                     this.total = res.data.total;
@@ -90,37 +94,19 @@ export default {
         },
         // 按時間查詢
         date(val){
-            this.$get("orderForm/queryExecutedOrder",{
-                startTime: this.$getTimes(val[0]),
-                endTime: this.$getTimes(val[1]),
-                pageNum:this.currentPage,
-                pageSize: this.pageSize
-            }).then(res=>{
-                if(res.code == 0){
-                    this.tableData = [];
-                    this.total = res.data.total;
-                    this.tableData = res.data.list;
-                }
-            })
+            this.dateTime = val;
+            this.currentPage = 1;
+          this.getOrderBySuccess('','',val)
         },
         // 查詢
         search(val){
-            this.$get("orderForm/queryExecutedOrder",{
-                val:val,
-                pageNum:this.currentPage,
-                pageSize: this.pageSize
-            }).then(res=>{
-                if(res.code == 0){
-                    this.tableData = [];
-                    this.total = res.data.total;
-                    this.tableData = res.data.list;
-                }
-            })
+            this.dateTime = []
+            this.currentPage = 1;
+            this.getOrderBySuccess(this.currentPage,val)
         },
         // 分頁
         handleCurrentChange(val){
-            this.currentPage = val;
-            this.getOrderBySuccess(this.currentPage);
+            this.getOrderBySuccess(val,'',this.dateTime);
         }
     }
 }
@@ -131,8 +117,74 @@ export default {
     display: flex;
     justify-content: space-around;
 }
+.el-date-editor--daterange.el-input__inner{
+    width:220px !important;
+}
+.el-input--suffix .el-input__inner{
+    width:100% !important;
+    height: 50px;
+    border-radius: 8px;
+}
 </style>
 <style scoped>
+.searchBar{
+    width: 100%;
+    height: 90px;
+    background-color: #fff;
+    margin: 10px 0 20px;
+}
+.searchBar h1{
+    font-weight: bold;
+    font-size: 20px;
+    letter-spacing: 3px;
+    border-left: 2px solid #f99e1b;
+    padding-left: 10px;
+    float: left;
+    margin-top: 30px;
+}
+.search{
+    position: relative;
+    width: 230px;
+    height: 50px;
+    border: 1px solid #ddd;
+    float: right;
+    margin-right: 20px;
+    margin-top: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.search input{
+    width: 100%;
+    height: 100%;
+    outline: none;
+    border: none;
+    padding-left: 15px;
+    box-sizing: border-box;
+}
+.search span.iconfont{
+    position: absolute;
+    display: inline-block;
+    height: 30px;
+    right: 10px;
+    top: 10px;
+    font-size: 30px;
+    color: #f99e1b;
+    border-left: 1px solid #ddd;
+    padding-left: 15px;
+    line-height: 30px;
+    cursor: pointer;
+}
+.date{
+    float: right;
+    width: 230px;
+    height: 50px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-right: 90px;
+    margin-top: 20px;
+    box-sizing: border-box;
+}
+
     .block{
         width: 100%;
         height: 50px;

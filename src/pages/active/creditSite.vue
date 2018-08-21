@@ -40,7 +40,7 @@
             <el-upload
                 ref="upLoad"
                 class="avatar-uploader"
-                action="http://192.168.20.50:8081/IntegralGoodsController/addIntegralGoods"
+                action="http://101.207.139.80:8081/IntegralGoodsController/addIntegralGoods"
                 :show-file-list="false"
                 accept="image/jpeg,image/png,image/jpg"
                 name="file"
@@ -127,7 +127,6 @@ export default {
                 pageNum: this.currentPage,
                 pageSize: this.pageSize
             }).then(res=>{
-                console.log(res)
                 if(res.code == 0){
                     this.integralList = [];
                     this.total = res.data.total;
@@ -157,7 +156,6 @@ export default {
         },
         //查看
         examine(val){
-            console.log(val.id,val.origin)
             this.$router.push({
                 name: 'creditSiteDetails',
                 query:{
@@ -245,7 +243,7 @@ export default {
     color: #8c939d;
     width: 178px;
     height: 178px;
-    line-height: 178px;
+    line-height: 178px !important;
     text-align: center;
   }
   .avatar {

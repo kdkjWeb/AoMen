@@ -15,16 +15,25 @@
             </div>
             <!-- 用戶退款原因 -->
             <!-- 商家未處理、拒絕原因、同意 -->
+            <div v-if="shopStatus !== 0"  class="handle">
+                <h3 style="color:#000;">商家意見</h3>
+                <div v-if="shopStatus === -1">
+                    <h3 style="color:red">拒絕原因:</h3>
+                    <p>{{shopReason}}</p>
+                </div>
+                <h3 v-if="shopStatus === 1" style="color:green">已同意</h3>
+            </div>
             <div class="handle">
-                <h3 v-if="status == 0">商家未处理</h3>
+                <h3 style="color:#000" >管理员意见</h3>
+                <h3 v-if="status == 0">未处理</h3>
                 <div v-if="status == -1">
-                    <h3>商家拒絕原因</h3>
+                    <h3 style="color:red">拒絕原因</h3>
                     <p>{{refuseText}}</p>
                 </div>
-                <h3 v-if="status == 1">商家已同意退款</h3>
+                <h3 v-if="status == 1" style="color:green">已同意退款</h3>
                 <div class="btn">
-                     <el-button @click="refuse" :disabled="isClick">拒絕</el-button>
-                     <el-button type="warning" @click="agreen" :disabled="isClick">同意</el-button>
+                     <el-button @click="refuse" v-show="isShow">拒絕</el-button>
+                     <el-button type="warning" @click="agreen" v-show="isShow">同意</el-button>
                 </div>
             </div>
             <!-- 填寫拒絕原因 -->
@@ -56,13 +65,16 @@ export default {
         return{
             dialogVisible:false,
             isClick:false,
+            isShow:true,
             imgs:[],
             form: {
                 desc: ''
             },
-            causeText:"一閃一閃亮晶晶",
-            refuseText:"滿天都是小星星",
-            status:""
+            causeText:"",
+            refuseText:"",
+            status:"",
+            suggestion:"",
+            shopStatus:1
         }
     },
     mounted(){
@@ -79,10 +91,11 @@ export default {
                     this.imgs = res.data.refundImgVos;
                     this.causeText = res.data.comment;
                     this.refuseText = res.data.reason;
+                    this.suggestion = res.data.shopReason;
                     this.id = res.data.id;
                     this.status = res.data.status;
                     if(this.status !=0){
-                        this.isClick = true
+                        this.isShow = false
                     }
                 }
             })
@@ -190,7 +203,7 @@ export default {
 }
 .handle h3{
     color: #f99e1b;
-    margin-bottom: 30px;
+    /* margin-bottom: 30px; */
     padding-left:20px;
     box-sizing:border-box;
 }

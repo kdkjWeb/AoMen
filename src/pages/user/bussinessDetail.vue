@@ -26,11 +26,12 @@
                 header-align = "center"
                 label="商品名称">              
                 </el-table-column>
-                <!-- <el-table-column
-                prop="shopStyle"
+                <el-table-column
+                prop="goodsType"
                 header-align = "center"
-                label="商品类型">
-                </el-table-column> -->
+                label="商品类型"
+                >
+                </el-table-column>
                 <el-table-column
                 header-align = "center"
                 v-for="(item,index) in tableList"
@@ -76,36 +77,40 @@ export default {
             user:[],
             currentPage: 1,
             pageSize:10,
-            total:null
+            total:null,
+            shopStyle:""
         }
     },
     mounted(){
-        console.log(this.$route.query.id)
-        this.getDetailByBussiness(this.$route.query.id,this.currentPage)
+        this.getDetailByBussiness(this.$route.query.id);
     },
     methods:{
         // 獲取商家詳情列表
-        getDetailByBussiness(id){
+        getDetailByBussiness(id,currentPage){
            this.$get("shop/s_goods",{
                shopId: this.$route.query.id,
-               pageNum: this.currentPage,
+               pageNum: currentPage ?currentPage : 1,
                pageSize: this.pageSize
            }).then(res=>{
-               console.log(res);
+               console.log(res)
                if(res.code == 0){
-                   this.user = [];
-                   this.tableData = [];
-                   this.user.linkman = res.linkman;
-                   this.user.phone = res.phone;
-                   this.user.shopAddress = res.shopAddress;
-                   this.tableData = res.data.list;
-                   this.total = res.data.total;
+                    this.user = [];
+                    this.tableData = [];
+                    this.user.linkman = res.linkman;
+                    this.user.phone = res.phone;
+                    this.user.shopAddress = res.shopAddress;
+                    this.tableData = res.data.list;
+                    this.total = res.data.total;
+                    for(var i = 0;i<this.tableData.length;i++) {
+                        this.tableData[i].createTime = this.$getTimes(this.tableData[i].createTime);
+                    }
+
+                    
                }
            })
         },
         // 分頁
         handleCurrentChange(val){
-            console.log("分頁");
             this.currentPage = val;
             this.getDetailByBussiness(this.currentPage)
         }

@@ -13,8 +13,9 @@
                 v-for="(tag,index1) in list.dynamicTags"
                 closable
                 :disable-transitions="false"
-                @close="handleClose(tag,index,index1)">
-                {{tag.typeName}}
+                @close="handleClose(tag,index,index1)"
+                :type="tag.status === 0 ? 'primary':'info'">
+                    {{tag.typeName}}
                 </el-tag>
                 <el-button type="warning" @click="add(list)"> <i class="el-icon-plus"></i> 新建</el-button>
             </div>
@@ -33,7 +34,7 @@
                     ref="upLoad"
                     class="avatar-uploader"
                     :action="uploadUrl"
-                    :show-file-list="true"
+                    :show-file-list="false"
                     accept="image/jpeg,image/png,image/jpg"
                     name="file"
                     :data="data"
@@ -43,11 +44,14 @@
                     :before-upload="beforeAvatarUpload">
                     <img v-if="imageUrl" :src="imageUrl" class="avatar">
                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                    <div v-show="isComfirm">
+                        <p style="color:red">點擊確認按鈕后方可顯示</p>
+                    </div>
                 </el-upload>
             </div>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogFormVisible = false">取 消</el-button>
-                <el-button type="warning" @click="submitForm('form')">确 定</el-button>
+                <el-button type="warning" @click="submitForm('form')">确 認</el-button>
             </div>
         </el-dialog>
         <!-- 彈出框 -->
@@ -63,6 +67,7 @@ export default {
     },
     data(){
         return{
+            isComfirm:true,
             imageUrl:"",
             dialogVisible:false,
             dialogFormVisible:false,
@@ -89,7 +94,7 @@ export default {
                 kind: ''
             },
             bool:true,
-            uploadUrl:"http://192.168.20.50:8081/goodsType/add"
+            uploadUrl:"http://101.207.139.80:8081/goodsType/add",
         }
     },
     mounted(){
@@ -99,12 +104,12 @@ export default {
         // 獲取所有類名
         getTypes(index){
             this.$get("goodsType/s_all",{
-                pageSize:0
+                pageSize:0,
+                status:2
             }).then(res =>{
                 if(res.code == 0){
                     this.lists[1].dynamicTags = []
                     this.lists[0].dynamicTags = []
-                    
                     for(let i = 0;i < res.data.list.length; i++){
                         if(res.data.list[i].kind == "0"){
                             this.lists[1].dynamicTags.push(res.data.list[i])
@@ -118,12 +123,12 @@ export default {
         // 保存修改內容
         keep(){
             this.$get("goodsType/save",{}).then(res=>{
-                console.log(res);
                 if(res.code === 0){
                     this.$message({
                         message:"保存成功",
                         type:"success"
                     })
+                    this.getTypes();
                 }else{
                     this.$message.error("保存失败！")
                 }
@@ -146,6 +151,7 @@ export default {
                             type: 'success',
                             message: '删除成功!'
                         });
+                        this.getTypes()
                     }else{
                         this.$message.error("该数据已有用户在使用，不支持删除!")
                     }
@@ -170,12 +176,13 @@ export default {
         submitForm(formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
-                    this.$refs.upLoad.submit();
-                    setTimeout(()=>{
-                         this.dialogFormVisible = false;
-                         this.getTypes()
-                    },3000)
                    
+                    this.$refs.upLoad.submit();
+                        setTimeout(()=>{
+                            this.dialogFormVisible = false;
+                            this.getTypes();
+                        },3000)
+                        this.isComfirm = false
                 } else {
                     this.$message.error("请检查所填数据！")
                     return false;
@@ -224,7 +231,7 @@ export default {
     color: #8c939d;
     width: 178px;
     height: 178px;
-    line-height: 178px;
+    line-height: 178px !important;
     text-align: center;
   }
   .avatar {

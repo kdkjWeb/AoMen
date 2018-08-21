@@ -13,6 +13,8 @@ import 'element-ui/lib/theme-chalk/index.css';
 Vue.use(ElementUI);
 
 import '@/assets/css/reset.css'    //重置样式公共文件
+// import '@/assets/css/media.css'    //重置样式公共文件
+
 
 //引用阿里图标
 import '@/assets/font/iconfont.css' 
@@ -24,7 +26,7 @@ import Server from './server/server.js';
 Vue.prototype.$get = Server.get;
 Vue.prototype.$post = Server.post;
 Vue.prototype.$put = Server.put;
-Vue.prototype.$delete = Server.delete;
+// Vue.prototype.$delete = Server.delete;
 
 Vue.prototype.$getTimes = Server.getTimes;
 Vue.prototype.$getTime = Server.getTime;

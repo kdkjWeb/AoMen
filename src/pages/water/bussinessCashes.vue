@@ -18,7 +18,7 @@
                 header-align = "center"
                 label="賬戶餘額">
                 <template slot-scope="scope">
-                    <p style="color:red" v-show="isSuccess">{{scope.row.balance}}</p>
+                    <p style="color:red">{{scope.row.balance}}</p>
                 </template>
                 </el-table-column>
                 <el-table-column
@@ -56,8 +56,6 @@ export default {
     data(){
         return{
             isShow:true,
-            isSuccess:true,
-            isFailed:false,
             title:"商家提現",
             placeholder:"商家帳號/店鋪名稱",
             tableData: [],
@@ -69,16 +67,20 @@ export default {
             ],
             currentPage: 1,
             pageSize:10,
-            total:null
+            total:null,
+            dateTime:[]
         }
     },
     mounted(){
         this.getCashesList(this.currentPage)
     },
     methods:{
-        getCashesList(){
+        getCashesList(currentPage,val,date=[]){
             this.$get("withdrawalRecord/s_all",{
-                pageNum: this.currentPage,
+                val: val,
+                startTime: date.length >0 ? this.$getTimes(date[0]) : null,
+                endTime:  date.length >0 ? this.$getTimes(date[1]) : null,
+                pageNum: currentPage ? currentPage : 1,
                 pageSize: this.pageSize
             }).then(res=>{
                 if(res.code == 0){
@@ -90,34 +92,20 @@ export default {
         },
         // 按時間查詢
         date(val){
-            this.$get("withdrawalRecord/s_all",{
-                startTime: this.$getTimes(val[0]),
-                endTime: this.$getTimes(val[1]),
-            }).then(res=>{
-                if(res.code == 0){
-                    this.tableData = [];
-                    this.total = res.data.total;
-                    this.tableData = res.data.list;
-                }
-            })
-            
+            this.dateTime = val;
+            this.currentPage = 1;
+            this.getCashesList('','',val);
         },
         // 查詢
         search(val){
-            this.$get("withdrawalRecord/s_all",{
-              val: val
-            }).then(res=>{
-                if(res.code == 0){
-                    this.tableData = [];
-                    this.total = res.data.total;
-                    this.tableData = res.data.list;
-                }
-            })
+            this.dateTime = []
+            this.currentPage = 1
+            this.getCashesList(this.currentPage,val)
         },
         // 分頁
         handleCurrentChange(val){
             this.currentPage = val;
-            this.getCashesList(this.currentPage)
+            this.getCashesList(val,'',this.dateTime)
         }
     }
 }

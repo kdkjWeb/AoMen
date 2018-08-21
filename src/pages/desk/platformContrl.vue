@@ -94,7 +94,7 @@
         <!-- 微信賬號設置 -->
         <div class="wxSite">
             <el-form :model="form"  label-width="160px" class="demo-ruleForm">
-                <el-form-item label="收付款微信賬號設置" prop="wxAccount">
+                <el-form-item label="收付款微信賬號設置：" prop="wxAccount">
                     <el-input v-model="form.wxAccount"></el-input>
                 </el-form-item>
             </el-form>
@@ -176,7 +176,6 @@ export default {
     .putforward .el-form-item__content{
         width: 40%
     }
-
 </style>
 
 <style scoped>
@@ -209,5 +208,4 @@ export default {
         width:30%;
         margin-right: 20px;
     }
-    
 </style>

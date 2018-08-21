@@ -8,7 +8,9 @@
             <div class="list" v-for="(list,index) in lists" :key="index">
                 <ul class="left">
                     <li class="money">
-                        <h1>{{list.couponName}}</h1>
+                        <el-tooltip class="item" effect="dark" :content=list.couponName placement="top-start" style="margin-right:30px">
+                            <h1>{{list.couponName}}</h1>
+                        </el-tooltip>
                         <span v-show="list.isBegin" style="color:green">未開始···</span>
                         <span v-show="list.isBegining">進行中···</span>
                         <span v-show="list.isOver" style="color:red">已結束···</span>
@@ -46,12 +48,12 @@
                 <el-form-item label="需要積分：" prop="need">
                     <el-input v-model="ruleForm.need" placeholder="请输入需要的積分"></el-input>
                 </el-form-item>
-                <el-form-item label="發行數量：" prop="number" style="border-bottom:1px solid #ccc;margin-bottom:30px">
-                    <el-input placeholder="请输入您想要發行的數量" v-model="ruleForm.number" style="margin-bottom:30px">
+                <el-form-item label="發行數量：" prop="number" style="margin-bottom:30px">
+                    <el-input placeholder="请输入您想要發行的數量" v-model="ruleForm.number" >
                         <template slot="append">張</template>
                     </el-input>
                 </el-form-item >
-                <el-form-item  id="preferential">
+                <el-form-item  id="preferential" style="border-top:1px solid #ccc;padding-top:30px">
                     <el-radio-group v-model="ruleForm.contentType" @change="handleChange">
                         <el-radio-button :label="5">直接代金券</el-radio-button>
                     </el-radio-group>
@@ -331,13 +333,16 @@ export default {
         margin-top: 30px;
     }
     .list li:first-child h1{
-        width:230px;
+        width:150px;
         font-size: 16px;
         color: #333;
         font-weight: 700;
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
+    }
+    .item {
+      margin: 4px;
     }
     .list li:first-child span{
         font-size: 12px;
@@ -350,7 +355,7 @@ export default {
         margin-bottom: 30px;
     }
     #preferential{
-        width:80%;
+        width:97%;
         margin:auto;
         display: flex;
         flex-direction: row;

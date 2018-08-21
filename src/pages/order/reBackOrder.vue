@@ -24,7 +24,7 @@
                 label="訂單狀態">
                 <template slot-scope="scope">
                     <p style="color:red;text-decoration:underline;" v-if="scope.row.status == 4">未處理</p>
-                    <p v-if="scope.row.status == 5">已處理</p>
+                    <p v-else style="color:green">已處理</p>
                 </template>
                 </el-table-column>
                 <el-table-column
@@ -77,7 +77,8 @@ export default {
                 {prop: 'paidTime', label: '購買時間', width: ''},
                 {prop: 'sellers', label: '商家暱稱', width: ''},
             ],
-            tableData: []
+            tableData: [],
+            dateTime:[]
         }
     },
     mounted(){
@@ -85,12 +86,14 @@ export default {
     },
     methods:{
         // 獲取所有退款訂單
-        getRefund(currentPage){
+        getRefund(currentPage,val,date=[]){
             this.$get("orderForm/queryRefundTrade",{
-                pageNum: this.currentPage,
+                val: val,
+                startTime: date.length > 0 ? this.$getTimes(date[0]) : null,
+                endTime:  date.length > 0 ? this.$getTimes(date[1]) : null,
+                pageNum: currentPage ? currentPage : 1,
                 pageSize: this.pageSize
             }).then(res => {
-                console.log(res)
                 if(res.code == 0){
                     this.tableData = [];
                     this.total = res.data.total;
@@ -100,38 +103,15 @@ export default {
         },
         //選擇時間
         date(val){
-            console.log(this.$getTimes(val[0]),this.$getTimes(val[1]));
-            this.$get("orderForm/queryRefundTrade",{
-                startTime: this.$getTimes(val[0]),
-                endTime: this.$getTimes(val[1]),
-                pageNum: this.currentPage,
-                pageSize: this.pageSize
-            }).then(res => {
-                console.log(res)
-                if(res.code == 0){
-                    this.tableData = [];
-                    this.total = res.data.total;
-                    this.tableData = res.data.list;
-                }
-            })
-           
+            this.dateTime = val;
+            this.currentPage = 1;
+            this.getRefund('','',val)
         },
         //點擊搜索按鈕
         search(val){
-            console.log(val);
-            this.$get("orderForm/queryRefundTrade",{
-                val: val,
-                pageNum: this.currentPage,
-                pageSize: this.pageSize
-            }).then(res=>{
-                console.log(res);
-                if(res.code == 0){
-                    this.tableData = [];
-                    this.total = res.data.total;
-                    this.tableData = res.data.list;
-                }
-            })
-            
+            this.dateTime = []
+            this.currentPage = 1;
+            this.getRefund(this.currentPage,val)
         },
         //點擊查看
         handleClick(row){
@@ -144,8 +124,7 @@ export default {
         },
         handleCurrentChange(val){
             this.currentPage = val;
-            this.getRefund(this.currentPage)
-            console.log("分頁")
+            this.getRefund(val,'',this.dateTime)
         }
     }
 }

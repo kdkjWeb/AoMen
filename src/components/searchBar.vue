@@ -5,6 +5,14 @@
             <input type="text" v-model="inputText" :placeholder="placeholder">
             <span class="iconfont icon-search-o" @click="search"></span>
         </div>
+ 
+        <el-select v-model="status" clearable filterable placeholder="訂單狀態查詢" @change="orderStatus(status)" class="myform" v-show="isSearch">
+            <el-option label="保護期" value="1"></el-option>
+            <el-option label="申請退款中" value="4"></el-option>
+            <el-option label="已退款" value="5"></el-option>
+            <el-option label="已完结" value="6"></el-option>
+        </el-select>
+
         <div class="block" v-show="isShow" >
             <el-date-picker
             v-model="date"
@@ -17,7 +25,6 @@
             @blur="blur">
             </el-date-picker>
         </div>
-        
     </div>
 </template>
 
@@ -35,12 +42,17 @@ export default {
        isShow: {
            type: Boolean,
            default: false
+       },
+       isSearch: {
+           type: Boolean,
+           default: false
        }
    },
    data(){
        return {
            inputText: '',
            date:'',
+           status:"",
        }
    },
    methods:{
@@ -49,10 +61,24 @@ export default {
        },
        blur(){
            this.$emit("date",this.date)
+       },
+       orderStatus(val){
+           this.$emit("orderStatus",this.status)
        }
    }
 }
 </script>
+
+<style>
+.el-date-editor--daterange.el-input__inner{
+    width:235px !important;
+}
+.el-input--suffix .el-input__inner{
+    width:100% !important;
+    height: 50px;
+    border-radius: 8px;
+}
+</style>
 
 <style scoped>
 .searchBar{
@@ -62,7 +88,6 @@ export default {
     margin: 10px 0 20px;
 }
 .searchBar h1{
-    /* line-height: 90px; */
     font-weight: bold;
     font-size: 20px;
     letter-spacing: 3px;
@@ -73,7 +98,7 @@ export default {
 }
 .search{
     position: relative;
-    width: 300px;
+    width: 230px;
     height: 50px;
     border: 1px solid #ddd;
     float: right;
@@ -105,7 +130,7 @@ export default {
 }
 .block{
     float: right;
-    width: 310px;
+    width: 240px;
     height: 50px;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -113,7 +138,13 @@ export default {
     margin-top: 20px;
     box-sizing: border-box;
 }
+.myform{
+    width:200px;
+    float: right;
+    margin-top:20px;
+    margin-right: 80px;
 
+}
 
 
 
