@@ -15,8 +15,8 @@
                         <span v-show="list.isBegining">進行中···</span>
                         <span v-show="list.isOver" style="color:red">已結束···</span>
                     </li>
-                    <li v-if="list.couponType == 4">滿{{list.conditionAmount}}圓減{{list.discount}}圓優惠券</li>
-                    <li v-if="list.couponType == 5">直減{{list.discount}}圓優惠券</li>
+                    <li v-if="list.couponType == 4">滿 <span style="color:green">{{list.conditionAmount}}</span> (MOP$) 減 <span style="color:red">{{list.discount}}</span> (MOP$)優惠券</li>
+                    <li v-if="list.couponType == 5">直減 <span style="color:red">{{list.discount}}</span> (MOP$)優惠券</li>
                     <li>剩餘數量：{{list.amount}}</li>
                     <li>{{list.beginTime}} 至 {{list.stopTime}}</li>
                 </ul>
@@ -68,12 +68,12 @@
                                 <label> <em>*</em>满：</label>
                             </div>
                             <el-input placeholder="例：10" v-model="ruleForm.full">
-                                <template slot="append">圓</template>
+                                <template slot="append">MOP$</template>
                             </el-input>
                         </el-form-item>
                         <el-form-item label="減：" prop="cut">
                             <el-input placeholder="例：5" v-model="ruleForm.cut">
-                                <template slot="append">圓</template>
+                                <template slot="append">MOP$</template>
                             </el-input>
                         </el-form-item>
                     </div>
@@ -192,14 +192,16 @@ export default {
 
                     // 把今天的時間分別與活動開始時間、結束時間做比較，從而判斷該活動的進行狀態
 
-                        if(this.$getTimes(myDate)< this.$getTimes(this.lists[i].beginTime)){
+                        if(this.$getTimes(myDate) < this.$getTimes(this.lists[i].beginTime)){
                             this.$set(this.lists[i],'isBegin',true)
-                        }else if(this.$getTimes(myDate)>this.$getTimes(this.lists[i].stopTime)) {
+                        }else if(this.$getTimes(myDate) > this.$getTimes(this.lists[i].stopTime)) {
                             this.$set(this.lists[i],'isOver',true)
                         }else{
                              this.$set(this.lists[i],'isBegining',true)
                         }
                     }
+                }else{
+                    this.$message.error("沒有記錄")
                 }
             })
         },
@@ -235,6 +237,8 @@ export default {
                             this.ruleForm.cut = "";
                             this.getLists();
                             this.dialogVisible = false
+                        }else{
+                            this.$message.error("新增失敗")
                         }
                     })
                 } else {
@@ -268,6 +272,8 @@ export default {
                             message: '删除成功!'
                         });
                         this.getLists()
+                    }else{
+                        this.$message.error("刪除失敗！")
                     }
                 })
            

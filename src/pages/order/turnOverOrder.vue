@@ -1,8 +1,10 @@
 <template>
     <div>
+        <!-- 查詢 -->
         <searchBar :title="title" :placeholder="placeholder" @search="search" @date="date" :isShow="isShow"></searchBar>
-
+        <!-- 查詢 -->
         <div class="table">
+            <!-- 表格 -->
             <el-table
                 :data="tableData"
                 border
@@ -26,6 +28,8 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <!-- 表格 -->
+            <!-- 分頁 -->
             <div class="block">
                 <el-pagination
                 @current-change="handleCurrentChange"
@@ -36,7 +40,7 @@
                 style="margin-top:10px">
                 </el-pagination>
             </div>
-
+            <!-- 分頁 -->
         </div>
     </div>
 </template>
@@ -51,18 +55,18 @@ export default {
     },
     data(){
         return{
-            dateTime: [],
-            isShow:true,
+            dateTime: [],   //日期
+            isShow:true,    //日期查詢是否顯示
             title:"付款訂單",
             placeholder:"訂單號/商品名/商家昵稱",
             tableData: [],
             tableList:[
                 {prop:"orderNum",label:"訂單號",width:''},
                 {prop:"goodsName",label:"商品名稱",width:''},
-                {prop:"unitPrice",label:"商品單價",width:''},
+                {prop:"unitPrice",label:"商品單價（MOP$）",width:''},
                 {prop:"buyer",label:"購買用戶",width:''},
-                {prop:"amount",label:"購買數量",width:''},
-                {prop:"realPrice",label:"總金額",width:''},
+                {prop:"amount",label:"購買數量（個）",width:''},
+                {prop:"realPrice",label:"總金額（MOP$）",width:''},
                 {prop:"paidTime",label:"購買時間",width:''},
                 {prop:"sellers",label:"商家昵稱",width:''},
                 {prop:"shopName",label:"店鋪昵稱",width:''}
@@ -89,6 +93,8 @@ export default {
                     this.tableData = [];
                     this.total = res.data.total;
                     this.tableData = res.data.list;
+                }else{
+                    this.$message.error("沒有記錄")
                 }
             })
         },
@@ -96,7 +102,7 @@ export default {
         date(val){
             this.dateTime = val;
             this.currentPage = 1;
-          this.getOrderBySuccess('','',val)
+            this.getOrderBySuccess('','',val)
         },
         // 查詢
         search(val){
@@ -113,94 +119,39 @@ export default {
 </script>
 
 <style>
+/* 表格內容居中 */
 .el-table .cell{
     display: flex;
     justify-content: space-around;
 }
+/* 日期樣式 */
 .el-date-editor--daterange.el-input__inner{
-    width:220px !important;
+    width:240px !important;
 }
-.el-input--suffix .el-input__inner{
+/* .el-input--suffix .el-input__inner{
     width:100% !important;
     height: 50px;
     border-radius: 8px;
-}
+} */
 </style>
 <style scoped>
-.searchBar{
+/* 分頁 */
+.block{
     width: 100%;
-    height: 90px;
+    height: 50px;
     background-color: #fff;
-    margin: 10px 0 20px;
 }
-.searchBar h1{
-    font-weight: bold;
-    font-size: 20px;
-    letter-spacing: 3px;
-    border-left: 2px solid #f99e1b;
-    padding-left: 10px;
-    float: left;
-    margin-top: 30px;
-}
-.search{
-    position: relative;
-    width: 230px;
-    height: 50px;
-    border: 1px solid #ddd;
+.el-pagination{
     float: right;
-    margin-right: 20px;
-    margin-top: 20px;
-    border-radius: 8px;
-    overflow: hidden;
 }
-.search input{
-    width: 100%;
-    height: 100%;
-    outline: none;
-    border: none;
-    padding-left: 15px;
-    box-sizing: border-box;
+.el-pagination button, .el-pagination span:not([class*=suffix]),.el-pager li,.el-pagination__editor.el-input .el-input__inner{
+    height: 40px !important;
+    line-height: 40px;
+    font-size: 16px;
 }
-.search span.iconfont{
-    position: absolute;
-    display: inline-block;
-    height: 30px;
-    right: 10px;
-    top: 10px;
-    font-size: 30px;
-    color: #f99e1b;
-    border-left: 1px solid #ddd;
-    padding-left: 15px;
-    line-height: 30px;
-    cursor: pointer;
+.el-pagination .el-select .el-input .el-input__inner{
+    height: 43px !important;
+    font-size: 16px;
 }
-.date{
-    float: right;
-    width: 230px;
-    height: 50px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    margin-right: 90px;
-    margin-top: 20px;
-    box-sizing: border-box;
-}
-
-    .block{
-        width: 100%;
-        height: 50px;
-        background-color: #fff;
-    }
-    .el-pagination{
-        float: right;
-    }
-    .el-pagination button, .el-pagination span:not([class*=suffix]),.el-pager li,.el-pagination__editor.el-input .el-input__inner{
-        height: 40px !important;
-        line-height: 40px;
-        font-size: 16px;
-    }
-    .el-pagination .el-select .el-input .el-input__inner{
-        height: 43px !important;
-        font-size: 16px;
-    }
 </style>
 

@@ -3,9 +3,8 @@
         <!-- start 頂部搜索 -->
         <searchBar :title="title" :placeholder="placeholder" :isShow="isShow" @date="date" @search="search"></searchBar>
         <!-- end 頂部搜索 -->
-
-        <!-- start 表格 -->
         <div class="table">
+            <!-- start 表格 -->
             <el-table
                 :data="tableData"
                 border
@@ -35,6 +34,8 @@
                 </template>
                 </el-table-column>
             </el-table>
+            <!-- end 表格 -->
+            <!-- 分頁 -->
             <div class="block">
                 <el-pagination
                 @current-change="handleCurrentChange"
@@ -45,9 +46,8 @@
                 style="margin-top:10px">
                 </el-pagination>
             </div>
-
+            <!-- 分頁 -->
         </div>
-        <!-- end 表格 -->
     </div>
 </template>
 
@@ -63,22 +63,22 @@ export default {
         return{
             placeholder: '訂單號/商品名/商家暱稱',
             title: '退款訂單',
-            isShow: true,
+            isShow: true,  //日期是否顯示
             currentPage:1,
             pageSize:10,
             total:null,
             tableList:[
                 {prop:'orderNum', label: '訂單號', width: ''},
                 {prop:'goodsName', label: '商品名稱', width: ''},
-                {prop:'unitPrice', label: '商品單價', width: ''},
+                {prop:'unitPrice', label: '商品單價（MOP$）', width: ''},
                 {prop: 'buyer', label: '購買用戶', width: ''},
-                {prop: 'amount', label: '購買數量', width: ''},
-                {prop: 'realPrice', label: '總金額', width: ''},
+                {prop: 'amount', label: '購買數量（個）', width: ''},
+                {prop: 'realPrice', label: '總金額（MOP$）', width: ''},
                 {prop: 'paidTime', label: '購買時間', width: ''},
                 {prop: 'sellers', label: '商家暱稱', width: ''},
             ],
             tableData: [],
-            dateTime:[]
+            dateTime:[]   //日期
         }
     },
     mounted(){
@@ -98,6 +98,8 @@ export default {
                     this.tableData = [];
                     this.total = res.data.total;
                     this.tableData = res.data.list;
+                }else{
+                    this.$message.error("沒有記錄！")
                 }
             })
         },
@@ -107,13 +109,13 @@ export default {
             this.currentPage = 1;
             this.getRefund('','',val)
         },
-        //點擊搜索按鈕
+        //搜索按鈕
         search(val){
             this.dateTime = []
             this.currentPage = 1;
             this.getRefund(this.currentPage,val)
         },
-        //點擊查看
+        //查看
         handleClick(row){
             this.$router.push({
                 path:"/reBackOrderDetail",
@@ -122,6 +124,7 @@ export default {
                 }
             })
         },
+        // 分頁
         handleCurrentChange(val){
             this.currentPage = val;
             this.getRefund(val,'',this.dateTime)
@@ -129,30 +132,31 @@ export default {
     }
 }
 </script>
-
 <style>
+/* 表格內容居中 */
 .el-table .cell{
     display: flex;
     justify-content: space-around;
 }
 </style>
 <style scoped>
-    .block{
-        width: 100%;
-        height: 50px;
-        background-color: #fff;
-    }
-    .el-pagination{
-        float: right;
-    }
-    .el-pagination button, .el-pagination span:not([class*=suffix]),.el-pager li,.el-pagination__editor.el-input .el-input__inner{
-        height: 40px !important;
-        line-height: 40px;
-        font-size: 16px;
-    }
-    .el-pagination .el-select .el-input .el-input__inner{
-        height: 43px !important;
-        font-size: 16px;
-    }
+/* 分頁 */
+.block{
+    width: 100%;
+    height: 50px;
+    background-color: #fff;
+}
+.el-pagination{
+    float: right;
+}
+.el-pagination button, .el-pagination span:not([class*=suffix]),.el-pager li,.el-pagination__editor.el-input .el-input__inner{
+    height: 40px !important;
+    line-height: 40px;
+    font-size: 16px;
+}
+.el-pagination .el-select .el-input .el-input__inner{
+    height: 43px !important;
+    font-size: 16px;
+}
 </style>
 

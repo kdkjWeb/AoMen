@@ -3,26 +3,30 @@
         <!-- 返回 -->
         <goBack></goBack>
         <!-- 返回 -->
-        <!-- 內容 -->
         <div class="content">
             <!-- 用戶退款原因 -->
             <div class="cause">
                 <h3>用戶退款原因</h3>
                 <p>{{causeText}}</p>
+                <!-- 退款憑證 -->
                 <div>
-                    <img :src="img.origin" alt="" v-for="(img,index) in imgs" :key="index">
+                    <img :src="img.compress" alt="" v-for="(img,index) in imgs" :key="index" v-if="img.compress">
                 </div>
+                <!-- 退款憑證 -->
             </div>
             <!-- 用戶退款原因 -->
-            <!-- 商家未處理、拒絕原因、同意 -->
-            <div v-if="shopStatus !== 0"  class="handle">
+            <!-- 商家未處理、拒絕、同意 -->
+            <div  class="Bhandle">
                 <h3 style="color:#000;">商家意見</h3>
-                <div v-if="shopStatus === -1">
+                <h3 v-if="shopStatus !== 1 && shopStatus !== -1">未处理</h3>
+                <div v-if="shopStatus === -1" >
                     <h3 style="color:red">拒絕原因:</h3>
-                    <p>{{shopReason}}</p>
+                    <p style="margin-left:30px">{{suggestion}}</p>
                 </div>
                 <h3 v-if="shopStatus === 1" style="color:green">已同意</h3>
             </div>
+            <!-- 商家未處理、拒絕、同意 -->
+            <!-- 管理員未處理、拒絕、同意 -->
             <div class="handle">
                 <h3 style="color:#000" >管理员意见</h3>
                 <h3 v-if="status == 0">未处理</h3>
@@ -36,6 +40,7 @@
                      <el-button type="warning" @click="agreen" v-show="isShow">同意</el-button>
                 </div>
             </div>
+            <!-- 管理員未處理、拒絕、同意 -->
             <!-- 填寫拒絕原因 -->
             <el-dialog :visible.sync="dialogVisible" width="600px">
                 <el-form ref="form" :model="form" label-width="80px">
@@ -50,7 +55,6 @@
             </el-dialog>
             <!-- 填寫拒絕原因 -->
         </div>
-        <!-- 內容 -->
     </div>
 </template>
 
@@ -63,44 +67,44 @@ export default {
     },
     data(){
         return{
-            dialogVisible:false,
-            isClick:false,
-            isShow:true,
+            dialogVisible:false,    //彈框狀態
+            isShow:true,            //按鈕在處理完後是否顯示
             imgs:[],
             form: {
                 desc: ''
             },
-            causeText:"",
-            refuseText:"",
-            status:"",
-            suggestion:"",
-            shopStatus:1
+            causeText:"",           //用戶退款理由
+            refuseText:"",          //管理員拒絕理由
+            status:"",              //管理員拒絕、同意的狀態
+            suggestion:"",          //商家拒絕的理由
+            shopStatus:""           //商家拒絕、同意的狀態
         }
     },
     mounted(){
-        console.log(this.$route.query.id)
         this.getRefundByUser(this.$route.query.id)
     },
     methods:{
         // 獲取用戶退款原因
         getRefundByUser(id){
             this.$get("refund/s_id/" + this.$route.query.id).then(res=>{
-                console.log(res)
                 if(res.code == 0){
                     this.imgs = [];
-                    this.imgs = res.data.refundImgVos;
-                    this.causeText = res.data.comment;
-                    this.refuseText = res.data.reason;
-                    this.suggestion = res.data.shopReason;
-                    this.id = res.data.id;
-                    this.status = res.data.status;
+                    this.imgs = res.data.refundImgVos;          //用戶上傳退款憑證
+                    this.causeText = res.data.comment;          //用戶退款理由
+                    this.refuseText = res.data.reason;          //管理員拒絕理由
+                    this.suggestion = res.data.shopReason;      //商家拒絕理由
+                    this.id = res.data.id;                      //管理員同意、拒絕id                            
+                    this.status = res.data.status;              //管理員意見狀態
+                    this.shopStatus = res.data.shopStatus;      //商家意見狀態
                     if(this.status !=0){
                         this.isShow = false
                     }
+                }else{
+                    this.$message.error("沒有記錄！")
                 }
             })
         },
-        // 商家拒絕
+        // 管理員拒絕
         refuse(){
             this.dialogVisible = true;
         },
@@ -110,11 +114,10 @@ export default {
                 this.$message.error("請填寫拒絕原因")
             }else{
                 this.$post("refund/agreeOrRefuse",{
-                    id: this.id,
-                    reason: this.form.desc,
-                    status: false
+                    id: this.id,                //管理員拒絕的id
+                    reason: this.form.desc,     //管理員拒絕理由
+                    status: false               //管理員拒絕狀態
                 }).then(res=>{
-                    console.log(res);
                     if(res.code == 0) {
                         this.$message({
                             message:"已拒絕",
@@ -122,11 +125,13 @@ export default {
                         });
                         this.dialogVisible = false;
                         this.getRefundByUser()
-                    }                   
+                    }else{
+                        this.$message.error("無法拒絕此信息！")
+                    }                  
                 })
             }
         },
-        // 商家同意
+        // 管理員同意
         agreen(){
             this.$confirm('是否同意此信息?', '提示', {
                 confirmButtonText: '确定',
@@ -135,7 +140,7 @@ export default {
             }).then(() => {
                 this.$post("refund/agreeOrRefuse",{
                     id: this.id,
-                    status: true
+                    status: true    //管理員同意的狀態
                 }).then(res=>{
                     if(res.code == 0){
                         this.$message({
@@ -143,6 +148,8 @@ export default {
                             type:"success"
                         });
                         this.getRefundByUser()
+                    }else{
+                        this.$message.error("無法同意該信息！")
                     }
                 })
             }).catch(() => {
@@ -157,16 +164,18 @@ export default {
 </script>
 
 <style>
+/* 拒絕 */
 .el-textarea__inner{
     height: 230px;
 }
 </style>
-
 <style scoped>
+/* 主內容 */
 .content{
     background-color: #fff;
     width:100%
 }
+/* 用戶退款原因 */
 .cause{
     width:98%;
     margin: auto;
@@ -195,15 +204,19 @@ export default {
     height: 200px;
     margin: 0 0 40px 10px;
 }
-.handle{
+/* 用戶退款原因 */
+/* 商家/管理員未處理、拒絕、同意 */
+.handle,.Bhandle{
     width:98%;
     margin: auto;
     padding-top: 20px;
     box-sizing: border-box;
 }
-.handle h3{
+.handle h3, .Bhandle h3{
+    font-size:16px;
+    font-weight:700;
     color: #f99e1b;
-    /* margin-bottom: 30px; */
+    margin-bottom: 30px;
     padding-left:20px;
     box-sizing:border-box;
 }
@@ -227,4 +240,5 @@ h1{
     font-weight: 700;
     margin-bottom: 20px;
 }
+/* 商家/管理員未處理、拒絕、同意 */
 </style>

@@ -106,7 +106,7 @@ export default {
                 ],
                 tel:[
                     {required: true, message: '请输入電話', trigger: 'blur' },
-                    { type: 'number', message: '電話號碼應為數值', trigger: ['blur'] }
+                    // { type: 'number', message: '電話必须为数字值'}
                     // { pattern:/^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/ , message: '無效的電話', trigger: 'blur' },
                 ],
                 account:[
@@ -167,6 +167,8 @@ export default {
                                 this.ruleForm.password = "";
                                 this.dialogFormNewVisible = false;
                                 this.getUserlistByAdmin()
+                            }else{
+                                this.$message.error("無法新建人員")
                             }
                         })
                     }
@@ -190,26 +192,28 @@ export default {
         updateForm(formName){
             this.$refs[formName].validate((valid) => {
                 if (valid) {
-                    this.$post("admin/edit",{
-                        id: this.id,
-                        realName: this.ruleForm.name,
-                        phone: this.ruleForm.account,
-                        phoneExt: this.ruleForm.tel,
-                        password: this.ruleForm.password
-                    }).then(res =>{
-                        if(res.code === 0){
-                            this.$message({
-                                message:"添加成功",
-                                type:"success"
-                            })
-                            this.ruleForm.name = "";
-                            this.ruleForm.account = "";
-                            this.ruleForm.tel = "";
-                            this.ruleForm.password = "";
-                            this.dialogFormNewVisible = false
-                            this.getUserlistByAdmin()
-                        }
-                    })
+                        this.$post("admin/edit",{
+                            id: this.id,
+                            realName: this.ruleForm.name,
+                            phone: this.ruleForm.account,
+                            phoneExt: this.ruleForm.tel,
+                            password: this.ruleForm.password
+                        }).then(res =>{
+                            if(res.code === 0){
+                                this.$message({
+                                    message:"添加成功",
+                                    type:"success"
+                                })
+                                this.ruleForm.name = "";
+                                this.ruleForm.account = "";
+                                this.ruleForm.tel = "";
+                                this.ruleForm.password = "";
+                                this.dialogFormNewVisible = false
+                                this.getUserlistByAdmin()
+                            }else{
+                                this.$message.error("無法修改")
+                            }
+                        })
                 } else {
                     this.$message.error("請確認所填寫的數據")
                     return false;
@@ -237,7 +241,6 @@ export default {
                             this.$message.error("刪除失敗！")
                         }
                     })
-                    
                 }).catch(() => {
                 this.$message({
                     type: 'info',

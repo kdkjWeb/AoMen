@@ -1,27 +1,14 @@
 <template>
     <div id="bussinessList">
+        <!-- 查詢 -->
         <searchBar :title="title" :placeholder="placeholder" @search="search"></searchBar>
-        <div>
+        <!-- 查詢 -->
+        <div class="table">
+            <!-- 表格 -->
             <el-table
                 :data="tableData"
                 border
                 style="width: 100%">
-                <!-- <el-table-column
-                prop="phone"
-                header-align = "center"
-                label="帳號">              
-                </el-table-column>
-                <el-table-column
-                prop="nickname"
-                header-align = "center"
-                label="賬號暱稱">              
-                </el-table-column>
-                <el-table-column
-                prop="shopName"
-                header-align = "center"
-                label="店鋪名稱"
-                :show-overflow-tooltip="true">              
-                </el-table-column> -->
                 <el-table-column
                 header-align = "center"
                 v-for="(item,index) in tableList"
@@ -40,7 +27,7 @@
                 </el-table-column>
                 <el-table-column
                 header-align = "center"
-                label="店鋪詳情"
+                label="操作"
                 width="280px">
                 <template slot-scope="scope" class="handle">
                     <div>
@@ -51,6 +38,8 @@
                 </template>
                 </el-table-column>
             </el-table>
+            <!-- 表格 -->
+            <!-- 分頁 -->
             <div class="block">
                 <el-pagination
                 @current-change="handleCurrentChange"
@@ -61,6 +50,7 @@
                 style="margin-top:10px">
                 </el-pagination>
             </div>
+            <!-- 分頁 -->
         </div>
     </div>
 </template>
@@ -76,9 +66,6 @@ export default {
         return{
             title:"商家列表",
             placeholder:"請輸入用戶帳號",
-            isBlock:false,
-            isStop:false,
-            isShow:false,
             currentPage:1,
             pageSize:10,
             total:null,
@@ -89,9 +76,9 @@ export default {
                 {prop:"shopName",label:"店鋪名稱",width:''},
                 {prop:"registerTime",label:"註冊時間",width:''},
                 {prop:"registerShopTime",label:"成為商家時間",width:''},
-                {prop:"goodsCount",label:"商品數量",width:''},
-                {prop:"balance",label:"賬戶餘額",width:''},
-                {prop:"integral",label:"積分餘額",width:''}
+                {prop:"goodsCount",label:"商品數量（個）",width:''},
+                {prop:"balance",label:"賬戶餘額(MOP$)",width:''},
+                {prop:"integral",label:"積分餘額（個）",width:''}
             ]
         }
     },
@@ -114,6 +101,8 @@ export default {
                         this.tableData[i].registerTime = this.$getTimes(this.tableData[i].registerTime);
                         this.tableData[i].registerShopTime = this.$getTimes(this.tableData[i].registerShopTime);
                     }
+                }else{
+                    this.$message.error("沒有記錄")
                 }
             })
         },
@@ -125,7 +114,6 @@ export default {
         // 查看
         look(row){
             this.id = row.id
-            console.log(this.id)
             this.$router.push({
                 path:"/bussinessDetail",
                 query:{
@@ -141,7 +129,6 @@ export default {
                 type: 'warning'
             }).then(() => {
                 this.$post("shop/deactivationAndUnsealing?shopId=" + val.id +"&yesOrNo=" + true).then(res=>{
-                    console.log(res);
                     if(res.code == 0){  
                         this.$message({
                             type: 'success',
@@ -149,7 +136,7 @@ export default {
                         });
                         this.getBussinessList()
                     }else{
-                        this.$message.error("未能將該商家停封，請注意檢查！")
+                        this.$message.error("未能將該商家停封")
                     }
                 })
             }).catch(() => {
@@ -174,7 +161,7 @@ export default {
                         });
                         this.getBussinessList()
                     }else{
-                        this.$message.error("未能將該商家解封，請注意檢查！")
+                        this.$message.error("未能將該商家解封")
                     }
                 })
             }).catch(() => {
@@ -194,35 +181,39 @@ export default {
 </script>
 
 <style>
+/* 表格內容居中 */
     #bussinessList .el-table .cell{
         display: flex;
         justify-content: space-around;
     }
+/* 解封、停封、查看按鈕 */
     #bussinessList .el-button.is-round{
         width:75px;
         border-radius: 20px;
     }
 </style>
 <style scoped>
-    .handle{
-        display: flex;
-    }
-    .block{
-        width: 100%;
-        height: 50px;
-        background-color: #fff;
-    }
-    .el-pagination{
-        float: right;
-    }
-    .el-pagination button, .el-pagination span:not([class*=suffix]),.el-pager li,.el-pagination__editor.el-input .el-input__inner{
-        height: 40px !important;
-        line-height: 40px;
-        font-size: 16px;
-    }
-    .el-pagination .el-select .el-input .el-input__inner{
-        height: 43px !important;
-        font-size: 16px;
-    }
+/* 操作 */
+.handle{
+    display: flex;
+}
+/* 分頁 */
+.block{
+    width: 100%;
+    height: 50px;
+    background-color: #fff;
+}
+.el-pagination{
+    float: right;
+}
+.el-pagination button, .el-pagination span:not([class*=suffix]),.el-pager li,.el-pagination__editor.el-input .el-input__inner{
+    height: 40px !important;
+    line-height: 40px;
+    font-size: 16px;
+}
+.el-pagination .el-select .el-input .el-input__inner{
+    height: 43px !important;
+    font-size: 16px;
+}
 </style>
 

@@ -74,6 +74,10 @@ export default new Router({
         name:'article',
         component: resolve => require(['@/pages/article/article.vue'],resolve)
       },{
+        path:"/Carousel",
+        name:'Carousel',
+        component: resolve => require(['@/pages/Carousel/Carousel.vue'],resolve)
+      },{
         path:"/platformContrl",
         name:'platformContrl',
         component: resolve => require(['@/pages/desk/platformContrl.vue'],resolve)

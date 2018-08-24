@@ -38,15 +38,13 @@
                 </el-pagination>
             </div>
         </div>
-        
-        
         <!-- 內容 -->
     </div>
 </template>
 
 <script>
 import newBuild from "./../../components/newBuild"
-import axios from 'axios';
+// import axios from 'axios';
 export default {
     components:{
         newBuild
@@ -70,18 +68,19 @@ export default {
                 pageNum: this.currentPage,
                 pageSize: this.pageSize
             }).then(res=>{
-                console.log(res)
-                this.lists = [];
-                this.total = res.data.total;
-                this.lists = res.data.list;
-                this.imgs = res.data.list
+                if(res.code == 0){
+                    this.lists = [];
+                    this.total = res.data.total;
+                    this.lists = res.data.list;
+                    this.imgs = res.data.list
+                }else{
+                    this.$message.error("沒有記錄")
+                }
             })
         },
         // 删除贴文
         delet(val,index){
-            console.log(val)
             this. id = val.id
-            console.log(this.id)
             this.$confirm('此操作將永久刪除該積分兌換活動, 是否繼續?', '提示', {
                 confirmButtonText: '確定',
                 cancelButtonText: '取消',

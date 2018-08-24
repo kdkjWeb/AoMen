@@ -24,33 +24,17 @@
         <!-- 彈出框 -->
         <el-dialog :visible.sync="dialogFormVisible" width="30%">
             <el-form :model="form" :rules="rules" ref="form">
-                <el-form-item label="類名：" label-width="70px" prop="typeName">
+                <el-form-item label="類名：" label-width="100px" prop="typeName">
                     <el-input v-model="form.typeName" auto-complete="off"></el-input>
                 </el-form-item>
+                <div class="upload">
+                    <el-button style="margin-bottom:50px" @click="upLoad" type="primary" size="mini" :data="data">上傳圖標</el-button>
+                    <img :src="form.img" alt="">
+                    <input type="file" :model="imgFile" ref="imgFileInput" v-show="false" @change="showImage">
+                </div>
             </el-form>
-            <div class="upload">
-                <span><em style="color:red;margin-right:10px">*</em>圖片：</span>
-                <el-upload
-                    ref="upLoad"
-                    class="avatar-uploader"
-                    :action="uploadUrl"
-                    :show-file-list="false"
-                    accept="image/jpeg,image/png,image/jpg"
-                    name="file"
-                    :data="data"
-                    :auto-upload="false"
-                    :with-credentials="true"
-                    :on-success="handleAvatarSuccess"
-                    :before-upload="beforeAvatarUpload">
-                    <img v-if="imageUrl" :src="imageUrl" class="avatar">
-                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                    <div v-show="isComfirm">
-                        <p style="color:red">點擊確認按鈕后方可顯示</p>
-                    </div>
-                </el-upload>
-            </div>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
+                <el-button @click="cancle">取 消</el-button>
                 <el-button type="warning" @click="submitForm('form')">确 認</el-button>
             </div>
         </el-dialog>
@@ -60,15 +44,14 @@
 
 <script>
 import newBuild from "../../components/newBuild"
+
 export default {
     name:"basicSite",
     components:{
-        newBuild
+        newBuild,
     },
     data(){
         return{
-            isComfirm:true,
-            imageUrl:"",
             dialogVisible:false,
             dialogFormVisible:false,
             title:"基本設置",
@@ -82,19 +65,20 @@ export default {
                 dynamicTags: []
             }],
             form:{
-                typeName:""
+                typeName:"",
+                file:"",
+                img:"",
+                kind:""
             },
             rules:{
                 typeName:[
                     {required: true, message: '请输入類名', trigger: 'blur'}
                 ]
             },
+            imgFile:"",
             data: {
-                typeName: '',
                 kind: ''
             },
-            bool:true,
-            uploadUrl:"http://101.207.139.80:8081/goodsType/add",
         }
     },
     mounted(){
@@ -117,18 +101,25 @@ export default {
                             this.lists[0].dynamicTags.push(res.data.list[i])
                         }
                     }
+                }else{
+                    this.$message.error("沒有記錄")
                 }
             })
         },
         // 保存修改內容
         keep(){
-            this.$get("goodsType/save",{}).then(res=>{
+            this.isloading = true
+            this.$get("goodsType/save").then(res=>{
                 if(res.code === 0){
-                    this.$message({
-                        message:"保存成功",
-                        type:"success"
-                    })
-                    this.getTypes();
+                    setTimeout(()=>{
+                        this.$message({
+                            message:"保存成功",
+                            type:"success"
+                        })
+                        // this.$refs.upload.clearFiles();
+                        this.getTypes();
+                        this.isloading = false
+                    },2000)
                 }else{
                     this.$message.error("保存失败！")
                 }
@@ -143,7 +134,7 @@ export default {
             }).then(() => {
                 this.$post("goodsType/del",{
                     id: tag.id,
-                    status: 1
+                    status: -1
                 }).then(res=>{
                     if(res.code == 0){
                         this.lists[index].dynamicTags.splice(index1,1)
@@ -172,17 +163,58 @@ export default {
                 this.data.kind = 0;
             }
         },
+        //上傳
+        upLoad(){
+            var fileInput = this.$refs.imgFileInput;
+            fileInput.click()
+        },
+        // 顯示圖片
+        showImage(){
+            var fileInput = this.$refs.imgFileInput;
+            var fileReader = new FileReader();
+            var imgData = fileReader.readAsDataURL(fileInput.files[0]);
+            this.form.file = fileInput.files[0];
+            var that = this;
+            fileReader.onload = function(){
+                that.form.img = this.result
+            }
+        },
         // 確定新建
         submitForm(formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
-                   
-                    this.$refs.upLoad.submit();
-                        setTimeout(()=>{
-                            this.dialogFormVisible = false;
-                            this.getTypes();
-                        },3000)
-                        this.isComfirm = false
+                    if(this.form.img == ""){
+                        this.$message.error("請上傳圖標")
+                    }else{
+                        var formData = new FormData;
+                        if(this.data.kind == 1){
+                            formData.append("kind",this.data.kind)
+                        }else{
+                            formData.append("kind",this.data.kind)
+                        }
+                        formData.append("typeName",this.form.typeName);
+                        formData.append("file",this.form.file)
+                        this.$post("goodsType/add",formData).then(res =>{
+                            if(res.code == 0){
+                                if(this.data.kind == 1){
+                                    this.lists[0].dynamicTags.push(res.data);
+                                    this.dialogFormVisible = false;
+                                    this.form.typeName = "";
+                                    this.form.img = ""
+                                }else{
+                                    this.lists[1].dynamicTags.push(res.data);
+                                    this.dialogFormVisible = false;
+                                    this.form.typeName = "";
+                                    this.form.img = "";
+                                }
+                            }else{
+                                this.$message.error("新增失敗，同一類別不能重複新增")
+                                setTimeout(()=>{
+                                    this.isloading = false;
+                                },3000)
+                            }
+                        })
+                    }
                 } else {
                     this.$message.error("请检查所填数据！")
                     return false;
@@ -190,23 +222,12 @@ export default {
             });
           
         },
-        
-        handleAvatarSuccess(res, file) {
-            this.imageUrl = URL.createObjectURL(file.raw);
-        },
-        beforeAvatarUpload(file) {
-            this.data.typeName = this.form.typeName;
-            const isJPG = file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png';
-            const isLt2M = file.size / 1024 / 1024 < 2;
-            if (!isJPG) {
-            this.$message.error('上传头像图片只能是 JPG/PNG 格式!');
-            }
-            if (!isLt2M) {
-            this.$message.error('上传头像图片大小不能超过 2MB!');
-            }
-            return isJPG && isLt2M;
-        },
-        
+        // 取消新增圖標
+        cancle(){
+            this.dialogFormVisible = false;
+            this.form.typeName = "";
+            this.form.img = ""
+        }
     }
 }
 </script>
@@ -215,31 +236,6 @@ export default {
     .el-dialog__footer{
         text-align: center
     }
-
-  .avatar-uploader .el-upload {
-    border: 1px dashed #d9d9d9;
-    border-radius: 6px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-  }
-  .avatar-uploader .el-upload:hover {
-    border-color: #409EFF;
-  }
-  .avatar-uploader-icon {
-    font-size: 28px;
-    color: #8c939d;
-    width: 178px;
-    height: 178px;
-    line-height: 178px !important;
-    text-align: center;
-  }
-  .avatar {
-    width: 178px;
-    height: 178px;
-    display: block;
-  }
-
 </style>
 
 
@@ -286,18 +282,10 @@ export default {
         width:unset;
         margin-left: 10px;
     }
-     .el-button{
-        width:200px
-    }
-    .upload span{
-        float: left;
-        display: inline-block;
-        width: 70px;
-        height: 40px;
-        line-height: 40px;
-        padding-left: 15px;
-        box-sizing: border-box;
-        position: relative;
+     .upload img{
+        width:200px;
+        margin:0 20px 20px 20px;
+        vertical-align:middle;
     }
     em{
         position: absolute;

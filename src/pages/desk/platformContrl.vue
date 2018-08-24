@@ -26,43 +26,53 @@
         <!-- 用戶消費等級/折扣設置 -->
         <div class="level">
             <h1>用戶消費等級/折扣設置</h1>
-            <el-form :model="form"  label-width="80px" class="demo-ruleForm">
-                 <el-form-item label="鐵牌用戶">
-                    <el-input placeholder="请输入内容" v-model="form.ironUser">
-                        <template slot="append">圓</template>
+            <el-form :model="form"  label-width="120px" class="demo-ruleForm">
+                <!-- <el-form-item label="水晶用戶：">
+                    <el-input placeholder="例：滿500">
+                        <template slot="append">MOP$</template>
                     </el-input>
                 </el-form-item>
-                <el-form-item label="折扣率">
+                <el-form-item label="赠送：">
+                    <el-input placeholder="例：贈送100">
+                        <template slot="append">MOP$代金券</template>
+                    </el-input>
+                </el-form-item> -->
+                <el-form-item label="鐵牌用戶：">
+                    <el-input placeholder="请输入内容" v-model="form.ironUser">
+                        <template slot="append">MOP$</template>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="折扣率：">
                     <el-input placeholder="请输入内容" v-model="form.ironRate">
                         <template slot="append">%</template>
                     </el-input>
                 </el-form-item>
-                 <el-form-item label="銅牌用戶">
+                 <el-form-item label="銅牌用戶：">
                     <el-input placeholder="请输入内容" v-model="form.copperUser">
-                        <template slot="append">圓</template>
+                        <template slot="append">MOP$</template>
                     </el-input>
                 </el-form-item>
-                 <el-form-item label="折扣率">
+                 <el-form-item label="折扣率：">
                     <el-input placeholder="请输入内容" v-model="form.copperRate">
                         <template slot="append">%</template>
                     </el-input>
                 </el-form-item>
-                 <el-form-item label="銀牌用戶">
+                 <el-form-item label="銀牌用戶：">
                     <el-input placeholder="请输入内容" v-model="form.silverUser">
-                        <template slot="append">圓</template>
+                        <template slot="append">MOP$</template>
                     </el-input>
                 </el-form-item>
-                 <el-form-item label="折扣率">
+                 <el-form-item label="折扣率：">
                     <el-input placeholder="请输入内容" v-model="form.silverRate">
                         <template slot="append">%</template>
                     </el-input>
                 </el-form-item>
-                 <el-form-item label="金牌用戶">
+                 <el-form-item label="金牌用戶：">
                     <el-input placeholder="请输入内容" v-model="form.goldenUser">
-                        <template slot="append">圓</template>
+                        <template slot="append">MOP$</template>
                     </el-input>
                 </el-form-item>
-                <el-form-item label="折扣率">
+                <el-form-item label="折扣率：">
                     <el-input placeholder="请输入内容" v-model="form.goldenRate">
                         <template slot="append">%</template>
                     </el-input>
@@ -80,12 +90,12 @@
                 </el-form-item>
                 <el-form-item label="商戶提現最低金額設置：">
                     <el-input placeholder="请输入内容" v-model="form.withdrawMin">
-                        <template slot="append">圓</template>
+                        <template slot="append">MOP$</template>
                     </el-input>
                 </el-form-item>
                 <el-form-item label="商戶每日提現最高金額設置：">
                     <el-input placeholder="请输入内容" v-model="form.withdrawMax">
-                        <template slot="append">圓</template>
+                        <template slot="append">MOP$</template>
                     </el-input>
                 </el-form-item>
             </el-form>
@@ -135,6 +145,8 @@ export default {
                     this.form.copperRate = res.data.copperRate*100;
                     this.form.silverRate = res.data.silverRate*100;
                     this.form.goldenRate = res.data.goldenRate*100;
+                }else{
+                    this.$message.error("沒有記錄")
                 }
             })
         },
@@ -156,7 +168,6 @@ export default {
                 withdrawMax: this.form.withdrawMax,
                 wxAccount: this.form.wxAccount
             }).then(res =>{
-                console.log(res)
                 if(res.code === 0){
                     this.$message({
                         message:"保存成功！",

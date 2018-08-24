@@ -16,7 +16,7 @@
                 </el-table-column>
                 <el-table-column
                 header-align = "center"
-                label="賬戶餘額">
+                label="賬戶餘額（MOP$）">
                 <template slot-scope="scope">
                     <p style="color:red">{{scope.row.balance}}</p>
                 </template>
@@ -62,7 +62,7 @@ export default {
             tableList:[
                 {prop:"phone",label:"商家帳號",width:''},
                 {prop:"shopName",label:"店鋪名稱",width:''},
-                {prop:"withdraw",label:"提現金額",width:''},
+                {prop:"withdraw",label:"提現金額（MOP$）",width:''},
                 {prop:"createTime",label:"提現時間",width:''},
             ],
             currentPage: 1,
@@ -87,6 +87,8 @@ export default {
                     this.tableData = [];
                     this.total = res.data.total;
                     this.tableData = res.data.list;
+                }else{
+                    this.$message.error("沒有記錄！")
                 }
             })
         },

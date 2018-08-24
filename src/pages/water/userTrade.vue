@@ -28,29 +28,26 @@
                 </el-table-column>
                 <el-table-column
                 header-align = "center"
-                label="總金額">
+                label="總金額（MOP$）">
                 <template slot-scope="scope">
                     <p style="color:red">{{scope.row.totalPrice}}</p>
                 </template>
                 </el-table-column>
                 <el-table-column
+                prop="coupons"
                 header-align = "center"
                 label="優惠類型">
-                <template slot-scope="scope">
-                    <p>{{scope.row.coupons}}</p>
-                    <!-- <p>積分減免</p>
-                    <p>打折券</p> -->
-                </template>
                 </el-table-column>
                 <el-table-column
                 prop="discountPrice"
                 header-align = "center"
-                label="打折金額">
+                label="打折金額（MOP$）">
                 </el-table-column>
                 <el-table-column
                 prop="realPrice"
                 header-align = "center"
-                label="實付款金額">
+                width="180px"
+                label="實付款金額（MOP$）">
                 </el-table-column>
                 <el-table-column
                 prop="paidTime"
@@ -123,6 +120,8 @@ export default {
                     this.tableData = [];
                     this.total = res.data.total;
                     this.tableData = res.data.list;
+                }else{
+                    this.$message.error("沒有記錄！")
                 }
             })
         },

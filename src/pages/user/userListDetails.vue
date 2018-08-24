@@ -1,11 +1,10 @@
 <template>
     <div class="userDetails">
-        <!-- 返回+查詢 -->
+        <!-- 返回 -->
         <goBack  :placeholder="placeholder"></goBack>
-        <!-- 返回+查詢 -->
-
-        <!-- start 表格 -->
+        <!-- 返回 -->
         <div class="table">
+            <!-- start 表格 -->
             <el-table
                 :data="tableData"
                 border
@@ -43,6 +42,8 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <!-- end 表格 -->
+            <!-- 分頁 -->
             <div class="block">
                 <el-pagination
                 @current-change="handleCurrentChange"
@@ -53,8 +54,8 @@
                 style="margin-top:10px">
                 </el-pagination>
             </div>
+            <!-- 分頁 -->
         </div>
-        <!-- end 表格 -->
     </div>
 </template>
 
@@ -74,10 +75,10 @@ export default {
                 {prop:'paidTime', label: '購買時間', width: ''},
                 {prop:'orderNum', label: '訂單號', width: ''},
                 {prop:'goodsName', label: '商品名稱', width: ''},
-                {prop:'unitPrice', label: '單價', width: ''},
-                {prop:'amount', label: '購買數量', width: ''},
-                {prop:'totalPrice', label: '應付金額', width: ''},
-                {prop:'realPrice', label: '實付金額', width: ''},
+                {prop:'unitPrice', label: '單價（MOP$）', width: ''},
+                {prop:'amount', label: '購買數量（個）', width: ''},
+                {prop:'totalPrice', label: '應付金額（MOP$）', width: ''},
+                {prop:'realPrice', label: '實付金額（MOP$）', width: ''},
             ],
             tableData: []
         }
@@ -100,6 +101,8 @@ export default {
                     for(var i = 0;i<this.tableData.length;i++) {
                         this.tableData[i].paidTime = this.$getTimes(this.tableData[i].paidTime);
                     }
+                }else{
+                    this.$message.error("沒有記錄")
                 }
             })
         },
@@ -113,27 +116,29 @@ export default {
 </script>
 
 <style>
+/* 表格內容居中 */
 .el-table .cell{
     display: flex;
     justify-content: space-around;
 }
 </style>
 <style scoped>
-    .block{
-        width: 100%;
-        height: 50px;
-        background-color: #fff;
-    }
-    .el-pagination{
-        float: right;
-    }
-    .el-pagination button, .el-pagination span:not([class*=suffix]),.el-pager li,.el-pagination__editor.el-input .el-input__inner{
-        height: 40px !important;
-        line-height: 40px;
-        font-size: 16px;
-    }
-    .el-pagination .el-select .el-input .el-input__inner{
-        height: 43px !important;
-        font-size: 16px;
-    }
+/* 分頁樣式 */
+.block{
+    width: 100%;
+    height: 50px;
+    background-color: #fff;
+}
+.el-pagination{
+    float: right;
+}
+.el-pagination button, .el-pagination span:not([class*=suffix]),.el-pager li,.el-pagination__editor.el-input .el-input__inner{
+    height: 40px !important;
+    line-height: 40px;
+    font-size: 16px;
+}
+.el-pagination .el-select .el-input .el-input__inner{
+    height: 43px !important;
+    font-size: 16px;
+}
 </style>

@@ -7,9 +7,13 @@
                 <dt>
                     <img :src="this.$route.query.img" alt="">
                 </dt>
-                <dd class="title">{{item.goodsName}}</dd>
+                <dd class="title">
+                    <el-tooltip class="item" effect="dark" :content=item.goodsName placement="top-start" style="margin-right:30px">
+                        <h1>{{item.goodsName}}</h1>
+                    </el-tooltip>
+                </dd>
                 <dd>剩餘數量：<span>{{item.storeCount}}</span></dd>
-                <dd><span>{{item.needIntegral}}</span></dd>
+                <dd>所需積分：<span style="font-size:20px;color:#f99e1b">{{item.needIntegral}}</span></dd>
             </dl>
         </div>
         <div class="userList" v-for="(user,index) in users" :key="index"  >
@@ -25,15 +29,15 @@
             <p style="text-align:center;line-height:100px">此商品暫無用戶兌換</p>
         </div>
         <div class="block">
-                <el-pagination
-                @current-change="handleCurrentChange"
-                :current-page="currentPage"
-                :page-size="pageSize"
-                layout="total, prev, pager, next, jumper"
-                :total="total" 
-                style="margin-top:10px">
-                </el-pagination>
-            </div>
+            <el-pagination
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-size="pageSize"
+            layout="total, prev, pager, next, jumper"
+            :total="total" 
+            style="margin-top:10px">
+            </el-pagination>
+        </div>
     </div>
 </template>
 
@@ -68,6 +72,8 @@ export default {
                    this.total = res.data.paymentsList.total;
                    this.item = res.data;
                    this.users = res.data.paymentsList.list
+               }else{
+                   this.$message.error("暫無人兌換")
                }
            })
        },
@@ -99,18 +105,17 @@ export default {
     float: left;
     margin-right: 25px;
 }
-.integral_list dl dd.title{
-    width:300px;
+.integral_list h1{
+    width:180px;
+    font-size: 18px;
     font-weight: bold;
     padding-bottom: 10px;
     text-overflow: ellipsis;
-    overflow: hidden;
     white-space: nowrap;
+    overflow: hidden;
 }
 .integral_list dl dd:last-child{
     padding-top: 35px;
-    font-size: 24px;
-    color: #f99e1b;
 }
 .userList{
     width:100%;

@@ -11,7 +11,11 @@
                    <dt>
                        <img :src="item.origin" alt="">
                    </dt>
-                   <dd class="title">{{item.goodsName}}</dd>
+                   <dd class="title">
+                        <el-tooltip class="item" effect="dark" :content=item.goodsName placement="top-start" style="margin-right:30px">
+                            <h1>{{item.goodsName}}</h1>
+                        </el-tooltip>
+                    </dd>
                    <dd>剩餘數量：<span>{{item.storeCount}}</span></dd>
                </dl>
                <div class="btn">
@@ -34,41 +38,28 @@
         </div>
         <!-- 分頁 -->
        <!-- start彈出框 -->
-       <el-dialog title="新建積分兌換商品" :visible.sync="dialogFormVisible" width="35%">
-        <div class="upload">
-            <span> <em style="color:red;margin-right:10px">*</em>圖片：</span>
-            <el-upload
-                ref="upLoad"
-                class="avatar-uploader"
-                action="http://101.207.139.80:8081/IntegralGoodsController/addIntegralGoods"
-                :show-file-list="false"
-                accept="image/jpeg,image/png,image/jpg"
-                name="file"
-                :data="data"
-                :auto-upload="false"
-                :with-credentials="true"
-                :on-success="handleAvatarSuccess"
-                :before-upload="beforeAvatarUpload">
-                <img v-if="imageUrl" :src="imageUrl" class="avatar">
-                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                <div v-show="isComfirm"><p style="color:red">點擊確認按鈕后方可顯示</p></div>
-            </el-upload>
-        </div>
+       <el-dialog title="新建積分兌換商品" :visible.sync="dialogFormVisible" width="35%" center>
         <el-form :model="form" label-position="right" label-width="120px" :rules="rules" ref="form">
-            <el-form-item label="商品名稱：" prop="name">
-                <el-input v-model="form.name"></el-input>
+            
+            <el-form-item label="商品名稱：" prop="goodsName">
+                <el-input v-model="form.goodsName"></el-input>
             </el-form-item>
-            <el-form-item label="領取上線：" prop="limit">
-                <el-input placeholder="请输入内容" v-model="form.limit">
+            <el-form-item label="領取上線：" prop="storeCount">
+                <el-input placeholder="请输入内容" v-model="form.storeCount">
                     <template slot="append">人</template>
                 </el-input>
             </el-form-item>
-            <el-form-item label="需要積分：" prop="integral">
-                <el-input v-model="form.integral"></el-input>
+            <el-form-item label="需要積分：" prop="needIntegral">
+                <el-input v-model="form.needIntegral"></el-input>
             </el-form-item>
-            <el-form-item>
-                <el-button @click="cancel">取 消</el-button>
-                    <el-button type="primary" @click="submitForm('form')">確 認</el-button>
+            <div class="upload">
+                <el-button style="margin-left:20px;margin-bottom:50px" @click="upLoad" type="primary" size="mini">上傳圖片</el-button>
+                <img :src="form.img" alt="">
+                <input type="file" :model="imgFile" ref="imgFileInput" v-show="false" @change="showImage">
+            </div>
+            <el-form-item style="margin-left:20%">
+                <el-button @click="cancle">取 消</el-button>
+                <el-button type="primary" @click="submitForm('form')">確 認</el-button>
             </el-form-item>
         </el-form>
        
@@ -90,31 +81,29 @@ export default {
             imageUrl: '',
             dialogFormVisible: false,
             form: {
-                name: '',
-                limit:'',
-                integral: ''
-                },
+                goodsName: '',
+                storeCount:'',
+                needIntegral: '',
+                img:"",
+                file:""
+            },
+            imgFile:"",
             title:"積分兌換設置",
             integralList: [],
             rules:{
-                name:[
+                goodsName:[
                     { required: true, message: '请输入商品名稱', trigger: 'blur' },
                 ],
-                limit:[
+                storeCount:[
                     { required: true, message: '请输入最多领取人数', trigger: 'blur' },
                 ],
-                integral:[
+                needIntegral:[
                     { required: true, message: '请输入领取所需分数', trigger: 'blur' },
                 ]
             },
             currentPage: 1,
             pageSize:10,
-            total:null,
-            data:{
-                goodsName: "",
-                needIntegral: "",
-                storeCount: ""
-            }
+            total:null
         }
     },
     mounted(){
@@ -131,6 +120,8 @@ export default {
                     this.integralList = [];
                     this.total = res.data.total;
                     this.integralList = res.data.list;
+                }else{
+                    this.$message.error("沒有記錄")
                 }
             })
         },
@@ -138,21 +129,64 @@ export default {
         add(){
             this.dialogFormVisible = true;
         },
+        // 上傳圖片
+        upLoad(){
+            var fileInput = this.$refs.imgFileInput;
+            fileInput.click()
+        },
+        // 顯示圖片
+        showImage(){
+            var fileInput = this.$refs.imgFileInput;
+            var fileReader = new FileReader();
+            var imgData = fileReader.readAsDataURL(fileInput.files[0]);
+            this.form.file = fileInput.files[0];
+            var that = this;
+            fileReader.onload = function(){
+                that.form.img = this.result;
+            }
+        },
         // 確認新建
         submitForm(formName) {
             this.$refs[formName].validate((valid) => {
             if (valid) {
-                this.$refs.upLoad.submit();
-                setTimeout(()=>{
-                    this.dialogFormVisible = false;
-                    this.getIntegral()
-                },3000);
-                this.isComfirm = false;
+                if(this.form.img == ""){
+                    this.$message.error("請上傳圖片")
+                }else{
+                    var formData = new FormData;
+                    formData.append("goodsName",this.form.goodsName);
+                    formData.append("needIntegral",this.form.needIntegral)
+                    formData.append("storeCount",this.form.storeCount);
+                    formData.append("file",this.form.file);
+                    this.$post("IntegralGoodsController/addIntegralGoods",formData).then(res=>{
+                        if(res.code ==0){
+                            this.$message({
+                                message:"新增成功",
+                                type:"success"
+                            });
+                            this.getIntegral();
+                            this.dialogFormVisible = false;
+                            this.form.goodsName = "";
+                            this.form.needIntegral = "";
+                            this.form.storeCount = "";
+                            this.form.img = ""
+                        }else{
+                            this.$message.error("新增失敗")
+                        }
+                    })
+                }
             } else {
-                console.log('error submit!!');
+                this.$message.error("請檢查所填數據")
                 return false;
             }
             });
+        },
+        // 取消新建
+        cancle(){
+            this.dialogFormVisible = false;
+            this.form.goodsName = "";
+            this.form.needIntegral = "";
+            this.form.storeCount = "";
+            this.form.img = "";
         },
         //查看
         examine(val){
@@ -171,11 +205,9 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
                 }).then(() => {
-                    console.log(val.id)
                     this.$get("IntegralGoodsController/deleteOne",{
                         goodsId:val.id
                     }).then(res=>{
-                        console.log(res);
                         if(res.code == 0){
                             this.$message({
                                 type: 'success',
@@ -186,9 +218,7 @@ export default {
                         }else{
                             this.$message.error("刪除失敗")
                         }
-                       
                     })
-                   
                 }).catch(() => {
                     this.$message({
                         type: 'info',
@@ -196,62 +226,16 @@ export default {
                     });          
                 });
         },
-        //彈出框的取消按鈕
-        cancel(){
-            this.dialogFormVisible = false;
-        },
-        //彈出框的確認按鈕
+        //分頁
         handleCurrentChange(val){
             this.currentPage = val;
             this.getIntegral(this.currentPage)
         },
-        handleAvatarSuccess(res, file) {
-            this.imageUrl = URL.createObjectURL(file.raw);
-        },
-        beforeAvatarUpload(file) {
-            this.data.goodsName  = this.form.name;
-            this.data.needIntegral   = this.form.integral;
-            this.data.storeCount   = this.form.limit;
-            const isJPG = file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png';
-            const isLt2M = file.size / 1024 / 1024 < 2;
-            if (!isJPG) {
-            this.$message.error('上传头像图片只能是 JPG/PNG 格式!');
-            }
-            if (!isLt2M) {
-            this.$message.error('上传头像图片大小不能超过 2MB!');
-            }
-            return isJPG && isLt2M;
-        },
-        
+       
     }
 }
 </script>
 
-<style>
- .avatar-uploader .el-upload {
-    border: 1px dashed #d9d9d9;
-    border-radius: 6px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-  }
-  .avatar-uploader .el-upload:hover {
-    border-color: #409EFF;
-  }
-  .avatar-uploader-icon {
-    font-size: 28px;
-    color: #8c939d;
-    width: 178px;
-    height: 178px;
-    line-height: 178px !important;
-    text-align: center;
-  }
-  .avatar {
-    width: 178px;
-    height: 178px;
-    display: block;
-  }
-</style>
 
 <style scoped>
 .integral{
@@ -279,7 +263,9 @@ export default {
     float: left;
     margin-right: 25px;
 }
-.integral_list dl dd.title{
+.integral_list dl h1{
+    width:80px;
+    font-size: 18px;
     font-weight: bold;
     padding-bottom: 10px;
     text-overflow: ellipsis;
@@ -294,17 +280,7 @@ export default {
 .upload {
     margin-bottom: 20px;
 }
-.upload span{
-    float: left;
-    display: inline-block;
-    width: 120px;
-    height: 40px;
-    line-height: 40px;
-    padding: 0 12px 0 0;
-    text-align: right;
-    box-sizing: border-box;
-    position: relative;
-}
+
 em{
     position: absolute;
     top:0;
@@ -328,5 +304,10 @@ em{
 .el-pagination .el-select .el-input .el-input__inner{
     height: 43px !important;
     font-size: 16px;
+}
+.upload img{
+    width:200px;
+    margin:0 20px 20px 20px;
+    vertical-align:middle;
 }
 </style>
