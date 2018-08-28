@@ -79,7 +79,8 @@ export default {
                 {prop:"goodsCount",label:"商品數量（個）",width:''},
                 {prop:"balance",label:"賬戶餘額(MOP$)",width:''},
                 {prop:"integral",label:"積分餘額（個）",width:''}
-            ]
+            ],
+            sVal:"" //按用戶賬號搜索
         }
     },
     mounted() {
@@ -108,8 +109,9 @@ export default {
         },
         // 搜索
         search(val){
+            this.sVal = val
             this.currentPage = 1;
-            this.getBussinessList(this.currentPage,val)
+            this.getBussinessList(this.currentPage,this.sVal)
         },
         // 查看
         look(row){
@@ -174,7 +176,7 @@ export default {
         // 分頁
         handleCurrentChange(val){
             this.currentPage = val;
-            this.getBussinessList(val)
+            this.getBussinessList(this.currentPage,this.sVal)
         }
     }
 }
@@ -182,10 +184,10 @@ export default {
 
 <style>
 /* 表格內容居中 */
-    #bussinessList .el-table .cell{
-        display: flex;
-        justify-content: space-around;
-    }
+#bussinessList .el-table .cell{
+    display: flex;
+    justify-content: space-around;
+}
 /* 解封、停封、查看按鈕 */
     #bussinessList .el-button.is-round{
         width:75px;

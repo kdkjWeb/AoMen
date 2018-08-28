@@ -1,12 +1,12 @@
 <template>
-    <div>
+    <div id="build">
         <!-- 返回 -->
         <goBack :isAdd="true" @add="add"></goBack>
         <!-- 返回 -->
         <!-- 新建彈出框 -->
         <el-dialog :visible.sync="dialogFormNewVisible" width="30%">
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="70px" class="demo-ruleForm">
-                <el-form-item label="姓名：" prop="name">
+                <el-form-item label="姓名：" prop="name" clearbale>
                     <el-input v-model="ruleForm.name"></el-input>
                 </el-form-item>
                 <el-form-item label="電話：" prop="tel">
@@ -51,7 +51,7 @@
             width="200px">
             <template slot-scope="scope">
                 <el-button round @click="update(scope.row)" type="warning" plain style="border-color:#f99e1b;">修改</el-button>
-                <el-button round @click="delet(scope.row)">刪除</el-button>
+                <el-button round @click="delet(scope.row)" type="danger" plain>刪除</el-button>
             </template>
             </el-table-column>
         </el-table>
@@ -106,8 +106,7 @@ export default {
                 ],
                 tel:[
                     {required: true, message: '请输入電話', trigger: 'blur' },
-                    // { type: 'number', message: '電話必须为数字值'}
-                    // { pattern:/^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/ , message: '無效的電話', trigger: 'blur' },
+                    { pattern: /^[1][3456789][0-9]{9}|^\d{8}$/, message: '無效的電話', trigger: 'blur' },
                 ],
                 account:[
                     {required: true, message: '请输入賬號', trigger: 'blur' },
@@ -130,6 +129,7 @@ export default {
                 pageNum: currentPage ? currentPage : 1,
                 pageSize: this.pageSize
             }).then(res=>{
+                console.log(res)
                 if(res.code == 0){
                     this.tableData = [];
                     this.total = res.data.total;
@@ -141,7 +141,11 @@ export default {
         add(){
             this.dialogFormNewVisible = true;
             this.isUpdate = false;
-            this.isNew = true
+            this.isNew = true;
+            this.ruleForm.name = "";
+            this.ruleForm.account = "";
+            this.ruleForm.tel = "";
+            this.ruleForm.password = "";
         },
         // 確認新建人員
         submitForm(formName) {
@@ -161,14 +165,13 @@ export default {
                                     message:"添加成功",
                                     type:"success"
                                 })
-                                this.ruleForm.name = "";
-                                this.ruleForm.account = "";
-                                this.ruleForm.tel = "";
-                                this.ruleForm.password = "";
                                 this.dialogFormNewVisible = false;
                                 this.getUserlistByAdmin()
-                            }else{
-                                this.$message.error("無法新建人員")
+                            }else if(res.msg == 401){
+                                this.$message.error("無法新建，電話號碼格式有誤")
+                            }
+                            else{
+                                this.$message.error("手機號(用戶名)已被人注冊，請重新輸入")
                             }
                         })
                     }
@@ -192,6 +195,9 @@ export default {
         updateForm(formName){
             this.$refs[formName].validate((valid) => {
                 if (valid) {
+                     if(!(/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z_]{8,20}$/.test(this.ruleForm.password))){
+                        this.$message.error("密碼必須由数字、字母或下劃線（_）組合而成，且長度在8-20位之間")
+                    }else{
                         this.$post("admin/edit",{
                             id: this.id,
                             realName: this.ruleForm.name,
@@ -201,7 +207,7 @@ export default {
                         }).then(res =>{
                             if(res.code === 0){
                                 this.$message({
-                                    message:"添加成功",
+                                    message:"修改成功",
                                     type:"success"
                                 })
                                 this.ruleForm.name = "";
@@ -214,6 +220,7 @@ export default {
                                 this.$message.error("無法修改")
                             }
                         })
+                    }
                 } else {
                     this.$message.error("請確認所填寫的數據")
                     return false;
@@ -258,40 +265,47 @@ export default {
 </script>
 
 <style>
-    .el-table .cell{
+    #build .el-table .cell{
+        /* width:70px !important; */
+        height: 36px !important;
         display: flex;
         justify-content: space-around;
+        line-height: 35px;
     }
+
 </style>
 <style scoped>
-    .el-button--primary{
-       width:90%;
-       background-color: #f99e1b;
-       border-color:#f99e1b;
-    }
-    .pas{
-        position: absolute;
-        top:0;
-        left:-65px;
-        z-index: 1000
-    }
-    .block{
-        width: 100%;
-        height: 50px;
-        background-color: #fff;
-    }
-    .el-pagination{
-        float: right;
-    }
-    .el-pagination button, .el-pagination span:not([class*=suffix]),.el-pager li,.el-pagination__editor.el-input .el-input__inner{
-        height: 40px !important;
-        line-height: 40px;
-        font-size: 16px;
-    }
-    .el-pagination .el-select .el-input .el-input__inner{
-        height: 43px !important;
-        font-size: 16px;
-    }
+.el-button--warning.is-plain,.el-button--danger.is-plain{
+    padding:0 20px !important
+}
+.el-button--primary{
+    width:90%;
+    background-color: #f99e1b;
+    border-color:#f99e1b;
+}
+.pas{
+    position: absolute;
+    top:0;
+    left:-65px;
+    z-index: 1000
+}
+.block{
+    width: 100%;
+    height: 50px;
+    background-color: #fff;
+}
+.el-pagination{
+    float: right;
+}
+.el-pagination button, .el-pagination span:not([class*=suffix]),.el-pager li,.el-pagination__editor.el-input .el-input__inner{
+    height: 40px !important;
+    line-height: 40px;
+    font-size: 16px;
+}
+.el-pagination .el-select .el-input .el-input__inner{
+    height: 43px !important;
+    font-size: 16px;
+}
 </style>
 
 

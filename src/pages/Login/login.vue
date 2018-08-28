@@ -28,13 +28,13 @@ export default {
     },
     methods:{
         login(){
-            if(this.userInfo.userName == "" || this.userInfo.userPas == "" || !this.userInfo.userName || !this.userInfo.userPas){
+            if(this.userInfo.userName == "" || this.userInfo.userPas == ""){
                 this.$message({
                     message: '請輸入用戶名或密碼',
                     type: 'warning'
                 });
                 return;
-            }else if((/^[\u0391-\uFFE5A-Za-z]+$/.test(this.userInfo.userName))){
+            }else if((/^[\u0391-\uFFE5]+$/.test(this.userInfo.userName))){
                 this.$message({
                     message: '請輸入正確的用戶名',
                     type: 'warning'
@@ -43,11 +43,11 @@ export default {
             }
             else if(!(/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z_]{8,20}$/.test(this.userInfo.userPas))){
                 this.$message({
-                    message: '請輸入正確的密碼',
+                    message: '請輸入正確的密碼,且保證長度在8-20位之間',
                     type: 'warning'
                 });
             }
-            else if(this.userInfo.userName.length > 12 || this.userInfo.userName.length < 6 || this.userInfo.userPas.length > 12 || this.userInfo.userPas.length < 6){
+            else if(this.userInfo.userName.length > 12 || this.userInfo.userName.length < 8 || this.userInfo.userPas.length > 12 || this.userInfo.userPas.length < 8){
                 this.$message({
                     message: '用戶名或密碼長度不夠8位或已超過20位，請輸入正確的用戶名或密碼',
                     type: 'warning'
@@ -68,6 +68,8 @@ export default {
                         this.$router.push({
                             path:"/homePage",
                         })
+                   }else{
+                       this.$message.error("用戶名或密碼錯誤")
                    }
                })
             }

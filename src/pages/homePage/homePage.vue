@@ -7,11 +7,20 @@
                     <h1>澳門到家</h1>
                 </div>
                 <ul style="width:300px">
-                    <li class="admin" style="margin-right:30px">
+                    <li class="admin" style="margin-right:30px;position:relative">
                         <div class="headerName" @click="handleClick">
                             <img src="../../assets/images/header.jpg" alt="">
-                            <span>{{userName}}</span>
+                            <span>{{userName}}</span> 
                         </div>
+                        <!-- 修改密码及新建人员弹框 -->
+                        <div v-show="isShow" class="special">
+                            <div class="loading" @click.stop="leave"></div>
+                            <ul class="adminSpecial">
+                                <li @click="update">修改密碼</li>
+                                <li @click="newPerson" v-show="show">新建人員</li>
+                            </ul>
+                        </div>
+                        <!-- 修改密码及新建人员弹框 -->
                        
                     </li>
                     <li class="myicon">
@@ -38,15 +47,6 @@
                 </el-dialog>
                 <!-- 修改密碼彈出框 -->
             </el-header>
-            <!-- 修改密码及新建人员弹框 -->
-            <div v-show="isShow" class="super">
-                <div class="loading" @click="close"></div>
-                <ul class="adminSpecial">
-                    <li @click="update" >修改密碼</li>
-                    <li @click="newPerson" v-show="show" >新建人員</li>
-                </ul>
-            </div>
-            <!-- 修改密码及新建人员弹框 -->
             <el-container id="aside">
                 <el-aside class="aside">
                     <el-row>
@@ -187,7 +187,10 @@ export default {
         // 修改密碼
         update(){
             this.dialogFormVisible  = true;
-            this.isShow = false;
+            this.isShow = false
+            this.ruleForm.oldPass = "";
+            this.ruleForm.newPass = "";
+            this.ruleForm.confirm = "";
         },
         // 確認修改密碼
         submitPass(formName){
@@ -229,7 +232,7 @@ export default {
         newPerson(){
             this.$router.push({
                 path:"/build"
-            }),
+            });
             this.isShow = false
         },
         // 註銷
@@ -257,6 +260,9 @@ export default {
             });
         },
         // 点击任意处修改密码及新建人员弹框消失
+        leave(){
+            this.isShow = false
+        },
         close(){
             this.isShow = false
         }
@@ -268,8 +274,11 @@ export default {
 #homePage{
     height: 100%;
 }
+.el-submenu__title{
+    padding:0 !important
+}
 .el-aside{
-    width:280px !important;
+    width:220px !important;
     background-color: #2b3245;
 }
 .el-menu{
@@ -335,7 +344,6 @@ export default {
 }
 #homePage .headerName{
     width:180px;
-    position: relative;
 }
 #homePage .headerName:hover{
     cursor:pointer;
@@ -351,16 +359,16 @@ export default {
     background-color: rgba(0,0,0,.1);
     z-index: 10000;
 }
-.adminSpecial {
+#homePage .special {
     position: absolute;
-    left: 85%;
-    top: 9.2%;
-    margin-left: -16px;
-    z-index: 10001;
-    background-size:100% 100%;
+    left: 20%;
+    top: 100%;
+    /* z-index: 10001; */
 }
 #homePage .adminSpecial{
-    width:160px;
+    position: relative;
+    z-index: 10001;
+    width:150px;
     display:flex;
     flex-direction: column;
 }
@@ -369,7 +377,6 @@ export default {
     height: 50px;
     font-size: 14px;
     line-height: 50px;
-    color: #000;
     text-align: center;
     background-color:#fff;
 }

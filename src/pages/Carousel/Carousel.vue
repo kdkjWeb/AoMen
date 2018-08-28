@@ -3,7 +3,7 @@
         <div class="new">
             <el-button type="warning" @click="build">新增</el-button>
         </div>
-
+        <!-- 新增輪播圖彈出框 -->
         <el-dialog title="新增轮播图" :visible.sync="dialogFormVisible" width="28%" center>
             <el-form :model="form">
                 <el-form-item label="权重：" label-width="31%">
@@ -28,11 +28,13 @@
                     <input type="file" :model="imgFile" ref="imgFileInput" v-show="false" @change="showImage">
                 </div>
                 <el-form-item  style="margin-left:50%;padding-top:30px">
-                    <el-button @click="cancle">取 消</el-button>
+                    <el-button @click="dialogFormVisible = false">取 消</el-button>
                     <el-button type="primary" @click="confirm">确 定</el-button>
                 </el-form-item >
             </el-form>           
         </el-dialog>
+        <!-- 新增輪播圖彈出框 -->
+        <!-- 表格 -->
         <div class="primary">
             <h3>通用机型轮播图</h3>
             <el-table
@@ -58,7 +60,7 @@
                 label="操作"
                 width="280px">
                 <template slot-scope="scope" class="handle">
-                    <p style="color:red" @click="delet(scope.row)">删除</p>
+                    <p style="color:red" @click="delet(scope.row)" class="delet">删除</p>
                 </template>
                 </el-table-column>
             </el-table>
@@ -94,6 +96,7 @@
                 </el-table-column>
             </el-table>
         </div> -->
+        <!-- 表格 -->
     </div>
 </template>
 
@@ -174,7 +177,10 @@ export default {
         },
         // 新增
         build(){
-            this.dialogFormVisible = true
+            this.dialogFormVisible = true;
+            this.form.weight = ""
+            this.form.phoneType = ""
+            this.form.img = ""
         },
         // 上傳圖片
         upLoad(){
@@ -197,6 +203,8 @@ export default {
         confirm(){
            if(this.form.weight === "" || this.form.phoneType === ""){
                this.$message.error("權重和手機類型不能為空")
+           }else if(this.form.img === ""){
+               this.$message.error("請上傳圖片")
            }else{
                 var fromData = new FormData;
                 if(this.form.phoneType == 1){
@@ -210,29 +218,16 @@ export default {
                             this.iphoneX.push(res.data);
                             this.getIphoneXList();
                             this.dialogFormVisible = false;
-                            this.form.weight = ""
-                            this.form.phoneType = ""
-                            this.form.img = ""
                         }else{
                             this.primary.push(res.data);
                             this.getPrimaryList();
                             this.dialogFormVisible = false
-                            this.form.weight = ""
-                            this.form.phoneType = ""
-                            this.form.img = ""
                         }
                     }else{
                         this.$message.error("该權重位置已有图片，无法新增轮播图")
                     }
                 })
             }
-        },
-        // 取消新增輪播圖
-        cancle(){
-            this.dialogFormVisible = false
-            this.form.weight = ""
-            this.form.phoneType = ""
-            this.form.img = ""
         }
     }
     
@@ -246,30 +241,33 @@ export default {
     }
 </style>
 <style scoped>
-    .new{
-        width:100%;
-        height: 80px;
-        background-color: #fff;
-    }
-    .new .el-button{
-        margin:20px;
-        box-sizing:border-box;
-    }
-    .primary,.iphoneX{
-        width:100%;
-        height: 720px;
-        background-color: #fff;
-        margin-top:20px
-    }
-    .primary h3,.iphoneX h3{
-        font-size:16px;
-        font-weight: 700;
-        padding:30px 0 20px 10px;
-    }
-    .uploadBlock img{
-        width:200px;
-        margin:0 20px 20px 20px;
-        vertical-align:middle;
-    }
+.delet:hover{
+    cursor:pointer;
+}
+.new{
+    width:100%;
+    height: 80px;
+    background-color: #fff;
+}
+.new .el-button{
+    margin:20px;
+    box-sizing:border-box;
+}
+.primary,.iphoneX{
+    width:100%;
+    height: 720px;
+    background-color: #fff;
+    margin-top:20px
+}
+.primary h3,.iphoneX h3{
+    font-size:16px;
+    font-weight: 700;
+    padding:30px 0 20px 10px;
+}
+.uploadBlock img{
+    width:200px;
+    margin:0 20px 20px 20px;
+    vertical-align:middle;
+}
 </style>
 

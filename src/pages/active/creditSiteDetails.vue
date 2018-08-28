@@ -50,7 +50,7 @@ export default {
     data(){
         return{
             currentPage: 1,
-            pageSize:10,
+            pageSize:1,
             total:null,
             item:{}, 
             users:[]
@@ -60,9 +60,9 @@ export default {
       this.getIntegralMsg(this.$route.query.id,this.currentPage)
     },
     methods:{
-       getIntegralMsg(id,currentPage){
+       getIntegralMsg(currentPage){
            this.$get("IntegralGoodsController/selectPaymentDetails",{
-                integralGoodsId: id,
+                integralGoodsId: this.$route.query.id,
                 pageNum: this.currentPage,
                 pageSize: this.pageSize
             }).then(res=>{

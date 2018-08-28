@@ -128,7 +128,8 @@ export default {
             rules:{
                 withdrawTime:[
                     { required: true, message: '请输入姓名', trigger: 'blur' },
-                    { type:"number" , message: '請輸入數值', trigger: 'blur' },]
+                    { pattern: /^[0-9]*$/, message: '無效的提現時間', trigger: 'blur' },
+                ]
             }
         }
     },

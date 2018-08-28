@@ -69,7 +69,8 @@
             <el-form ref="form" :model="form" label-width="80px" :rules="rules">
                 <h1>拒絕原因</h1>
                 <el-form-item prop="desc">
-                    <el-input type="textarea" v-model="form.desc" placeholder="請填寫拒絕原因" style="width:80%;"></el-input>
+                    <el-input type="textarea" v-model="form.desc" placeholder="請填寫拒絕原因" style="width:80%;position:relative" @input="discuss"></el-input>
+                    <p style="position:absolute;top:80%;right:25%;color:#ccc"><span>{{num}}</span>/<span>{{totalNum}}</span></p>
                 </el-form-item>
                  <el-form-item>
                     <el-button type="warning" id="confirm" @click="sure">確定</el-button>
@@ -115,7 +116,10 @@ export default {
             rules:{
                 desc:{required: true, message: '請輸入拒絕原因', trigger: 'blur'}  
             },
-            origin:''  //點擊后顯示的圖片
+            origin:'',  //點擊后顯示的圖片
+            totalNum:"100", //評論字數總數限制
+            num:"0", //當前輸入字數
+            sVal:""  //按用戶賬號搜索
         }
     },
     mounted(){
@@ -144,8 +148,9 @@ export default {
         },
         //搜索功能
         search(val){
+            this.sVal = val
             this.currentPage = 1;
-            this.getApplyList(this.currentPage,val)
+            this.getApplyList(this.currentPage,this.sVal)
         },
         // 身份證圖片（1）
         ImgShow(val){
@@ -200,13 +205,16 @@ export default {
         },
         //拒絕
         refuse(val){
+            this.form.desc = "";
             this.dialogVisible = true;
             this.id = val.id;
         },
         // 確認拒絕
         sure(val){
             if(this.form.desc == ""){
-                ths.$message.error("拒絕原因不能為空")
+                this.$message.error("拒絕原因不能為空")
+            }else if(this.num > this.totalNum){
+                this.$message.error("請注意保持字數在100字及其以內")
             }else{
                 this.$post("admin/auditApply",{
                     id: this.id,
@@ -227,10 +235,19 @@ export default {
                 })
             }
         },
+        // 評論字數
+        discuss(){
+            var text = this.form.desc.length;
+            // 顯示剩餘文字字數（為0 后依然減下去）
+            // this.num = this.totalNum -text
+            // 顯示輸入文字字數
+            this.num = text
+
+        },
         // 分頁
         handleCurrentChange(val){
             this.currentPage = val;
-            this.getApplyList(val)
+            this.getApplyList(this.currentPage,this.sVal)
         },
        
     }
@@ -245,7 +262,7 @@ export default {
 }
 /* 拒絕理由 */
 .el-textarea__inner{
-    height: 150px !important;
+    height: 230px ;
 }
 </style>
 <style scoped>

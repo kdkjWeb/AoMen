@@ -34,7 +34,7 @@
                 </div>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="cancle">取 消</el-button>
+                <el-button @click="dialogFormVisible = false">取 消</el-button>
                 <el-button type="warning" @click="submitForm('form')">确 認</el-button>
             </div>
         </el-dialog>
@@ -162,6 +162,8 @@ export default {
             }else{
                 this.data.kind = 0;
             }
+            this.form.typeName = "";
+            this.form.img = ""
         },
         //上傳
         upLoad(){
@@ -199,13 +201,9 @@ export default {
                                 if(this.data.kind == 1){
                                     this.lists[0].dynamicTags.push(res.data);
                                     this.dialogFormVisible = false;
-                                    this.form.typeName = "";
-                                    this.form.img = ""
                                 }else{
                                     this.lists[1].dynamicTags.push(res.data);
                                     this.dialogFormVisible = false;
-                                    this.form.typeName = "";
-                                    this.form.img = "";
                                 }
                             }else{
                                 this.$message.error("新增失敗，同一類別不能重複新增")
@@ -221,12 +219,6 @@ export default {
                 }
             });
           
-        },
-        // 取消新增圖標
-        cancle(){
-            this.dialogFormVisible = false;
-            this.form.typeName = "";
-            this.form.img = ""
         }
     }
 }

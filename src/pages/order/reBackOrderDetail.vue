@@ -10,7 +10,7 @@
                 <p>{{causeText}}</p>
                 <!-- 退款憑證 -->
                 <div>
-                    <img :src="img.compress" alt="" v-for="(img,index) in imgs" :key="index" v-if="img.compress">
+                    <img :src="img.compress" alt="" v-for="(img,index) in imgs" :key="index">
                 </div>
                 <!-- 退款憑證 -->
             </div>
@@ -46,7 +46,8 @@
                 <el-form ref="form" :model="form" label-width="80px">
                     <h1>拒絕原因</h1>
                     <el-form-item>
-                        <el-input type="textarea" v-model="form.desc" placeholder="請填寫拒絕原因" style="width:80%;"></el-input>
+                        <el-input type="textarea" v-model="form.desc" placeholder="請填寫拒絕原因" style="width:80%;position:relative" @input="discuss"></el-input>
+                        <p style="position:absolute;top:80%;right:25%;color:#ccc"><span>{{num}}</span>/<span>{{totalNum}}</span></p>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="warning" id="confirm" @click="confirm">確定</el-button>
@@ -77,7 +78,9 @@ export default {
             refuseText:"",          //管理員拒絕理由
             status:"",              //管理員拒絕、同意的狀態
             suggestion:"",          //商家拒絕的理由
-            shopStatus:""           //商家拒絕、同意的狀態
+            shopStatus:"",          //商家拒絕、同意的狀態
+            totalNum:"100",         //評論字數總數限制
+            num:"0"                 //當前輸入字數
         }
     },
     mounted(){
@@ -107,11 +110,14 @@ export default {
         // 管理員拒絕
         refuse(){
             this.dialogVisible = true;
+            this.form.desc = "";
         },
         // 確定拒絕
         confirm(){
             if(this.form.desc == ""){
                 this.$message.error("請填寫拒絕原因")
+            }else if(this.num > this.totalNum){
+                this.$message.error("請注意保持字數在100字及其以內")
             }else{
                 this.$post("refund/agreeOrRefuse",{
                     id: this.id,                //管理員拒絕的id
@@ -124,6 +130,7 @@ export default {
                             type:"success"
                         });
                         this.dialogVisible = false;
+                        this.form.desc ="";
                         this.getRefundByUser()
                     }else{
                         this.$message.error("無法拒絕此信息！")
@@ -159,6 +166,18 @@ export default {
                 });          
             });
         },
+        // 評論字數
+        discuss(){
+            // if(this.num < 0){
+            //     this.$message.error("請注意保持字數在100字及其以內")
+            // }else{
+                var text =this.form.desc.length;
+                // 顯示剩余文字字數，但是为0后依然递减
+                // this.num = this.totalNum -text
+                // 顯示輸入文字字數
+                this.num = text;
+            // }
+        }
     }
 }
 </script>
@@ -179,7 +198,7 @@ export default {
 .cause{
     width:98%;
     margin: auto;
-    padding-top: 40px;
+    padding-top: 30px;
     border-bottom: 1px solid #f5f5f5;
     box-sizing: border-box;
 }

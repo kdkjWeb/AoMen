@@ -29,7 +29,8 @@
                 v-for="(item,index) in tableList"
                 :key="index"
                 :prop="item.prop"
-                :label="item.label">
+                :label="item.label"
+                :height="item.height">
                 </el-table-column>
                 <el-table-column
                 header-align = "center"
@@ -82,11 +83,12 @@ export default {
             total:null,
             tableData: [],
             tableList: [
-                {prop: 'nickname', label: '暱稱', width: ''},
-                {prop: 'createTime', label: '註冊時間', width: ''},
-                {prop: 'level', label: '用戶等級', width: ''},
-                {prop: 'integral', label: '積分餘額（個）', width: ''},
+                {prop: 'nickname', label: '暱稱', height: '200px'},
+                {prop: 'createTime', label: '註冊時間', height: '200px'},
+                {prop: 'level', label: '用戶等級', height: '200px'},
+                {prop: 'integral', label: '積分餘額（個）', height: '200px'},
             ],
+            sVal:''  //按用戶賬號搜索
         }
     },
     mounted(){
@@ -97,7 +99,7 @@ export default {
         getUserList(currentPage,val){
             this.$get("admin/getUsersList",{
                 keyWord: val,
-                pageNum: currentPage ? currentPage : 1,
+                pageNum: this.currentPage ? this.currentPage : 1,
                 pageSize: this.pageSize,
             }).then(res =>{
                 if(res.code === 0){
@@ -111,9 +113,9 @@ export default {
         },
         //搜索功能
         search(val){
-            this.val = ""
+            this.sVal = val
             this.currentPage = 1
-            this.getUserList(this.currentPage,val)
+            this.getUserList(this.currentPage,this.sVal)
             
         },
         //查看消費詳情
@@ -129,7 +131,7 @@ export default {
         // 分頁
         handleCurrentChange(val){
             this.currentPage = val
-            this.getUserList(this.currentPage)
+            this.getUserList(this.currentPage,this.sVal)
         }
     }
 }
@@ -140,6 +142,7 @@ export default {
 .el-table .cell{
     display: flex;
     justify-content: space-around;
+    line-height: 35px;
 }
 </style>
 <style scoped>

@@ -22,7 +22,7 @@
                 header-align = "center"
                 label="訂單狀態">
                 <template slot-scope="scope">
-                    <p style="color:red;text-decoration:underline;" v-if="scope.row.status == 4">未處理</p>
+                    <p style="color:red;" v-if="scope.row.status == 4">未處理</p>
                     <p v-else style="color:green">已處理</p>
                 </template>
                 </el-table-column>
@@ -78,7 +78,8 @@ export default {
                 {prop: 'sellers', label: '商家暱稱', width: ''},
             ],
             tableData: [],
-            dateTime:[]   //日期
+            dateTime:[],   //日期
+            sVal:""
         }
     },
     mounted(){
@@ -111,9 +112,10 @@ export default {
         },
         //搜索按鈕
         search(val){
-            this.dateTime = []
+            this.dateTime = [];
+            this.sVal = val;
             this.currentPage = 1;
-            this.getRefund(this.currentPage,val)
+            this.getRefund(this.currentPage,this.sVal)
         },
         //查看
         handleClick(row){
@@ -127,7 +129,7 @@ export default {
         // 分頁
         handleCurrentChange(val){
             this.currentPage = val;
-            this.getRefund(val,'',this.dateTime)
+            this.getRefund(this.currentPage,this.sVal,this.dateTime)
         }
     }
 }

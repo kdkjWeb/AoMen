@@ -68,7 +68,8 @@ export default {
             currentPage: 1,
             pageSize:10,
             total:null,
-            dateTime:[]
+            dateTime:[],
+            sVal:''
         }
     },
     mounted(){
@@ -100,14 +101,15 @@ export default {
         },
         // 查詢
         search(val){
-            this.dateTime = []
+            this.dateTime = [];
+            this.sVal = val;
             this.currentPage = 1
-            this.getCashesList(this.currentPage,val)
+            this.getCashesList(this.currentPage,this.sVal)
         },
         // 分頁
         handleCurrentChange(val){
             this.currentPage = val;
-            this.getCashesList(val,'',this.dateTime)
+            this.getCashesList(val,this.sVal,this.dateTime)
         }
     }
 }
@@ -117,6 +119,7 @@ export default {
 .el-table .cell{
     display: flex;
     justify-content: space-around;
+    line-height: 35px;
 }
 .el-tag{
     color:unset;

@@ -87,18 +87,18 @@ export default {
             currentPage: 1,
             pageSize:10,
             total:null,
-            origin:"" //點擊后顯示的圖片
+            origin:"", //點擊后顯示的圖片
         }
     },
     mounted(){
-        this.getDetailByBussiness(this.$route.query.id);
+        this.getDetailByBussiness(this.$route.query.id,this.currentPage);
     },
     methods:{
         // 獲取商家詳情列表
         getDetailByBussiness(id,currentPage){
            this.$get("shop/s_goods",{
                shopId: this.$route.query.id,
-               pageNum: currentPage ?currentPage : 1,
+               pageNum: this.currentPage ? this.currentPage : 1,
                pageSize: this.pageSize
            }).then(res=>{
                if(res.code == 0){

@@ -56,6 +56,7 @@ export default {
     data(){
         return{
             dateTime: [],   //日期
+            sVal:"",        //按訂單號、商品名、商家暱稱搜索
             isShow:true,    //日期查詢是否顯示
             title:"付款訂單",
             placeholder:"訂單號/商品名/商家昵稱",
@@ -106,13 +107,14 @@ export default {
         },
         // 查詢
         search(val){
-            this.dateTime = []
+            this.dateTime = [];
+            this.sVal = val;
             this.currentPage = 1;
-            this.getOrderBySuccess(this.currentPage,val)
+            this.getOrderBySuccess(this.currentPage,this.sVal)
         },
         // 分頁
         handleCurrentChange(val){
-            this.getOrderBySuccess(val,'',this.dateTime);
+            this.getOrderBySuccess(this.currentPage,this.sVal,this.dateTime);
         }
     }
 }
@@ -123,16 +125,12 @@ export default {
 .el-table .cell{
     display: flex;
     justify-content: space-around;
+    line-height: 35px;
 }
 /* 日期樣式 */
 .el-date-editor--daterange.el-input__inner{
-    width:240px !important;
+    width:230px !important;
 }
-/* .el-input--suffix .el-input__inner{
-    width:100% !important;
-    height: 50px;
-    border-radius: 8px;
-} */
 </style>
 <style scoped>
 /* 分頁 */

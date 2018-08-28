@@ -248,15 +248,16 @@ export default {
                 }
             });
         },
+        // 優惠類型為直接代金券
         handleChange(){
             this.isShow = false;
         },
+        // 優惠類型為滿減代金券
         handleCut(){
             this.isShow = true;
         },
         // 刪除
         delet(val,index){
-            console.log(val,val.id)
             this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',

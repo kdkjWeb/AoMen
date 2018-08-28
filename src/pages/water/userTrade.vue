@@ -58,13 +58,12 @@
                 header-align = "center"
                 prop="status"
                 label="訂單狀態"
-                width="200"
-                filter-placement="bottom-end">
+                width="200">
                     <template slot-scope="scope">
-                        <el-tag disable-transitions style="color:green" v-if="scope.row.status == 1 || scope.row.status == 2 || scope.row.status == 3">保護期</el-tag>
-                        <el-tag disable-transitions style="color:#3f51b5" v-if="scope.row.status == 4">申請退款中</el-tag>
-                        <el-tag disable-transitions style="color:red" v-if="scope.row.status == 5">已退款</el-tag>
-                        <el-tag disable-transitions style="color:#f99e1b" v-if="scope.row.status == 6">已完結</el-tag>
+                        <p style="color:green" v-if="scope.row.status == 1 || scope.row.status == 2 || scope.row.status == 3">保護期</p>
+                        <p style="color:#3f51b5" v-if="scope.row.status == 4">申請退款中</p>
+                        <p style="color:red" v-if="scope.row.status == 5">已退款</p>
+                        <p style="color:#f99e1b" v-if="scope.row.status == 6">已完結</p>
                     </template>
                 </el-table-column>
             </el-table>
@@ -98,8 +97,9 @@ export default {
             pageSize:10,
             total:null,
             tableData: [],                 //用戶交易列表信息
-            dateTime:[],
-            state:''
+            dateTime:[], //日期查詢
+            state:'', //訂單狀態查詢
+            sVal:'' //訂單號、商品名查詢
         }
     },
     mounted(){
@@ -133,13 +133,15 @@ export default {
         },
         // 查詢
         search(val){
-            this.dateTime = []
-            this.state = []
+            this.dateTime = [];
+            this.state = [];
+            this.sVal = val;
             this.currentPage = 1;
-            this.getTradeList(this.currentPage,val)
+            this.getTradeList(this.currentPage,this.sVal)
         },
         // 訂單狀態查詢
         orderStatus(val){
+            this.sVal = ""
             this.state = val
             this.currentPage = 1;
             this.getTradeList(this.currentPage,"",this.dateTime,val)
@@ -147,7 +149,7 @@ export default {
         // 分頁
         handleCurrentChange(val){
             this.currentPage = val;
-            this.getTradeList(this.currentPage,"",this.dateTime,this.state);
+            this.getTradeList(this.currentPage,this.sVal,this.dateTime,this.state);
         },
     }
 }
@@ -157,6 +159,7 @@ export default {
 .el-table .cell{
     display: flex;
     justify-content: space-around;
+    line-height: 35px;
 }
 /* .el-checkbox__input{
     display: none
