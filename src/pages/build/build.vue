@@ -126,10 +126,9 @@ export default {
         // 獲取所有列表信息
         getUserlistByAdmin(currentPage){
             this.$get("admin/getUsersAdminList",{
-                pageNum: currentPage ? currentPage : 1,
+                pageNum: this.currentPage ? this.currentPage : 1,
                 pageSize: this.pageSize
             }).then(res=>{
-                console.log(res)
                 if(res.code == 0){
                     this.tableData = [];
                     this.total = res.data.total;
@@ -171,7 +170,7 @@ export default {
                                 this.$message.error("無法新建，電話號碼格式有誤")
                             }
                             else{
-                                this.$message.error("手機號(用戶名)已被人注冊，請重新輸入")
+                                this.$message.error("此賬號已被人注冊，請重新輸入")
                             }
                         })
                     }
@@ -210,14 +209,11 @@ export default {
                                     message:"修改成功",
                                     type:"success"
                                 })
-                                this.ruleForm.name = "";
-                                this.ruleForm.account = "";
-                                this.ruleForm.tel = "";
                                 this.ruleForm.password = "";
-                                this.dialogFormNewVisible = false
-                                this.getUserlistByAdmin()
+                                this.dialogFormNewVisible = false;
+                                this.getUserlistByAdmin();
                             }else{
-                                this.$message.error("無法修改")
+                                this.$message.error("無法修改");
                             }
                         })
                     }
@@ -234,9 +230,7 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
                 }).then(() => {
-                    console.log(val.id)
                     this.$get("admin/del/" + val.id).then(res=>{
-                        console.log(res);
                         if(res.code == 0){
                             this.tableData.splice(index,1)
                             this.$message({
@@ -245,7 +239,7 @@ export default {
                             });
                             this.getUserlistByAdmin()
                         }else{
-                            this.$message.error("刪除失敗！")
+                            this.$message.error("刪除失敗！不允许删除自己！")
                         }
                     })
                 }).catch(() => {
@@ -266,7 +260,6 @@ export default {
 
 <style>
     #build .el-table .cell{
-        /* width:70px !important; */
         height: 36px !important;
         display: flex;
         justify-content: space-around;
@@ -275,9 +268,7 @@ export default {
 
 </style>
 <style scoped>
-.el-button--warning.is-plain,.el-button--danger.is-plain{
-    padding:0 20px !important
-}
+
 .el-button--primary{
     width:90%;
     background-color: #f99e1b;

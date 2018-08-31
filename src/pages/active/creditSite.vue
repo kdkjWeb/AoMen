@@ -96,9 +96,11 @@ export default {
                 ],
                 storeCount:[
                     { required: true, message: '请输入最多领取人数', trigger: 'blur' },
+                    { pattern: /^\d*$/, message: '請輸入數值', trigger: 'blur' },
                 ],
                 needIntegral:[
-                    { required: true, message: '请输入领取所需分数', trigger: 'blur' },
+                    { required: true, message: '请输入领取所需積分', trigger: 'blur' },
+                    { pattern: /^\d*$/, message: '無效的積分', trigger: 'blur' },
                 ]
             },
             currentPage: 1,

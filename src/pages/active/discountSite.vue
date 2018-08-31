@@ -35,8 +35,7 @@
             </div>
             <!-- 分頁 -->
         </div>
-        <!-- 列表 -->
-        
+        <!-- 列表 --> 
         <!-- 新建框 -->
         <el-dialog
             :visible.sync="dialogVisible"
@@ -136,8 +135,8 @@ export default {
             },
             isShow:false,
             show:true,
-            dialogVisible:false,                //彈出框
-            title:"打折券設置",                   //表頭文字
+            dialogVisible:false,                
+            title:"打折券設置",                  
             lists:[],
             ruleForm:{
                 name:'',
@@ -155,12 +154,15 @@ export default {
                 ],
                 need:[
                     {required:true,message:"請輸入所需積分",trigger:"blur"},
+                    { pattern: /^\d*$/, message: '無效的積分', trigger: 'blur' },
                 ],
                 number:[
                     {required:true,message:"請輸入您想要發行的數量",trigger:"blur"},
+                    { pattern: /^\d*$/, message: '無效的數量', trigger: 'blur' },
                 ],
                 cut:[
                     {required:true,message:"請輸入需達到滿減的金額",trigger:"blur"},
+                    { pattern: /^\d*$/, message: '無效的金額', trigger: 'blur' },
                 ]
             },
             beginDate:'',
@@ -197,7 +199,7 @@ export default {
                         }else if(this.$getTimes(myDate) > this.$getTimes(this.lists[i].stopTime)) {
                             this.$set(this.lists[i],'isOver',true)
                         }else{
-                             this.$set(this.lists[i],'isBegining',true)
+                            this.$set(this.lists[i],'isBegining',true)
                         }
                     }
                 }else{
@@ -207,42 +209,47 @@ export default {
         },
         // 新建
         add(){
-            this.dialogVisible = true
+            this.dialogVisible = true;
+            this.ruleForm.name = "";
+            this.ruleForm.number = "";
+            this.ruleForm.need = "";
+            this.ruleForm.beginDate = "";
+            this.ruleForm.overDate = "";
+            this.ruleForm.full = "";
+            this.ruleForm.cut = "";
         },
         //確定新建
         submitForm(formName){
             this.$refs[formName].validate((valid) => {
                 if (valid) {
-                    this.$post("coupon/add",[{
-                        amount: this.ruleForm.number,
-                        beginTime:this.$getTimes(this.ruleForm.beginDate),
-                        stopTime: this.$getTimes(this.ruleForm.overDate),
-                        conditionAmount: this.ruleForm.full,
-                        discount:this.ruleForm.cut,
-                        couponType: this.ruleForm.contentType,
-                        couponName:this.ruleForm.name,
-                        needIntegral:this.ruleForm.need
-                    }]).then(res =>{
-                        if(res.code === 0){
-                            this.$message({
-                                message:"添加成功",
-                                type:"success"
-                            })
-                            this.ruleForm.name = "";
-                            this.ruleForm.number = "";
-                            this.ruleForm.need = "";
-                            this.ruleForm.beginDate = "";
-                            this.ruleForm.overDate = "";
-                            this.ruleForm.full = "";
-                            this.ruleForm.cut = "";
-                            this.getLists();
-                            this.dialogVisible = false
-                        }else{
-                            this.$message.error("新增失敗")
-                        }
-                    })
+                    if(!(/^\d*$/.test(this.ruleForm.full))){
+                        this.$message.error("滿減處請輸入數值")
+                    }else if(this.ruleForm.full <= this.ruleForm.cut){
+                        this.$message.error("滿減金額不能大於或等於折扣金額")
+                    }else{
+                        this.$post("coupon/add",[{
+                            amount: this.ruleForm.number,
+                            beginTime:this.$getTimes(this.ruleForm.beginDate),
+                            stopTime: this.$getTimes(this.ruleForm.overDate),
+                            conditionAmount: this.ruleForm.full,
+                            discount:this.ruleForm.cut,
+                            couponType: this.ruleForm.contentType,
+                            couponName:this.ruleForm.name,
+                            needIntegral:this.ruleForm.need
+                        }]).then(res =>{
+                            if(res.code === 0){
+                                this.$message({
+                                    message:"添加成功",
+                                    type:"success"
+                                })
+                                this.getLists();
+                                this.dialogVisible = false
+                            }else{
+                                this.$message.error("新增失敗，條件不能為空")
+                            }
+                        })
+                    }
                 } else {
-                    alert(valid)
                     this.$message.error("請確認所填寫的數據")
                     return false;
                 }
@@ -251,10 +258,13 @@ export default {
         // 優惠類型為直接代金券
         handleChange(){
             this.isShow = false;
+            this.ruleForm.full = "";
+            this.ruleForm.cut = "";
         },
         // 優惠類型為滿減代金券
         handleCut(){
             this.isShow = true;
+            this.ruleForm.cut = "";
         },
         // 刪除
         delet(val,index){

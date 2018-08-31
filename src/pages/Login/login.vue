@@ -58,7 +58,6 @@ export default {
                    phone: this.userInfo.userName,
                    password: this.userInfo.userPas
                }).then(res=>{
-                   console.log(res)
                    if(res.code === 0){
                         let flag = res.data.roleList.includes('super_admin');
                         sessionStorage.setItem('role',flag)

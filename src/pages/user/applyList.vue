@@ -206,6 +206,7 @@ export default {
         //拒絕
         refuse(val){
             this.form.desc = "";
+            this.num = "0"
             this.dialogVisible = true;
             this.id = val.id;
         },
@@ -298,6 +299,9 @@ export default {
 .gif:hover,.loading:hover{
     cursor:pointer;
 }
+/* .gif:hover{
+    transform:scale(1.5);
+} */
 /* 點擊后圖片樣式 */
 /* 同意、拒絕 */
 #pass,#no{

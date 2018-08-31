@@ -66,7 +66,6 @@ export default {
                 pageNum: this.currentPage,
                 pageSize: this.pageSize
             }).then(res=>{
-                console.log(res)
                if(res.code == 0){
                    this.users = [];
                    this.total = res.data.paymentsList.total;

@@ -111,6 +111,7 @@ export default {
         refuse(){
             this.dialogVisible = true;
             this.form.desc = "";
+            this.num = "0"
         },
         // 確定拒絕
         confirm(){
@@ -162,7 +163,7 @@ export default {
             }).catch(() => {
                 this.$message({
                     type: 'info',
-                    message: '已取消删除'
+                    message: '已取消'
                 });          
             });
         },

@@ -87,7 +87,6 @@ export default {
                 type: 'warning'
                 }).then(() => {
                    this.$get("article/delete",{id:val.id}).then(res =>{
-                       console.log(res)
                        if(res.code === 0){
                             this.$message({
                                 message:"刪除成功",

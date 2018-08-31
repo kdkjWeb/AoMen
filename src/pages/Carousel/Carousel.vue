@@ -65,37 +65,6 @@
                 </el-table-column>
             </el-table>
         </div>
-         <!-- <div class="iphoneX">
-            <h3>iphoneX轮播图</h3>
-            <el-table
-                :data="iphoneX"
-                border
-                style="width: 98%;margin:auto">
-                <el-table-column
-                prop="img"
-                header-align = "center"
-                label="轮播图"> 
-                <template slot-scope="scope">
-                    <img style="width:80px;height:80px" :src="scope.row.spic" alt="">
-                </template>             
-                </el-table-column>
-                <el-table-column
-                header-align = "center"
-                v-for="(item,index) in tableList"
-                :key="index"
-                :prop="item.prop"
-                :label="item.label">
-                </el-table-column>
-                <el-table-column
-                header-align = "center"
-                label="操作"
-                width="280px">
-                <template slot-scope="scope" class="handle">
-                    <p style="color:red" @click="delet(scope.row)">删除</p>
-                </template>
-                </el-table-column>
-            </el-table>
-        </div> -->
         <!-- 表格 -->
     </div>
 </template>
@@ -123,7 +92,6 @@ export default {
     },
     mounted(){
         this.getPrimaryList();
-        // this.getIphoneXList()
     },
     methods:{
         // 获取通用型轮播图
@@ -163,7 +131,6 @@ export default {
                                 type:"success"
                             });
                             this.getPrimaryList();
-                            // this.getIphoneXList();
                         }else{
                             this.$message.error("刪除失敗！")
                         }
