@@ -287,6 +287,7 @@ export default {
 .el-main{
     background-color: #ddd;
 }
+
 /* 管理系統首頁框架 */
 /* 菜单头部 */
 #homePage .el-header{
@@ -406,6 +407,7 @@ export default {
 #aside .iconfont:hover{
     color: #f99e1b
 }
+
 /* 菜单侧栏 */
 </style>
 

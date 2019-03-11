@@ -60,8 +60,6 @@ import { Message, Loading } from 'element-ui';
             })
         })
     },
-
-
       //post请求
       post: (url,data,load)=>{
         let loading;
